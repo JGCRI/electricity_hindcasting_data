@@ -7,6 +7,18 @@ overnight <- read.delim("data-raw/overnight.cost.tsv") %>%
 # GDPDEF
 gdpdef <- read.csv("data-raw/GDPDEF.csv")
 
+# accepted categories
+overnightmapping <- read.delim('data-raw/overnight_categories.csv')
+overnightmapping <- as.vector(unique(overnightmapping[,'overnight_category.updated']))
+
+# string manipulation -----------------------------------------------------
+overnight$overnight_category <- gsub('_', ' ', overnight$overnight_category)
+
+# remove certain categories -----------------------------------------------
+
+overnight <- overnight %>%
+  filter(overnight_category %in% overnightmapping)
+
 # unit conversions --------------------------------------------------------
 overnight <- overnight %>%
   mutate(fixed.o.m = fixed.o.m/1000/8760,# /kWyr -> /MWh

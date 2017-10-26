@@ -25,8 +25,7 @@ ca.elec.almanac <- ca.elec.almanac %>%
   left_join(ca.mapping, by = "plant.id") %>% # join ca.mapping (which contains EIA ID's) to ca.elec.almanac
   mutate(heat.rate = 1000*heat.rate) %>%
   # Converts units from MMbtu/MWh to btu/kWh (units favored by the EIA)
-  select(plant_code, year, heat.rate) %>% #EIA Plant Code #'s, Year, & Heat Rate
-  filter(year != 2015)
+  select(plant_code, year, heat.rate) #EIA Plant Code #'s, Year, & Heat Rate
 
 
 
