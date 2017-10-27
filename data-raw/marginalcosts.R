@@ -1,23 +1,27 @@
 
+# To-Do -------------------------------------------------------------------
+# Clarify heatrate regression
+# Are we ever assigning heatrates to generators just using average in order to model for all years
+# then calculate/assign marginal cost to generator according to year & category/fuel?
+
+#
+
 # Data --------------------------------------------------------------------
 # Generator-level data
 generators <- form860CAsupplemented %>%
-  select(year, plant_code, overnight_category, fuel, heat_rate)
+  select(year, generator_code, fuel, prime_mover, heat_rate)
 
 # summary
-skeleton <- skeleton
+mapping <- skeleton
 
-# fuel_general mapping
-fuels <- read.csv('data-raw/fuels.csv') %>%
-  select(fuel, fuel_general)
-
-# maximum heatrates
+# maximum heatrates - necessary
 maximumheatrates <- maximumheatrates
 
-# map fuel_general onto generator data ------------------------------------
+# map fuel_general & overnight_category onto generator data ---------------
 generators <- generators %>%
-  left_join(fuels, by=c('fuel')) %>%
-  select(-fuel)
+  left_join(mapping, by=c('prime_mover', 'fuel')) %>%
+  filter(! is.na(fuel_general)) %>%
+  filter(! is.na(overnight_category))
 
 # average heat rate for (overnight, fuel, year) ---------------------------
 hr <- generators %>%
@@ -27,38 +31,24 @@ hr <- generators %>%
   # if no data for an entire year, avg == NaN
   mutate(heat.rate.avg = ifelse(is.nan(heat.rate.avg), NA, heat.rate.avg))
 
-# summary -----------------------------------------------------------------
-summary.hr <- skeleton %>%
-  left_join(hr, by=c('overnight_category','fuel_general','year')) %>%
-  # attach heat.rate.avg and capacity.factor.avg to overnight-fuel capacity
-  arrange(overnight_category, fuel_general, year)
-
 # bind maximum heat_rates for 2050, 2100 ----------------------------------
-summary.hr <- summary.hr %>%
+hr <- hr %>%
   rbind(maximumheatrates)
 
 # heat rate linear regression ---------------------------------------------
-
-h.r.model <- summary.hr %>%
+h.r.model <- hr %>%
   filter(heat.rate.avg > 0) %>%
   group_by(overnight_category, fuel_general) %>%
-  complete(year = seq(from = 1990, to = 2100, by = 1)) %>%
+  complete(year = seq(from = 1990, to = 2014, by = 1)) %>% # 2100 if including maximumheatrates
   ungroup() %>%
   mutate(time = year - 1989) %>%
   mutate(time_sq = time^2) %>%
   group_by(overnight_category, fuel_general) %>%
   do({mod <- lm(heat.rate.avg ~ time + time_sq, data = .)
   # The model is the same as heat_rate ~ time + time_sq + time*overnight_category + time_sq*overnight_category because of the group_by
-  pred.heat.rate <- predict(mod, newdata = .[c("time", "time_sq")])
-  data.frame(., pred.heat.rate)}) %>%
-  select(overnight_category, fuel_general, year, pred.heat.rate) %>%
-  mutate(pred.heat.rate = replace(pred.heat.rate, fuel_general=="solar", NA)) %>%
-  mutate(pred.heat.rate = replace(pred.heat.rate, fuel_general=="wind", NA))
-# We still have overnight category, general fuel combinations with low sample sizes (even after implementing the aggregation measures).
-
-summary.hr <- summary.hr %>%
-  left_join(h.r.model, by = c("overnight_category", "fuel_general", "year")) %>%
-  arrange(overnight_category, fuel_general, year)
+  pred.heat.rate.avg <- predict(mod, newdata = .[c("time", "time_sq")])
+  data.frame(., pred.heat.rate.avg)}) %>%
+  select(overnight_category, fuel_general, year, heat.rate.avg, pred.heat.rate.avg)
 
 # fuel price --------------------------------------------------------------
 # adjust for dollar of transaction?

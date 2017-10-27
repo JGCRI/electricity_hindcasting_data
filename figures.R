@@ -1,7 +1,7 @@
 library(ggplot2)
 
-ggplot(marginalcosts) +
-  geom_line(aes(x = year, y = pred.heat.rate)) +
+ggplot(h.r.model) +
+  #geom_line(aes(x = year, y = pred.heat.rate.avg)) +
   geom_point(aes(x = year, y = heat.rate.avg)) +
   facet_wrap(~overnight_category + fuel_general) +
   labs(x='year', y='Btu/MWh', title='Average/Predicted Heat Rate ')

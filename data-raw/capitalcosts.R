@@ -1,3 +1,10 @@
+
+# To-Do -------------------------------------------------------------------
+
+## Rename online as year. Does this assumption make sense
+# Makes sense in order tor costs to be associated with new generators from Form 860 (in_service==year)
+
+
 # Data --------------------------------------------------------------------
 # Industry-level
 overnight <- read.delim("data-raw/overnight.cost.tsv") %>%
@@ -7,17 +14,9 @@ overnight <- read.delim("data-raw/overnight.cost.tsv") %>%
 # GDPDEF
 gdpdef <- read.csv("data-raw/GDPDEF.csv")
 
-# accepted categories
-overnightmapping <- read.delim('data-raw/overnight_categories.csv')
-overnightmapping <- as.vector(unique(overnightmapping[,'overnight_category.updated']))
-
 # string manipulation -----------------------------------------------------
 overnight$overnight_category <- gsub('_', ' ', overnight$overnight_category)
 
-# remove certain categories -----------------------------------------------
-
-overnight <- overnight %>%
-  filter(overnight_category %in% overnightmapping)
 
 # unit conversions --------------------------------------------------------
 overnight <- overnight %>%
