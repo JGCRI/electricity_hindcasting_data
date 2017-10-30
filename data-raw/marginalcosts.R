@@ -17,6 +17,9 @@ mapping <- skeleton
 # maximum heatrates - necessary
 maximumheatrates <- maximumheatrates
 
+# fuel prices
+fuelprices <- fuelprices
+
 # map fuel_general & overnight_category onto generator data ---------------
 generators <- generators %>%
   left_join(mapping, by=c('prime_mover', 'fuel')) %>%
@@ -52,16 +55,10 @@ h.r.model <- hr %>%
 
 # fuel price --------------------------------------------------------------
 # adjust for dollar of transaction?
-energy.prices <- read.delim("data-raw/energy.prices.txt.gz") %>%
-  dplyr::rename(fuel_general = fuel_1_general)
-uranium.prices <- read.delim("data-raw/uranium.prices.txt.gz") %>%
-  select(year, fuel.price=weighted.avg.price.nominal) %>%
-  mutate(fuel_general='uranium')
 
-energy.prices <- rbind(energy.prices, uranium.prices)
 
 marginalcosts <- summary.hr %>%
-  left_join(energy.prices, by = c('fuel_general','year')) %>%
+  left_join(fuel.prices, by = c('fuel_general','year')) %>%
   mutate(marginal.cost = (fuel.price/10^6)*pred.heat.rate) %>% # $/MBtu * Btu/Kwh = $/Kwh
   mutate(marginal.cost = marginal.cost*1000) # $/kwh -> $/Mwh
 
