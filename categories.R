@@ -9,7 +9,8 @@
 # overnight categories ----------------------------------------------------
 capcats <- capitalcosts %>%
   group_by(overnight_category) %>%
-  summarise(AEOmin=min(year), AEOmax = max(year), avginvestment = sum(base.overnight), AEOyears=n())
+  summarise(AEOmin=min(year), AEOmax = max(year), AEOyears=n(),
+            avginvestment = sum(base.overnight) )
 
 overnightmapping <- read.delim('data-raw/overnight_categories.csv') %>%
   select(prime_mover, fuel, overnight_category=overnight_category.updated) %>%
@@ -17,9 +18,15 @@ overnightmapping <- read.delim('data-raw/overnight_categories.csv') %>%
 eiacats <- form860CAsupplemented %>%
   left_join(overnightmapping, by=c('prime_mover', 'fuel')) %>%
   group_by(overnight_category) %>%
-  summarise(EIAmin=min(year), EIAmax=max(year), totalcapacity = sum(summer_capacity), generators=n(), EIAyears=length(unique(year)))
+  summarise(EIAmin=min(year), EIAmax=max(year), EIAyears=length(unique(year)),
+            totalcapacity = sum(summer_capacity, na.rm=TRUE), avgheatrate = mean(heat_rate, na.rm=TRUE),
+            generators=n() )
 
 timelines <- full_join(capcats, eiacats, by='overnight_category')
+
+# capacity vs numgenerators
+ggplot(na.omit(timelines), aes(generators, totalcapacity)) +
+  geom_point(aes(colour=avgheatrate))
 
 # capacities of conv.cc turbines
 form860CAsupplemented %>%
@@ -39,7 +46,6 @@ form860CAsupplemented %>%
   left_join(overnightmapping, by=c('prime_mover', 'fuel')) %>%
   ggplot( aes( summer_capacity, colour=overnight_category) ) +
   geom_freqpoly()
-
 
 # movers ------------------------------------------------------------------
 movers <- read.delim('data-raw/form860movers.csv')
@@ -69,3 +75,9 @@ unassigned <- c('MF', 'MSW', 'BLQ', 'LPG', 'STM', 'WH', 'PUR', 'SLW', 'TDF', 'BD
 ignored <- c('BIO', 'RRO', 'TOP', 'FO3', 'COM', 'PRO', 'CWM', 'PL', 'TH', 'COG', 'LNG', 'MTH') # zero generators
 undefined <- c('OO', 'SU', 'UNK', 'WOC')
 
+
+
+# fuel_general ------------------------------------------------------------
+fuelstime <- fuel.prices %>%
+  group_by(fuel_general) %>%
+  summarise(min=min(year) , max=max(year))
