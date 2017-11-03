@@ -1,0 +1,217 @@
+prime_mover	fuel	prime_mover_text	fuel_text	overnight_category old	overnight_category updated
+AB	WD	Atmospheric Fluidized Bed	wood and wood waste	biomass	biomass
+CH	WD	Steam Turbine	wood and wood waste	biomass	biomass
+IC	REF	Internal Combustion	refuse bagasse and all other nonwood waste	biomass	biomass
+OT	REF	Other (Explained in Notes)	refuse bagasse and all other nonwood waste	biomass	biomass
+OT	WDS	Other (Explained in Notes)	wood and wood waste solids	biomass	biomass
+ST	AB	Steam Turbine (Boiler)	Agriculture crop byproducts straw energy crops	biomass	biomass
+ST	OBS	Steam Turbine (Boiler)	other biomass solids	biomass	biomass
+ST	REF	Steam Turbine (Boiler)	refuse bagasse and all other nonwood waste	biomass	biomass
+ST	WD	Steam Turbine (Boiler)	wood and wood waste	biomass	biomass
+ST	WDS	Steam Turbine (Boiler)	wood and wood waste solids	biomass	biomass
+AB	BIT	Atmospheric Fluidized Bed	bituminous coal	coal	coal
+AB	LIG	Atmospheric Fluidized Bed	lignite	coal	coal
+AB	SUB	Atmospheric Fluidized Bed	subbituminous coal	coal	coal
+AB	WC	Atmospheric Fluidized Bed	waste coal	coal	coal
+CH	ANT	Steam Turbine	Anthracite	coal	coal
+CH	BIT	Steam Turbine	bituminous coal	coal	coal
+CH	SUB	Steam Turbine	subbituminous coal	coal	coal
+CH	WC	Steam Turbine	waste coal	coal	coal
+GT	PC	Combustion (gas) Turbine	petroleum coke	coal	coal
+OT	PC	Other (Explained in Notes)	petroleum coke	coal	coal
+OT	SUB	Other (Explained in Notes)	subbituminous coal	coal	coal
+ST	ANT	Steam Turbine (Boiler)	Anthracite	coal	coal
+ST	BIT	Steam Turbine (Boiler)	bituminous coal	coal	coal
+ST	COL	Steam Turbine (Boiler)	coal generic	coal	coal
+ST	LIG	Steam Turbine (Boiler)	lignite	coal	coal
+ST	PC	Steam Turbine (Boiler)	petroleum coke	coal	coal
+ST	RC	Steam Turbine (Boiler)	refined coal	coal	coal
+ST	SUB	Steam Turbine (Boiler)	subbituminous coal	coal	coal
+ST	TDF	Steam Turbine (Boiler)	tires	coal	coal
+ST	WC	Steam Turbine (Boiler)	waste coal	coal	coal
+CA	BIT	Combined Cycle Steam Turbine with Supplemental Firing	bituminous coal	conventional combined cycle	conventional combined cycle
+CA	DFO	Combined Cycle Steam Turbine with Supplemental Firing	distillate fuel oil	conventional combined cycle	conventional combined cycle
+CA	FO2	Combined Cycle Steam Turbine with Supplemental Firing	no 2 fuel oil	conventional combined cycle	conventional combined cycle
+CA	FO6	Combined Cycle Steam Turbine with Supplemental Firing	no 6 fuel oil	conventional combined cycle	conventional combined cycle
+CA	JF	Combined Cycle Steam Turbine with Supplemental Firing	jet fuel	conventional combined cycle	conventional combined cycle
+CA	LFG	Combined Cycle Steam Turbine with Supplemental Firing	landfill gas	conventional combined cycle	conventional combined cycle
+CA	NA	Combined Cycle Steam Turbine with Supplemental Firing	NA	conventional combined cycle	conventional combined cycle
+CA	NG	Combined Cycle Steam Turbine with Supplemental Firing	natural gas	conventional combined cycle	conventional combined cycle
+CA	OBG	Combined Cycle Steam Turbine with Supplemental Firing	other biomass gases	conventional combined cycle	conventional combined cycle
+CA	OG	Combined Cycle Steam Turbine with Supplemental Firing	other gas	conventional combined cycle	conventional combined cycle
+CA	PUR	Combined Cycle Steam Turbine with Supplemental Firing	purchased steam	conventional combined cycle	conventional combined cycle
+CA	RFO	Combined Cycle Steam Turbine with Supplemental Firing	residual fuel oil	conventional combined cycle	conventional combined cycle
+CA	SG	Combined Cycle Steam Turbine with Supplemental Firing	synthetic gas other than coal derived	conventional combined cycle	conventional combined cycle
+CA	SGC	Combined Cycle Steam Turbine with Supplemental Firing	coal-derived synthetic gas	conventional combined cycle	conventional combined cycle
+CA	SGP	Combined Cycle Steam Turbine with Supplemental Firing	synthetic gas from petroleum coke	conventional combined cycle	conventional combined cycle
+CA	SNG	Combined Cycle Steam Turbine with Supplemental Firing	synthetic natural gas	conventional combined cycle	conventional combined cycle
+CA	WDS	Combined Cycle Steam Turbine with Supplemental Firing	wood and wood waste solids	conventional combined cycle	conventional combined cycle
+CA	WH	Combined Cycle Steam Turbine with Supplemental Firing	waste heat	conventional combined cycle	conventional combined cycle
+CA	WO	Combined Cycle Steam Turbine with Supplemental Firing	oil-other and waste oil	conventional combined cycle	conventional combined cycle
+CC	BIT	Combine Cycle - Total Unit	bituminous coal	conventional combined cycle	conventional combined cycle
+CC	NG	Combine Cycle - Total Unit	natural gas	conventional combined cycle	conventional combined cycle
+CS	DFO	Combined Cycle Single Shaft (gas turbine and steam turbine share a single generator)	distillate fuel oil	conventional combined cycle	conventional combined cycle
+CS	NA	Combined Cycle Single Shaft (gas turbine and steam turbine share a single generator)	NA	conventional combined cycle	conventional combined cycle
+CS	NG	Combined Cycle Single Shaft (gas turbine and steam turbine share a single generator)	natural gas	conventional combined cycle	conventional combined cycle
+CT	BIT	Combined Cycle Combustion Turbine Part	bituminous coal	conventional combined cycle	conventional combined cycle
+CT	DFO	Combined Cycle Combustion Turbine Part	distillate fuel oil	conventional combined cycle	conventional combined cycle
+CT	FO2	Combined Cycle Combustion Turbine Part	no 2 fuel oil	conventional combined cycle	conventional combined cycle
+CT	JF	Combined Cycle Combustion Turbine Part	jet fuel	conventional combined cycle	conventional combined cycle
+CT	LFG	Combined Cycle Combustion Turbine Part	landfill gas	conventional combined cycle	conventional combined cycle
+CT	NA	Combined Cycle Combustion Turbine Part	NA	conventional combined cycle	conventional combined cycle
+CT	NG	Combined Cycle Combustion Turbine Part	natural gas	conventional combined cycle	conventional combined cycle
+CT	OBG	Combined Cycle Combustion Turbine Part	other biomass gases	conventional combined cycle	conventional combined cycle
+CT	OG	Combined Cycle Combustion Turbine Part	other gas	conventional combined cycle	conventional combined cycle
+CT	RFO	Combined Cycle Combustion Turbine Part	residual fuel oil	conventional combined cycle	conventional combined cycle
+CT	SG	Combined Cycle Combustion Turbine Part	synthetic gas other than coal derived	conventional combined cycle	conventional combined cycle
+CT	SGC	Combined Cycle Combustion Turbine Part	coal-derived synthetic gas	conventional combined cycle	conventional combined cycle
+CT	SGP	Combined Cycle Combustion Turbine Part	synthetic gas from petroleum coke	conventional combined cycle	conventional combined cycle
+CT	SNG	Combined Cycle Combustion Turbine Part	synthetic natural gas	conventional combined cycle	conventional combined cycle
+CT	WH	Combined Cycle Combustion Turbine Part	waste heat	conventional combined cycle	conventional combined cycle
+CT	WO	Combined Cycle Combustion Turbine Part	oil-other and waste oil	conventional combined cycle	conventional combined cycle
+CW	FO2	Combined Cycle Steam Turbine Part (Waste Heat Boiler Only)	no 2 fuel oil	conventional combined cycle	conventional combined cycle
+CW	NA	Combined Cycle Steam Turbine Part (Waste Heat Boiler Only)	NA	conventional combined cycle	conventional combined cycle
+CW	NG	Combined Cycle Steam Turbine Part (Waste Heat Boiler Only)	natural gas	conventional combined cycle	conventional combined cycle
+CW	SNG	Combined Cycle Steam Turbine Part (Waste Heat Boiler Only)	synthetic natural gas	conventional combined cycle	conventional combined cycle
+CW	WH	Combined Cycle Steam Turbine Part (Waste Heat Boiler Only)	waste heat	conventional combined cycle	conventional combined cycle
+CH	NG	Steam Turbine	natural gas	conventional combustion turbine	conventional combustion turbine
+GT	DFO	Combustion (gas) Turbine	distillate fuel oil	conventional combustion turbine	conventional combustion turbine
+GT	FO1	Combustion (gas) Turbine	no 1 fuel oil	conventional combustion turbine	conventional combustion turbine
+GT	FO2	Combustion (gas) Turbine	no 2 fuel oil	conventional combustion turbine	conventional combustion turbine
+GT	FO4	Combustion (gas) Turbine	no 4 fuel oil	conventional combustion turbine	conventional combustion turbine
+GT	FO6	Combustion (gas) Turbine	no 6 fuel oil	conventional combustion turbine	conventional combustion turbine
+GT	JF	Combustion (gas) Turbine	jet fuel	conventional combustion turbine	conventional combustion turbine
+GT	KER	Combustion (gas) Turbine	kerosene	conventional combustion turbine	conventional combustion turbine
+GT	LFG	Combustion (gas) Turbine	landfill gas	conventional combustion turbine	conventional combustion turbine
+GT	LPG	Combustion (gas) Turbine	liquified propane gas	conventional combustion turbine	conventional combustion turbine
+GT	NA	Combustion (gas) Turbine	NA	conventional combustion turbine	conventional combustion turbine
+GT	NG	Combustion (gas) Turbine	natural gas	conventional combustion turbine	conventional combustion turbine
+GT	OBG	Combustion (gas) Turbine	other biomass gases	conventional combustion turbine	conventional combustion turbine
+GT	OBL	Combustion (gas) Turbine	other biomass liquids	conventional combustion turbine	conventional combustion turbine
+GT	OG	Combustion (gas) Turbine	other gas	conventional combustion turbine	conventional combustion turbine
+GT	OO	Combustion (gas) Turbine	not defined	conventional combustion turbine	conventional combustion turbine
+GT	OTH	Combustion (gas) Turbine	other	conventional combustion turbine	conventional combustion turbine
+GT	PG	Combustion (gas) Turbine	propane	conventional combustion turbine	conventional combustion turbine
+GT	RFO	Combustion (gas) Turbine	residual fuel oil	conventional combustion turbine	conventional combustion turbine
+GT	RG	Combustion (gas) Turbine	refinery gas	conventional combustion turbine	conventional combustion turbine
+GT	WH	Combustion (gas) Turbine	waste heat	conventional combustion turbine	conventional combustion turbine
+GT	WO	Combustion (gas) Turbine	oil-other and waste oil	conventional combustion turbine	conventional combustion turbine
+IC	BIT	Internal Combustion	bituminous coal	conventional combustion turbine	conventional combustion turbine
+IC	DFO	Internal Combustion	distillate fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	FO1	Internal Combustion	no 1 fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	FO2	Internal Combustion	no 2 fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	FO4	Internal Combustion	no 4 fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	FO5	Internal Combustion	no 5 fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	FO6	Internal Combustion	no 6 fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	JF	Internal Combustion	jet fuel	conventional combustion turbine	conventional combustion turbine
+IC	LFG	Internal Combustion	landfill gas	conventional combustion turbine	conventional combustion turbine
+IC	MF	Internal Combustion	multifueled	conventional combustion turbine	conventional combustion turbine
+IC	MSW	Internal Combustion	municipal solid waste	conventional combustion turbine	conventional combustion turbine
+IC	MTE	Internal Combustion	methane	conventional combustion turbine	conventional combustion turbine
+IC	NA	Internal Combustion	NA	conventional combustion turbine	conventional combustion turbine
+IC	NG	Internal Combustion	natural gas	conventional combustion turbine	conventional combustion turbine
+IC	OBG	Internal Combustion	other biomass gases	conventional combustion turbine	conventional combustion turbine
+IC	OBL	Internal Combustion	other biomass liquids	conventional combustion turbine	conventional combustion turbine
+IC	OG	Internal Combustion	other gas	conventional combustion turbine	conventional combustion turbine
+IC	OT	Internal Combustion	other	conventional combustion turbine	conventional combustion turbine
+IC	OTH	Internal Combustion	other	conventional combustion turbine	conventional combustion turbine
+IC	PET	Internal Combustion	petroleum generic	conventional combustion turbine	conventional combustion turbine
+IC	RFO	Internal Combustion	residual fuel oil	conventional combustion turbine	conventional combustion turbine
+IC	RG	Internal Combustion	refinery gas	conventional combustion turbine	conventional combustion turbine
+IC	SLW	Internal Combustion	sludge waste	conventional combustion turbine	conventional combustion turbine
+IC	UNK	Internal Combustion	not defined	conventional combustion turbine	conventional combustion turbine
+IC	WO	Internal Combustion	oil-other and waste oil	conventional combustion turbine	conventional combustion turbine
+JE	FO1	Jet Engine	no 1 fuel oil	conventional combustion turbine	conventional combustion turbine
+JE	FO2	Jet Engine	no 2 fuel oil	conventional combustion turbine	conventional combustion turbine
+JE	JF	Jet Engine	jet fuel	conventional combustion turbine	conventional combustion turbine
+JE	KER	Jet Engine	kerosene	conventional combustion turbine	conventional combustion turbine
+JE	NA	Jet Engine	NA	conventional combustion turbine	conventional combustion turbine
+JE	NG	Jet Engine	natural gas	conventional combustion turbine	conventional combustion turbine
+FC	LFG	Fuel Cell (electrochemical)	landfill gas	fuel cell	fuel cell
+FC	NA	Fuel Cell (electrochemical)	NA	fuel cell	fuel cell
+FC	NG	Fuel Cell (electrochemical)	natural gas	fuel cell	fuel cell
+FC	OBG	Fuel Cell (electrochemical)	other biomass gases	fuel cell	fuel cell
+BT	GEO	turbines used in a binary cycle	geothermal	geothermal	geothermal
+GE	GST	Steam Turbine (geothermal)	geothermal steam	geothermal	geothermal
+OT	GEO	Other (Explained in Notes)	geothermal	geothermal	geothermal
+ST	GEO	Steam Turbine (Boiler)	geothermal	geothermal	geothermal
+HC	NA	Hydraulic Turbine (conventional)	NA	hydro	hydro
+HC	WAT	Hydraulic Turbine (conventional)	water	hydro	hydro
+HL	WAT	Hydraulic Turbine (pipeline)	water	hydro	hydro
+HR	NA	Hydraulic Turbine (reversible)	NA	hydro	hydro
+HR	WAT	Hydraulic Turbine (reversible)	water	hydro	hydro
+HY	WAT	Hydraulic Turbine (conventional)	water	hydro	hydro
+PS	WAT	Hydraulic Turbine Reversible (pumped storage)	water	hydro	hydro
+IG	BIT	Integrated Coal Gasification Combined Cycle	bituminous coal	igcc	igcc
+IG	NA	Integrated Coal Gasification Combined Cycle	NA	igcc	igcc
+IG	SNG	Integrated Coal Gasification Combined Cycle	synthetic natural gas	igcc	igcc
+ST	MSW	Steam Turbine (Boiler)	municipal solid waste	msw	msw
+AB	NA	Atmospheric Fluidized Bed	NA	NA	NA
+BA	MWH	Battery energy storage	megawatt hour	distributed peak	NA
+BT	WH	turbines used in a binary cycle	waste heat	NA	NA
+CA	OTH	Combined Cycle Steam Turbine with Supplemental Firing	other	NA	NA
+CE	NG	Compressed Air Energy Storage	natural gas	distributed base	NA
+CG	NA	not defined	NA	NA	NA
+CG	NG	not defined	natural gas	NA	NA
+CH	MF	Steam Turbine	multifueled	NA	NA
+FW	MWH	Flywheel energy storage	megawatt hour	distributed peak	NA
+GE	NA	Steam Turbine (geothermal)	NA	NA	NA
+HL	NA	Hydraulic Turbine (pipeline)	NA	NA	NA
+HY	NA	Hydraulic Turbine (conventional)	NA	NA	NA
+NA	NA	NA	NA	NA	NA
+NB	NA	Steam Turbine (Boiling Water Nuclear Reactor)	NA	NA	NA
+NH	NA	Steam Turbine (High-Temperature Gas-Cooled Nuclear Reactor)	NA	NA	NA
+NP	NA	Steam Turbine (Pressurized Water Nuclear Reactor)	NA	NA	NA
+OT	BFG	Other (Explained in Notes)	blast furnace gas	NA	NA
+OT	JF	Other (Explained in Notes)	jet fuel	NA	NA
+OT	KER	Other (Explained in Notes)	kerosene	NA	NA
+OT	LFG	Other (Explained in Notes)	landfill gas	NA	NA
+OT	NG	Other (Explained in Notes)	natural gas	NA	NA
+OT	OG	Other (Explained in Notes)	other gas	NA	NA
+OT	OT	Other (Explained in Notes)	other	NA	NA
+OT	OTH	Other (Explained in Notes)	other	NA	NA
+OT	RFO	Other (Explained in Notes)	residual fuel oil	NA	NA
+OT	WH	Other (Explained in Notes)	waste heat	NA	NA
+SS	NA	Steam Turbine (Solar)	NA	NA	NA
+ST	CRU	Steam Turbine (Boiler)	crude oil	NA	NA
+ST	GAS	Steam Turbine (Boiler)	gas generic	NA	NA
+ST	MF	Steam Turbine (Boiler)	multifueled	NA	NA
+ST	NA	Steam Turbine (Boiler)	NA	NA	NA
+ST	OTH	Steam Turbine (Boiler)	other	NA	NA
+ST	PET	Steam Turbine (Boiler)	petroleum generic	NA	NA
+ST	PUR	Steam Turbine (Boiler)	purchased steam	NA	NA
+ST	STM	Steam Turbine (Boiler)	steam	NA	NA
+ST	UNK	Steam Turbine (Boiler)	not defined	NA	NA
+ST	WDL	Steam Turbine (Boiler)	wood waste liquids	NA	NA
+ST	WH	Steam Turbine (Boiler)	waste heat	NA	NA
+ST	WOC	Steam Turbine (Boiler)	not defined	NA	NA
+NB	UR	Steam Turbine (Boiling Water Nuclear Reactor)	uranium	nuclear	nuclear
+NH	UR	Steam Turbine (High-Temperature Gas-Cooled Nuclear Reactor)	uranium	nuclear	nuclear
+NP	UR	Steam Turbine (Pressurized Water Nuclear Reactor)	uranium	nuclear	nuclear
+ST	NUC	Steam Turbine (Boiler)	nuclear	nuclear	nuclear
+PV	SUN	Photovoltaic	sun	photovoltaic	photovoltaic
+SP	NA	Photovoltaic	NA	photovoltaic	photovoltaic
+SP	SUN	Photovoltaic	sun	photovoltaic	photovoltaic
+CP	SUN	Concentrated solar power energy storage	sun	solar thermal	solar thermal
+OT	SUN	Other (Explained in Notes)	sun	solar thermal	solar thermal
+SS	SUN	Steam Turbine (Solar)	sun	solar thermal	solar thermal
+ST	SUN	Steam Turbine (Boiler)	sun	solar thermal	solar thermal
+ST	BFG	Steam Turbine (Boiler)	blast furnace gas	steam turbine	steam turbine
+ST	BLQ	Steam Turbine (Boiler)	black liquor	steam turbine	steam turbine
+ST	DFO	Steam Turbine (Boiler)	distillate fuel oil	steam turbine	steam turbine
+ST	FO1	Steam Turbine (Boiler)	no 1 fuel oil	steam turbine	steam turbine
+ST	FO2	Steam Turbine (Boiler)	no 2 fuel oil	steam turbine	steam turbine
+ST	FO4	Steam Turbine (Boiler)	no 4 fuel oil	steam turbine	steam turbine
+ST	FO6	Steam Turbine (Boiler)	no 6 fuel oil	steam turbine	steam turbine
+ST	LFG	Steam Turbine (Boiler)	landfill gas	steam turbine	steam turbine
+ST	LPG	Steam Turbine (Boiler)	liquified propane gas	steam turbine	steam turbine
+ST	NG	Steam Turbine (Boiler)	natural gas	steam turbine	steam turbine
+ST	OBG	Steam Turbine (Boiler)	other biomass gases	steam turbine	steam turbine
+ST	OG	Steam Turbine (Boiler)	other gas	steam turbine	steam turbine
+ST	RFO	Steam Turbine (Boiler)	residual fuel oil	steam turbine	steam turbine
+ST	SC	Steam Turbine (Boiler)	coal synfuel	steam turbine	steam turbine
+ST	SLW	Steam Turbine (Boiler)	sludge waste	steam turbine	steam turbine
+ST	SNG	Steam Turbine (Boiler)	synthetic natural gas	steam turbine	steam turbine
+ST	WO	Steam Turbine (Boiler)	oil-other and waste oil	steam turbine	steam turbine
+WT	NA	Wind Turbine	NA	NA	wind
+WT	WND	Wind Turbine	wind	wind	wind

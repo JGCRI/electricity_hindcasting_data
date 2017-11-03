@@ -15,7 +15,7 @@ maximumheatrates <- efficiencies %>%
   filter(!is.na(overnight_category) & !is.na(fuel_general)) %>%
   mutate(year = gsub('year.', '', year)) %>%
   filter(year != 2015) %>%
-  mutate(heat.rate.avg = 3412/efficiency) %>% # btu/kWh = 3412
+  mutate(heatrate = 3412/efficiency) %>% # btu/kWh = 3412
   select(-efficiency) %>%
   mutate(year = as.numeric(year))
 

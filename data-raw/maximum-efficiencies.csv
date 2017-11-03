@@ -7,7 +7,7 @@ conventional combustion turbine,natural gas,Natural Gas (simple cycle),0.49,0.01
 conventional combined cycle,natural gas,Natural Gas (CC),0.66,0.015,0.51,0.57,0.62
 NA,NA,Natural Gas CCS (CC),0.05,0.05,0.42,0.52,0.57
 conventional combustion turbine,oil,Oil (simple cycle),0.51,0.015,0.34,0.39,0.44
-conventional com bined cycle,oil,Oil (CC),0.68,0.015,0.52,0.59,0.64
+conventional combined cycle,oil,Oil (CC),0.68,0.015,0.52,0.59,0.64
 NA,NA,Oil CCS (CC),0.05,0.05,0.39,0.53,0.59
 biomass,biomass,Biomass (steam plant),0.4,0.015,0.25,0.31,0.36
 NA,NA,Biomass CCS (steam plant),0.08,0.05,0.18,0.24,0.29

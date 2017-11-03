@@ -42,8 +42,8 @@ form860processed <- form860raw %>%
   mutate(fuel = ifelse(fuel=='BL', 'BLQ', fuel)) %>% # assume BL is mistake
   mutate(fuel = ifelse(fuel=='', NA, fuel)) %>%
   mutate(prime_mover = ifelse(prime_mover=='', NA, prime_mover)) %>%
-  mutate(prime_mover = toupper(prime_mover)) # one case of ic (instead of IC)
-
+  mutate(prime_mover = toupper(prime_mover)) %>% # one case of ic (instead of IC)
+  mutate(heat_rate = ifelse(heat_rate==0, NA, heat_rate))
 
 
 # Filter status codes -----------------------------------------------------

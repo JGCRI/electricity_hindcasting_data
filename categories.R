@@ -10,9 +10,9 @@
 capcats <- capitalcosts %>%
   group_by(overnight_category) %>%
   summarise(AEOmin=min(year), AEOmax = max(year), AEOyears=n(),
-            avginvestment = sum(base.overnight) )
+            avgovernight = sum(base.overnight) )
 
-overnightmapping <- read.delim('data-raw/overnight_categories.csv') %>%
+overnightmapping <- read.delim('data-raw/overnight_categories.tsv') %>%
   select(prime_mover, fuel, overnight_category=overnight_category.updated) %>%
   arrange(prime_mover,fuel)
 eiacats <- form860CAsupplemented %>%
@@ -20,7 +20,7 @@ eiacats <- form860CAsupplemented %>%
   group_by(overnight_category) %>%
   summarise(EIAmin=min(year), EIAmax=max(year), EIAyears=length(unique(year)),
             totalcapacity = sum(summer_capacity, na.rm=TRUE), avgheatrate = mean(heat_rate, na.rm=TRUE),
-            generators=n() )
+            generators= 100 * n()/nrow(form860CAsupplemented) )
 
 timelines <- full_join(capcats, eiacats, by='overnight_category')
 

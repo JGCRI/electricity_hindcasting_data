@@ -10,15 +10,15 @@ ANT	Anthracite	coal	coal
 BIT	bituminous coal	coal	coal	
 COL	coal generic	coal	coal	
 LIG	lignite	coal	coal	
-PC	petroleum coke	coal	coal	
+PC	petroleum coke	coal	coal	# separate category after 1995
 RC	refined coal	coal	coal	
 SC	coal synfuel	coal	coal	
 SUB	subbituminous coal	coal	coal	
 WC	waste coal	coal	coal	
 GEO	geothermal	geothermal	geothermal	
 GST	geothermal steam	geothermal	geothermal	
-JF	jet fuel	kerosene	kerosene	
-KER	kerosene	kerosene	kerosene	
+JF	jet fuel	kerosene	oil	# technically included in oil after 1995
+KER	kerosene	kerosene	oil	# technically included in oil after 1995
 BFG	blast furnace gas	NA	NA	# unassigned
 BLQ	black liquor	black liquor	NA	# unassigned
 COG	coke oven gas	NA	NA	# unused
@@ -68,9 +68,9 @@ OBL	other biomass liquids	oil	oil
 PET	petroleum generic	oil	oil	# many generators in 93 with small capacity and no heatrate
 RFO	residual fuel oil	oil	oil	
 WO	oil-other and waste oil	oil	oil	
-LPG	liquified propane gas	lpg	propane	
-PG	propane	propane	propane	
-PRO	propane	propane	propane	# unused
+LPG	liquified propane gas	lpg	NA	"# few generators, no price"
+PG	propane	propane	NA	"# few generators, no price"
+PRO	propane	propane	NA	# unused
 SUN	sun	solar	solar	
 NUC	nuclear	uranium	uranium	
 UR	uranium	uranium	uranium	
