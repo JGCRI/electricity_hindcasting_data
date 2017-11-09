@@ -39,22 +39,22 @@ generators <- generators %>%
   mutate(heatrate = ifelse(is.nan(heatrate), NA, heatrate))
 
 # combine generator and industry data -------------------------------------
-comb <- generators %>%
-  full_join(industry, by=c('year', 'overnight_category')) %>%
-  melt(id.vars=c('year', 'overnight_category'),
-       measure.vars=c('form860', 'AEO'),
-       variable.name='source') %>%
-  rename(heatrate=value)
+#comb <- generators %>%
+#  full_join(industry, by=c('year', 'overnight_category')) %>%
+#  melt(id.vars=c('year', 'overnight_category'),
+#       measure.vars=c('form860', 'AEO'),
+#       variable.name='source') %>%
+#  rename(heatrate=value)
 
 # bind maximum heat_rates for 2050, 2100 ----------------------------------
-generators <- generators %>%
-  rbind(maximumheatrates)
+#generators <- generators %>%
+#  rbind(maximumheatrates)
 
 # heat rate linear regression ---------------------------------------------
 hr.model <- generators %>%
   filter(heatrate > 0) %>%
   group_by(overnight_category, fuel_general) %>%
-  complete(year = seq(from = 1990, to = 2100, by = 1)) %>% # 2100 if including maximumheatrates
+  tidyr::complete(year = seq(from = 1990, to = 2100, by = 1)) %>% # 2100 if including maximumheatrates
   ungroup() %>%
   mutate(time = year - 1989) %>%
   mutate(time_sq = time^2) %>%

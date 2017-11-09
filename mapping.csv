@@ -1,0 +1,217 @@
+"prime_mover","fuel","overnight_category","fuel_general"
+"AB","BIT","coal","coal"
+"AB","LIG","coal","coal"
+"AB",NA,NA,NA
+"AB","SUB","coal","coal"
+"AB","WC","coal","coal"
+"AB","WD","biomass","biomass"
+"BA","MWH",NA,NA
+"BT","GEO","geothermal","geothermal"
+"BT","WH",NA,NA
+"CA","BIT","combined cycle","coal"
+"CA","DFO","combined cycle","oil"
+"CA","FO2","combined cycle","oil"
+"CA","FO6","combined cycle","oil"
+"CA","JF","combined cycle","oil"
+"CA","LFG","combined cycle","natural gas"
+"CA",NA,"combined cycle",NA
+"CA","NG","combined cycle","natural gas"
+"CA","OBG","combined cycle","natural gas"
+"CA","OG","combined cycle",NA
+"CA","OTH",NA,NA
+"CA","PUR","combined cycle",NA
+"CA","RFO","combined cycle","oil"
+"CA","SG","combined cycle","natural gas"
+"CA","SGC","combined cycle","natural gas"
+"CA","SGP","combined cycle","natural gas"
+"CA","SNG","combined cycle","natural gas"
+"CA","WDS","combined cycle","biomass"
+"CA","WH","combined cycle",NA
+"CA","WO","combined cycle","oil"
+"CC","BIT","combined cycle","coal"
+"CC","NG","combined cycle","natural gas"
+"CE","NG",NA,"natural gas"
+"CG",NA,NA,NA
+"CG","NG",NA,"natural gas"
+"CH","ANT","coal","coal"
+"CH","BIT","coal","coal"
+"CH","MF",NA,NA
+"CH","NG","combustion turbine","natural gas"
+"CH","SUB","coal","coal"
+"CH","WC","coal","coal"
+"CH","WD","biomass","biomass"
+"CP","SUN","solar thermal","solar"
+"CS","DFO","combined cycle","oil"
+"CS",NA,"combined cycle",NA
+"CS","NG","combined cycle","natural gas"
+"CT","BIT","combined cycle","coal"
+"CT","DFO","combined cycle","oil"
+"CT","FO2","combined cycle","oil"
+"CT","JF","combined cycle","oil"
+"CT","LFG","combined cycle","natural gas"
+"CT",NA,"combined cycle",NA
+"CT","NG","combined cycle","natural gas"
+"CT","OBG","combined cycle","natural gas"
+"CT","OG","combined cycle",NA
+"CT","RFO","combined cycle","oil"
+"CT","SG","combined cycle","natural gas"
+"CT","SGC","combined cycle","natural gas"
+"CT","SGP","combined cycle","natural gas"
+"CT","SNG","combined cycle","natural gas"
+"CT","WH","combined cycle",NA
+"CT","WO","combined cycle","oil"
+"CW","FO2","combined cycle","oil"
+"CW",NA,"combined cycle",NA
+"CW","NG","combined cycle","natural gas"
+"CW","SNG","combined cycle","natural gas"
+"CW","WH","combined cycle",NA
+"FC","LFG","fuel cell","natural gas"
+"FC",NA,"fuel cell",NA
+"FC","NG","fuel cell","natural gas"
+"FC","OBG","fuel cell","natural gas"
+"FW","MWH",NA,NA
+"GE","GST","geothermal","geothermal"
+"GE",NA,NA,NA
+"GT","DFO","combustion turbine","oil"
+"GT","FO1","combustion turbine","oil"
+"GT","FO2","combustion turbine","oil"
+"GT","FO4","combustion turbine","oil"
+"GT","FO6","combustion turbine","oil"
+"GT","JF","combustion turbine","oil"
+"GT","KER","combustion turbine","oil"
+"GT","LFG","combustion turbine","natural gas"
+"GT","LPG","combustion turbine",NA
+"GT",NA,"combustion turbine",NA
+"GT","NG","combustion turbine","natural gas"
+"GT","OBG","combustion turbine","natural gas"
+"GT","OBL","combustion turbine","oil"
+"GT","OG","combustion turbine",NA
+"GT","OO","combustion turbine",NA
+"GT","OTH","combustion turbine",NA
+"GT","PC","coal","coal"
+"GT","PG","combustion turbine",NA
+"GT","RFO","combustion turbine","oil"
+"GT","RG","combustion turbine",NA
+"GT","WH","combustion turbine",NA
+"GT","WO","combustion turbine","oil"
+"HC",NA,"hydro",NA
+"HC","WAT","hydro","water"
+"HL",NA,NA,NA
+"HL","WAT","hydro","water"
+"HR",NA,"hydro",NA
+"HR","WAT","hydro","water"
+"HY",NA,NA,NA
+"HY","WAT","hydro","water"
+"IC","BIT","combustion turbine","coal"
+"IC","DFO","combustion turbine","oil"
+"IC","FO1","combustion turbine","oil"
+"IC","FO2","combustion turbine","oil"
+"IC","FO4","combustion turbine","oil"
+"IC","FO5","combustion turbine","oil"
+"IC","FO6","combustion turbine","oil"
+"IC","JF","combustion turbine","oil"
+"IC","LFG","combustion turbine","natural gas"
+"IC","MF","combustion turbine",NA
+"IC","MSW","combustion turbine",NA
+"IC","MTE","combustion turbine","natural gas"
+"IC",NA,"combustion turbine",NA
+"IC","NG","combustion turbine","natural gas"
+"IC","OBG","combustion turbine","natural gas"
+"IC","OBL","combustion turbine","oil"
+"IC","OG","combustion turbine",NA
+"IC","OT","combustion turbine",NA
+"IC","OTH","combustion turbine",NA
+"IC","PET","combustion turbine","oil"
+"IC","REF","biomass","biomass"
+"IC","RFO","combustion turbine","oil"
+"IC","RG","combustion turbine",NA
+"IC","SLW","combustion turbine",NA
+"IC","UNK","combustion turbine",NA
+"IC","WO","combustion turbine","oil"
+"IG","BIT","igcc","coal"
+"IG",NA,"igcc",NA
+"IG","SNG","igcc","natural gas"
+"JE","FO1","combustion turbine","oil"
+"JE","FO2","combustion turbine","oil"
+"JE","JF","combustion turbine","oil"
+"JE","KER","combustion turbine","oil"
+"JE",NA,"combustion turbine",NA
+"JE","NG","combustion turbine","natural gas"
+NA,NA,NA,NA
+"NB",NA,NA,NA
+"NB","UR","nuclear","uranium"
+"NH",NA,NA,NA
+"NH","UR","nuclear","uranium"
+"NP",NA,NA,NA
+"NP","UR","nuclear","uranium"
+"OT","BFG",NA,NA
+"OT","GEO","geothermal","geothermal"
+"OT","JF",NA,"oil"
+"OT","KER",NA,"oil"
+"OT","LFG",NA,"natural gas"
+"OT","NG",NA,"natural gas"
+"OT","OG",NA,NA
+"OT","OT",NA,NA
+"OT","OTH",NA,NA
+"OT","PC","coal","coal"
+"OT","REF","biomass","biomass"
+"OT","RFO",NA,"oil"
+"OT","SUB","coal","coal"
+"OT","SUN","solar thermal","solar"
+"OT","WDS","biomass","biomass"
+"OT","WH",NA,NA
+"PS","WAT","hydro","water"
+"PV","SUN","photovoltaic","solar"
+"SP",NA,"photovoltaic",NA
+"SP","SUN","photovoltaic","solar"
+"SS",NA,NA,NA
+"SS","SUN","solar thermal","solar"
+"ST","AB","biomass","biomass"
+"ST","ANT","coal","coal"
+"ST","BFG","steam turbine",NA
+"ST","BIT","coal","coal"
+"ST","BLQ","steam turbine",NA
+"ST","COL","coal","coal"
+"ST","CRU",NA,"oil"
+"ST","DFO","steam turbine","oil"
+"ST","FO1","steam turbine","oil"
+"ST","FO2","steam turbine","oil"
+"ST","FO4","steam turbine","oil"
+"ST","FO6","steam turbine","oil"
+"ST","GAS",NA,"natural gas"
+"ST","GEO","geothermal","geothermal"
+"ST","LFG","steam turbine","natural gas"
+"ST","LIG","coal","coal"
+"ST","LPG","steam turbine",NA
+"ST","MF",NA,NA
+"ST","MSW","msw",NA
+"ST",NA,NA,NA
+"ST","NG","steam turbine","natural gas"
+"ST","NUC","nuclear","uranium"
+"ST","OBG","steam turbine","natural gas"
+"ST","OBS","biomass","biomass"
+"ST","OG","steam turbine",NA
+"ST","OTH",NA,NA
+"ST","PC","coal","coal"
+"ST","PET",NA,"oil"
+"ST","PUR",NA,NA
+"ST","RC","coal","coal"
+"ST","REF","biomass","biomass"
+"ST","RFO","steam turbine","oil"
+"ST","SC","steam turbine","coal"
+"ST","SLW","steam turbine",NA
+"ST","SNG","steam turbine","natural gas"
+"ST","STM",NA,NA
+"ST","SUB","coal","coal"
+"ST","SUN","solar thermal","solar"
+"ST","TDF","coal",NA
+"ST","UNK",NA,NA
+"ST","WC","coal","coal"
+"ST","WD","biomass","biomass"
+"ST","WDL",NA,"biomass"
+"ST","WDS","biomass","biomass"
+"ST","WH",NA,NA
+"ST","WO","steam turbine","oil"
+"ST","WOC",NA,NA
+"WT",NA,"wind",NA
+"WT","WND","wind","wind"
