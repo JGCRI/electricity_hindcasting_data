@@ -35,12 +35,14 @@ form860CAsupplemented %>%
   ggplot( aes(summer_capacity)) +
   geom_histogram() +
   labs(title='conventional combined cycle')
+
 # capacities of all categories
 form860CAsupplemented %>%
   left_join(overnightmapping, by=c('prime_mover', 'fuel')) %>%
   ggplot( aes(summer_capacity) ) +
   geom_histogram() +
   facet_wrap(~overnight_category)
+
 # capacities of all categories
 form860CAsupplemented %>%
   left_join(overnightmapping, by=c('prime_mover', 'fuel')) %>%
