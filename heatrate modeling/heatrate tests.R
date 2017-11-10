@@ -36,6 +36,7 @@ gen.pairs <- generators %>%
   group_by(overnight_category, fuel_general) %>%
   summarise(min=min(year), max=max(year), num=n())
 model.pairs <- hr.model %>%
+  filter(!is.na(heatrate)) %>%
   group_by(overnight_category, fuel_general) %>%
   summarise(min=min(year), max=max(year), num=n())
 

@@ -77,3 +77,34 @@ sub <- form860CAsupplemented %>%
 km.out <- kmeans(sub, centers=2, nstart=20)
 
 plot(sub, col=km.out$cluster, main=category)
+
+
+# efficiency spread -------------------------------------------------------
+# advanced combustion turbines achieve greater than 65% efficiency (LHV, nbatural gas benchmark)
+# ngcc: greater than 60%?
+
+# mover, fuel, category, fuel_general
+mapping <- mapping
+
+# Generator-level data
+generators <- form860CAsupplemented %>%
+  dplyr::rename(heatrate=heat_rate)
+
+generators <- generators %>%
+  left_join(mapping, by=c('prime_mover', 'fuel')) %>%
+  mutate(heatrate = ifelse(is.nan(heatrate) | heatrate==0, NA, heatrate)) %>%
+  mutate(efficiency = 3412/heatrate)
+
+bad <- generators %>%
+  filter(efficiency > 1)
+
+cat <- c('combustion turbine', 'combined cycle')
+generators %>%
+  filter(overnight_category %in% cat) %>%
+  ggplot( aes(efficiency) ) +
+  geom_histogram() +
+  xlim(0,1) +
+  #ggtitle('All')
+  facet_wrap(~overnight_category)
+
+

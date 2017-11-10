@@ -46,9 +46,10 @@ form860processed <- form860raw %>%
   mutate(heat_rate = ifelse(heat_rate==0, NA, heat_rate))
 
 
-# Filter status codes -----------------------------------------------------
+# Filter status/retirement -----------------------------------------------------
 
 form860processed <- form860processed %>%
+  filter(year <= retirement | is.na(retirement)) %>%
   filter(status_code_1 != "RE" & status_code_2 != "RE") %>%
   filter(status_code_2 != "RA") %>%
   filter(status_code_2 != "CN") %>%
