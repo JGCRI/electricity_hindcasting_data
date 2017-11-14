@@ -1,30 +1,30 @@
-"FUELTYP","FUELDESC"
-"","WAT"
-"1","UR"
-"2","FO2"
-"3","FO6"
-"4","ANT"
-"5","PC"
-"6","BIT"
-"7","LIG"
-"9","NG"
-"9","WH"
-"9","WT"
-"A","WOD"
-"A","GEO"
-"B","WOD"
-"B","N/A"
-"C","WOD"
-"C","WHT"
-"C","GEO"
-"C","N/A"
-"C","REF"
-"C","ITG"
-"D","N/A"
-"D","WI"
-"E","N/A"
-"E","SO"
-"B","WD"
-"C","TIR"
-"E","SP"
-"D","GEO"
+FUELTYP,FUELDESC,FUEL,,,,,FUELTYP,FUELDESC,FUEL,,
+1,UR,Nuclear,,,,,,WAT,water,,
+2,FO2,Light Oil,,,,,1,UR,nuclear,,
+3,FO6,Heavy Oil,,,,,2,FO2,light oil,,
+4,ANT,Anthracite,,,,,3,FO6,heavy oil,,
+5,PC,Coke,,,,,4,ANT,anthracite,,
+6,BIT,Bituminous,,,,,5,PC,coke,,
+7,LIG,Lignite,,,,,6,BIT,bituminous,,
+9,NG,Natural Gas,,,,,7,LIG,lignite,,
+9,WH,?,,,,,8,OIL,oil,,
+9,WT,?,,,,,9,NG,natural gas,,
+A,WOD,Geo or Wood?,,,,,A,GEO,geothermal,,
+A,GEO,Geothermal,,,,,B,WOD,wood,,
+B,WOD,Wood,,,,,C,WAS,waste,,
+B,N/A,Wood or ?,,,,,D,WI,wind,,
+B,WD,Wood,,,,,E,SP,solar,,
+C,WOD,Waste or Wood?,,,,,F,SO,solar,,
+C,WHT,Waste or ?,,,,,,,,,
+C,GEO,Waste or Geo?,,,,,,,,,
+C,N/A,Waste or ?,,,,,,,,,
+C,REF,Waste,,,,,,,,,
+C,ITG,Waste or ?,,,,,,,,,
+C,TIR,,,,,,,,,,
+D,N/A,Wind or ?,,,,,,,,,
+D,WI,Wind,,,,,,,,,
+D,GEO,Wind or Geo ?,,,,,,,,,
+E,N/A,Solar or ?,,,,,,,,,
+E,SO,PV or Thermal?,,,,,,,,,
+E,SP,Solar - PV,,,,,,,,,
+,WAT,Water,,,,,,,,,
