@@ -1,0 +1,9 @@
+{
+    "path" : "C:/Users/xavie/Desktop/energy.markets/data-raw/drop",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
