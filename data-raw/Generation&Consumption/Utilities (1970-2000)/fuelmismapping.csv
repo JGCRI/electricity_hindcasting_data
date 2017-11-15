@@ -1,0 +1,30 @@
+FUELTYP	FUELDESC	FUEL
+1	UR	Nuclear
+2	FO2	Light Oil
+3	FO6	Heavy Oil
+4	ANT	Anthracite
+5	PC	Coke
+6	BIT	Bituminous
+7	LIG	Lignite
+9	NG	Natural Gas
+9	WH	?
+9	WT	?
+A	WOD	Geo or Wood?
+A	GEO	Geothermal
+B	WOD	Wood
+B	N/A	Wood or ?
+B	WD	Wood
+C	WOD	Waste or Wood?
+C	WHT	Waste or ?
+C	GEO	Waste or Geo?
+C	N/A	Waste or ?
+C	REF	Waste
+C	ITG	Waste or ?
+C	TIR	
+D	N/A	Wind or ?
+D	WI	Wind
+D	GEO	Wind or Geo ?
+E	N/A	Solar or ?
+E	SO	PV or Thermal?
+E	SP	Solar - PV
+	WAT	Water

@@ -48,39 +48,43 @@ for (i in seq(1:length(filez)) ) {
     rename(consumption=total.consumption)
 
   ## TRUNCATE
+  
   data.filter <- data.raw %>%
-    select(PMOVER, FUELTYP, YEAR, generation, consumption )
-
+    select(PMOVER, FUELTYP, YEAR, generation, consumption ) 
   ## MAPPING
   mapping.pm <- data.raw %>%
     select(PMOVER, PMDESC) %>%
-    distinct() %>%
+    group_by(PMOVER, PMDESC) %>%
+    summarise(n=n()) %>%
     arrange(PMOVER)
   mapping.fuel <- data.raw %>%
     select(FUELTYP, FUELDESC) %>%
-    distinct() %>%
+    group_by(FUELTYP, FUELDESC) %>%
+    summarise(n=n()) %>%
     arrange(FUELTYP)
 
   ## SAVE/APPEND
   if (i == 1) {
     write.table(data.filter, file=paste(startingDir, "aggregation_70_00.csv", sep="/"), sep=",",  append=FALSE, row.names=FALSE)
-    write.table(mapping.pm, file=paste(startingDir, "movermapping.csv", sep="/"), sep=",",  append=FALSE, row.names=FALSE)
-    write.table(mapping.fuel, file=paste(startingDir, "fuelmapping.csv", sep="/"), sep=",",  append=FALSE, row.names=FALSE)
+    write.table(mapping.pm, file=paste(startingDir, "movermismapping.csv", sep="/"), sep=",",  append=FALSE, row.names=FALSE)
+    write.table(mapping.fuel, file=paste(startingDir, "fuelmismapping.csv", sep="/"), sep=",",  append=FALSE, row.names=FALSE)
   } else {
     write.table(data.filter, file=paste(startingDir, "aggregation_70_00.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE)
-    write.table(mapping.pm, file=paste(startingDir, "movermapping.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE )
-    write.table(mapping.fuel, file=paste(startingDir, "fuelmapping.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE )
+    write.table(mapping.pm, file=paste(startingDir, "movermismapping.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE )
+    write.table(mapping.fuel, file=paste(startingDir, "fuelmismapping.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE )
   }
   ## DISTINCT MAPPING CODES
   if (file == filez[length(filez)]) {
     # prime mover
-    read.csv(paste(startingDir, "movermapping.csv", sep="/")) %>%
-      distinct() %>%
-      write.csv(file=paste(startingDir, "movermapping.csv", sep="/"), row.names=FALSE)
+    read.csv(paste(startingDir, "movermismapping.csv", sep="/")) %>%
+      group_by(PMOVER, PMDESC) %>%
+      summarise(n=sum(n)) %>%
+      write.csv(file=paste(startingDir, "movermismapping.csv", sep="/"), row.names=FALSE)
     # fuel
-    read.csv(paste(startingDir, "fuelmapping.csv", sep="/")) %>%
-      distinct() %>%
-      write.csv(file=paste(startingDir, "fuelmapping.csv", sep="/"), row.names=FALSE)
+    read.csv(paste(startingDir, "fuelmismapping.csv", sep="/")) %>%
+      group_by(FUELTYP, FUELDESC) %>%
+      summarise(n=n()) %>%
+      write.csv(file=paste(startingDir, "fuelmismapping.csv", sep="/"), row.names=FALSE)
   }
 }
 
