@@ -55,6 +55,16 @@ prep.form860processed <- function(form860rawfile, retirementfile)
     filter(status_code_2 != "U" & status_code_2 != "V" & status_code_2 != "TS" & status_code_1 != "TS") %>%
     filter(status_code_2 != "LE")
 
+  ## REMOVE DUPLICATES
+  trunk <- form860processed %>%
+    select(year, utility_code, plant_code, generator_code)
+  while( any(duplicated(trunk)) ) {
+    duplicates <- duplicated(trunk)
+    form860processed <- form860processed[ ! duplicates, ]
+    trunk <- form860processed %>%
+      select(year, utility_code, plant_code, generator_code)
+  }
+
   form860processed
 }
 

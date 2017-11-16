@@ -13,11 +13,11 @@ mapping <- prep.mapping('data-raw/mappingfiles/form860fuels.tsv', 'data-raw/mapp
 devtools::use_data(mapping, overwrite=TRUE)
 
 source('data-raw/costs/gdpdeflator.R')
-gdpdeflator <- calc.gdpdeflator("data-raw/GDPDEF.csv", "1975") # reference year
+gdpdeflator <- calc.gdpdeflator("data-raw/costs/GDPDEF.csv", "1975") # reference year
 
 source('data-raw/costs/fuelprices.R')
 # fuel.price ~ $/BTU
-fuelprices <- prep.fuelprices("data-raw/energy.prices.txt.gz", "data-raw/uranium.prices.txt.gz", gdpdeflator)
+fuelprices <- prep.fuelprices("data-raw/costs/energy.prices.txt.gz", "data-raw/costs/uranium.prices.txt.gz", gdpdeflator)
 devtools::use_data(fuelprices, overwrite=TRUE)
 
 source('data-raw/costs/marginalcosts.R')
@@ -32,8 +32,10 @@ source('data-raw/costs/capitalcosts.R')
 capitalcosts <- prep.capitalcosts("data-raw/costs/overnight.cost.tsv", gdpdeflator)
 devtools::use_data(capitalcosts, overwrite=TRUE)
 
+# master data -------------------------------------------------------------
+
 master <- form860processed %>%
-  select(year, utility_code, plant_code, generator_code, prime_mover, fuel, heat_rate) %>%
+  select(year, utility_code, plant_code, generator_code, prime_mover, fuel, summer_capacity, heat_rate) %>%
   left_join(mapping, by=c('prime_mover', 'fuel')) %>%
   select(-prime_mover, -fuel) %>%
   left_join(fuelprices, by=c("year", "fuel_general")) %>%
@@ -47,6 +49,16 @@ master <- form860processed %>%
 write.csv(master, 'master.csv', row.names=F)
 
 # couldn't get to work, saved in long format
-spread(key=year, value=heat_rate)
-dcast(overnight_category+fuel_general+utility_code+plant_code+generator_code~ year, value.var = "heat_rate")
+# spread(key=year, value=heat_rate)
+# dcast(overnight_category+fuel_general+utility_code+plant_code+generator_code~ year, value.var = "heat_rate")
 
+
+
+# find duplicates ---------------------------------------------------------
+trunk <- master %>%
+  select(year, utility_code, plant_code, generator_code)
+duplicates <- duplicated(trunk)
+
+extend.dups <- master[duplicates, ] %>%
+  arrange(year,utility_code, plant_code, generator_code)
+View(master[duplicates,])
