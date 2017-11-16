@@ -48,10 +48,31 @@ for (i in seq(1:length(filez)) ) {
     rename(consumption=total.consumption)
 
   ## TRUNCATE
-  
   data.filter <- data.raw %>%
-    select(PMOVER, FUELTYP, YEAR, generation, consumption ) 
-  ## MAPPING
+    select(PMOVER, PMDESC, FUELTYP, FUELDESC, YEAR, generation, consumption ) %>%
+    mutate(PMOVER = as.integer(PMOVER)) %>%
+    mutate(PMDESC = as.character(PMDESC)) %>%
+    mutate(FUELTYP = as.character(FUELTYP)) %>%
+    mutate(FUELDESC = as.character(FUELDESC))
+
+  ## MAP FROM FORM759 TO FORM860 CODES
+  # many entries have a mismatch between the two native cols used to identify PM and FUEL
+  # inner_join() filters through only rows where both cols match the mapping given in the form's documentation
+  # then replaces the two cols with a col whose codes correspond to the form860 mapping files
+  mapping.pm <- read.csv(paste(startingDir, "movermapping.csv", sep="/")) %>%
+    select(PMOVER, PMDESC, prime_mover) %>%
+    mutate(PMDESC = as.character(PMDESC))
+  mapping.fuel <- read.csv(paste(startingDir, "fuelmapping.csv", sep="/")) %>%
+    select(FUELTYP, FUELDESC, fuel) %>%
+    mutate(FUELTYP = as.character(FUELTYP)) %>%
+    mutate(FUELDESC = as.character(FUELDESC))
+  data.filter <- data.filter %>%
+    inner_join( mapping.pm, by=c("PMOVER", "PMDESC") ) %>%
+    select(-PMOVER, -PMDESC) %>%
+    inner_join( mapping.fuel, by=c("FUELTYP", "FUELDESC")) %>%
+    select(-FUELTYP, -FUELDESC)
+
+  ## RECORD NATIVE MISMAPPING
   mapping.pm <- data.raw %>%
     select(PMOVER, PMDESC) %>%
     group_by(PMOVER, PMDESC) %>%
@@ -73,7 +94,7 @@ for (i in seq(1:length(filez)) ) {
     write.table(mapping.pm, file=paste(startingDir, "movermismapping.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE )
     write.table(mapping.fuel, file=paste(startingDir, "fuelmismapping.csv", sep="/"), sep=",", append=TRUE, row.names=FALSE, col.names= FALSE )
   }
-  ## DISTINCT MAPPING CODES
+  ## DISTINCT MAPPING CODES ON LAST RUN
   if (file == filez[length(filez)]) {
     # prime mover
     read.csv(paste(startingDir, "movermismapping.csv", sep="/")) %>%
@@ -83,10 +104,28 @@ for (i in seq(1:length(filez)) ) {
     # fuel
     read.csv(paste(startingDir, "fuelmismapping.csv", sep="/")) %>%
       group_by(FUELTYP, FUELDESC) %>%
-      summarise(n=n()) %>%
+      summarise(n=sum(n)) %>%
       write.csv(file=paste(startingDir, "fuelmismapping.csv", sep="/"), row.names=FALSE)
   }
 }
 
+util <- read.csv(paste(startingDir, "aggregation_70_00.csv", sep="/")) %>%
+  left_join(mapping, by=c("prime_mover", "fuel")) %>%
+  select(-prime_mover, -fuel)
 
+year.totals <- util %>%
+  group_by(YEAR) %>%
+  summarise(total.gen = sum(generation),
+            total.cons = sum(consumption))
+
+choice.totals <- util %>%
+  group_by(overnight_category, fuel_general, YEAR) %>%
+  summarise(choice.gen = sum(generation),
+            choice.cons = sum(consumption) )
+
+marketshares <- choice.totals %>%
+  left_join(year.totals, by=c("YEAR") ) %>%
+  mutate(share.gen = 100 * choice.gen/total.gen,
+         share.cons = 100 * choice.cons/total.cons) %>%
+  select(-total.gen, -total.cons, -choice.gen, -choice.cons)
 

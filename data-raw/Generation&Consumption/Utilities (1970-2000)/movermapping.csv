@@ -1,10 +1,9 @@
-PMOVER	PMDESC	PM_text	860code
-1	HY	Hydraulic Turbine	HY
-2	ST	Steam Turbine	ST
-3	IC	Internal Combustion	IC
-4	GT	Gas Turbine	GT
-5	CC	Combined Cycle - Steam	CW
-6	CT	Combined Cycle - Gas Turbine	CT
-6	GT	CCNG or just Gas?	
-7	WD	Wood Turbine	
-8	SO	Solar	PV/SP
+PMOVER,PMDESC,prime_mover,prime_mover_text
+1,HY,HY,Hydraulic Turbine
+2,ST,ST,Steam Turbine
+3,IC,IC,Internal Combustion
+4,GT,GT,Gas Turbine
+5,CC,CW,combined Cycle - Steam
+6,CT,CT,combined Cycle - Gas Turbine
+7,WD,,Wood Turbine
+8,SO,PV,Solar 

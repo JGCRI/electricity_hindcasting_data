@@ -1,17 +1,17 @@
-FUELTYP,FUELDESC,FUEL
-,WAT,water
-1,UR,nuclear
-2,FO2,light oil
-3,FO6,heavy oil
-4,ANT,anthracite
-5,PC,coke
-6,BIT,bituminous
-7,LIG,lignite
-8,OIL,oil
-9,NG,natural gas
-A,GEO,geothermal
-B,WOD,wood
-C,WAS,waste
-D,WI,wind
-E,SP,solar
-F,SO,solar
+FUELTYP,FUELDESC,fuel,fuel_text
+,WAT,WAT,water
+1,UR,UR,nuclear
+2,FO2,FO2,light oil
+3,FO6,FO6,heavy oil
+4,ANT,ANT,anthracite
+5,PC,PC,coke
+6,BIT,BIT,bituminous
+7,LIG,LIG,lignite
+8,OIL,,oil
+9,NG,NG,natural gas
+A,GEO,GEO,geothermal
+B,WOD,WD,wood
+C,WAS,WAS,waste
+D,WI,WND,wind
+E,SP,SUN,solar - photovoltaic
+F,SO,SUN,solar - thermal
