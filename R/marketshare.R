@@ -11,70 +11,64 @@ marketshares <- function(generators, mapping, type, additions=FALSE)
       filter(year == in_service)
   }
 
+  ## CALCULATE SHARES
+  
+  # given electricity market, choice of fuel
+  if (type=='fuel') {
+    market <- generators %>%
+      group_by(year) %>%
+      summarise(fulladd = sum(summer_capacity) )
+    choice <- generators %>%
+      group_by(year, fuel_general) %>%
+      summarise(choiceadd = sum(summer_capacity) )
+    # calculate choice's share of market capacity
+    share <- choice %>%
+      left_join(market, by="year" ) %>%
+      mutate(share = choiceadd/fulladd) %>%
+      select(year, fuel_general, share)
+  }
 
-  # define market nesting by grouping
-  if (type=='total') {
-    market <- generators %>%
-      group_by(year)
-    join ='year'
-  }
-  if (type == 'fuel') {
-    market <- generators %>%
-      group_by(year, fuel_general)
-    join = c("year", "fuel_general")
-  }
+  # given fuel market, choice of tech/overnight_category
   if (type == 'tech') {
     market <- generators %>%
-      group_by(year, overnight_category)
-    join = c("year", "overnight_category")
+      group_by(year, fuel_general) %>%
+      summarise(fulladd = sum(summer_capacity) )
+    choice <- generators %>%
+      group_by(year, fuel_general, overnight_category) %>%
+      summarise(choiceadd = sum(summer_capacity) )
+    # calculate choice's share of market capacity
+    share <- choice %>%
+      left_join(market, by=c("year", "fuel_general") ) %>%
+      mutate(share = choiceadd/fulladd) %>%
+      select(year, fuel_general, overnight_category, share) %>%
+      arrange(year, fuel_general, overnight_category, share)
   }
 
-  # calculate full market capacity
-  market <- market %>%
-    summarise(fulladd = sum(summer_capacity) )
-
-  # calculate choice's (fuel, tech, or both) capacity
-  choice <- generators %>%
-    group_by(year, overnight_category, fuel_general) %>%
-    summarise(choiceadd = sum(summer_capacity) )
-
-  # calculate choice's share of capacity
-  share <- choice %>%
-    left_join(market, by=join ) %>%
-    mutate(share = choiceadd/fulladd) %>%
-    select(year, overnight_category, fuel_general, share)
-
-
-  ## PLOT
-  if (type == "total") {
-    plot <- share %>%
-      mutate(choice=paste(overnight_category, fuel_general, sep=" - ")) %>%
-      ggplot(aes(x=year, y=share)) +
-      geom_col( aes(fill=choice) ) +
-      ggtitle("Electricity Generation Market Shares") +
-      theme(axis.text.x=element_text(angle=45, hjust=1))
-  }
-
+  ## PLOT 
   if (type == "fuel") {
     plot <- share %>%
       ggplot(aes(x=year, y=share)) +
-      geom_col( aes(fill=overnight_category) ) +
-      facet_wrap(~fuel_general) +
-      ggtitle("Nested Tech Shares given Fuel") +
-      theme(axis.text.x=element_text(angle=45, hjust=1))
-
+      geom_col( aes(fill=fuel_general) )
+      title <- "Fuel shares within electricity market"
   }
 
   if (type == "tech") {
     plot <- share %>%
     ggplot(aes(x=year, y=share)) +
-      geom_col( aes(fill=fuel_general) ) +
-      facet_wrap(~overnight_category) +
-      ggtitle("Nested Fuel Shares given Tech") +
-      theme(axis.text.x=element_text(angle=45, hjust=1))
+      geom_col( aes(fill=overnight_category) ) +
+      facet_wrap(~fuel_general)
+      title <- "Tech shares given choice of fuel"
 
   }
 
+  if (additions) {
+    title <- paste(title, "(Capacity Additions Only)", sep=" ")
+  }
+
+
+  plot <- plot +
+    ggtitle(title) +
+    theme(axis.text.x=element_text(angle=45, hjust=1))
   print(plot)
   return(share)
 
