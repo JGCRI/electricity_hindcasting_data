@@ -11,4 +11,5 @@ Imports: magrittr,
 	dplyr,
 	lubridate,
 	reshape2,
-	tidyr
+	tidyr,
+    ggplot2
