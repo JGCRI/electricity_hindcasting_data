@@ -53,12 +53,3 @@ write.csv(master, 'master.csv', row.names=F)
 # dcast(overnight_category+fuel_general+utility_code+plant_code+generator_code~ year, value.var = "heat_rate")
 
 
-
-# find duplicates ---------------------------------------------------------
-trunk <- master %>%
-  select(year, utility_code, plant_code, generator_code)
-duplicates <- duplicated(trunk)
-
-extend.dups <- master[duplicates, ] %>%
-  arrange(year,utility_code, plant_code, generator_code)
-View(master[duplicates,])
