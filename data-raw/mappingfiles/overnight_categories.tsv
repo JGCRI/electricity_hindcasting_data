@@ -25,7 +25,7 @@ CA	SG	Combined Cycle Steam Turbine with Supplemental Firing	synthetic gas other 
 CA	SGC	Combined Cycle Steam Turbine with Supplemental Firing	coal-derived synthetic gas	conventional combined cycle	conventional combined cycle
 CA	SGP	Combined Cycle Steam Turbine with Supplemental Firing	synthetic gas from petroleum coke	conventional combined cycle	conventional combined cycle
 CA	SNG	Combined Cycle Steam Turbine with Supplemental Firing	synthetic natural gas	conventional combined cycle	conventional combined cycle
-CA	WDS	Combined Cycle Steam Turbine with Supplemental Firing	wood and wood waste solids	conventional combined cycle	conventional combined cycle
+CA	WDS	Combined Cycle Steam Turbine with Supplemental Firing	wood and wood waste solids	conventional combined cycle	biomass
 CA	WH	Combined Cycle Steam Turbine with Supplemental Firing	waste heat	conventional combined cycle	conventional combined cycle
 CA	WO	Combined Cycle Steam Turbine with Supplemental Firing	oil-other and waste oil	conventional combined cycle	conventional combined cycle
 CC	BIT	Combine Cycle - Total Unit	bituminous coal	conventional combined cycle	conventional combined cycle
