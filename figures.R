@@ -65,3 +65,23 @@ select(capitalcosts, year, overnight_category,base.overnight) %>%
   geom_point(aes(x=year,y=base.overnight)) +
   facet_wrap(~overnight_category) +
   labs(x='year', y='1975$/MW', title='Overnight Costs (1997-2015)')
+
+
+
+# capacity factors --------------------------------------------------------
+
+ggplot(unreasonable, aes(capacityfactor)) +
+  geom_histogram()
+
+
+
+# full costs --------------------------------------------------------------
+test <- fullcosts %>%
+  group_by(year, overnight_category, fuel_general) %>%
+  summarise(fullcost.avg = mean(fullcost),
+            plts=n())
+ggplot(test) +
+  geom_line(aes(x=year, y=fullcost.avg, color=overnight_category)) +
+  facet_wrap(~fuel_general)
+ggplot(test) +
+  geom_point(aes(x=plts, y=fullcost.avg))
