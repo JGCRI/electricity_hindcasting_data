@@ -1,9 +1,0 @@
-PMOVER,PMDESC,prime_mover,prime_mover_text
-1,HY,HY,Hydraulic Turbine
-2,ST,ST,Steam Turbine
-3,IC,IC,Internal Combustion
-4,GT,GT,Gas Turbine
-5,CC,CW,combined Cycle - Steam
-6,CT,CT,combined Cycle - Gas Turbine
-7,WD,,Wood Turbine
-8,SO,PV,Solar 

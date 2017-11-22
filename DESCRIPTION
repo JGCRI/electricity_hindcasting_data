@@ -12,4 +12,7 @@ Imports: magrittr,
 	lubridate,
 	reshape2,
 	tidyr,
-    ggplot2
+    ggplot2,
+    readxl,
+    stringr,
+    rebus
