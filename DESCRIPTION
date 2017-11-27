@@ -16,3 +16,4 @@ Imports: magrittr,
     readxl,
     stringr,
     rebus
+RoxygenNote: 6.0.1
