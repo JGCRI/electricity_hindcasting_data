@@ -95,13 +95,14 @@ devtools::use_data(generation, overwrite=TRUE)
 # Capacity Factors ---------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 # data: form860 generator capacities & forms759/906/920/923 plant generation output
+# carries original capacity and generation as well (for weighting capital costs)
 capacityfactors <- calc.capacityfactors(form860processed, generation)
 devtools::use_data(capacityfactors, overwrite=TRUE)
 
 # Levelized Capital Costs -------------------------------------------------
 source('data-raw/costs/levelize.R')
-# data: plant-level capacity factors for mover-fuel combos are assigned capitalcosts via overnight_category
-levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13, generation)
+# data: plant-level prices (/MWh) of producing electricity using overnight_category-fuel_general combos
+levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13)
 # constant fixed charge rate of 0.13 from GCAM
 devtools::use_data(levelizedcosts, overwrite=TRUE)
 
@@ -110,14 +111,9 @@ devtools::use_data(levelizedcosts, overwrite=TRUE)
 # source('data-raw/costs/full.R')
 # data: marginalcosts (endogenous to GCAM) plus levelizedcosts
 fullcosts <- levelizedcosts %>%
-  left_join(mapping, by=c("prime_mover", "fuel")) %>%
   filter(! is.na(fuel_general)) %>% # need fuel for marginalcost
-  left_join(marginalcosts, by=c("year", "overnight_category", "fuel_general"))
-fullcosts$marginal.cost[is.na(fullcosts$marginal.cost)] <- 0
-# renewables w/o marginalcost
-# (except conv.comb.cycle&coal, which doesn't have heatrate)
-fullcosts$fullcost <- fullcosts$levcost + fullcosts$marginal.cost
+  left_join(marginalcosts, by=c("year", "overnight_category", "fuel_general")) %>%
+  mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) %>% # renewables aren't assigned marginalcost
+  mutate(fullcost = levcost + marginal.cost)
 
-save <- fullcosts %>%
-  select(year, utility_code, plant_code, prime_mover, fuel, overnight_category, fuel_general, levcost, marginal.cost, fullcost)
-write.csv(save, "fullcost.csv")
+write.csv(fullcosts, "fullcost.csv")
