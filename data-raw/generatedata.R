@@ -101,7 +101,7 @@ devtools::use_data(capacityfactors, overwrite=TRUE)
 # Levelized Capital Costs -------------------------------------------------
 source('data-raw/costs/levelize.R')
 # data: plant-level capacity factors for mover-fuel combos are assigned capitalcosts via overnight_category
-levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13)
+levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13, generation)
 # constant fixed charge rate of 0.13 from GCAM
 devtools::use_data(levelizedcosts, overwrite=TRUE)
 
