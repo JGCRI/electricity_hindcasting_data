@@ -8,14 +8,14 @@ calc.capacityfactors <- function(generators, plantgeneration)
     ungroup()
 
   plantgeneration <- plantgeneration %>%
-    select(-consumption)
+    select(year, generation, utility_code, plant_code, prime_mover, fuel) %>%
+    filter(generation > 0) # drop generators that used more energy than they produced
 
   capacityfactors <- plantcapacity %>%
     inner_join(plantgeneration, by=c("year", "utility_code", "plant_code", "prime_mover", "fuel") ) %>%
     mutate(potentialgeneration = capacity * 8760) %>%
     mutate(capacityfactor = generation/potentialgeneration) %>%
-    filter(capacityfactor > 0 & capacityfactor < 1) %>%
-    select(year, utility_code, plant_code, prime_mover, fuel, capacityfactor)
+    filter(capacityfactor < 1) # this could be erroneous records or the fact that we're using summercapacity instead of nameplate
 
   capacityfactors
 
