@@ -1,0 +1,524 @@
+
+
+ FORM EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"                 November 1998
+ UTILITY FILE LAYOUT - ASCII FORMAT                               YEAR: 1997
+
+
+ -----------------------------------------------------------------------------------------
+ |       |                      |             |         |     |      |                   |
+ | Field |      Field Name      |   Columns   | No. of  |  .  |  ..  |      Special      |
+ |  No.  |                      | From    To  | Columns |     |      |    Instructions   |
+ |       |                      |             |         |     |      |                   |
+ |-------|----------------------|-------------|---------|-----|------|-------------------|
+ |       |                      |      |      |         |     |      |                   |
+ |    1  | Utility Code         | 0001 | 0005 |   005   |  N  |      |                   |
+ |    2  | Utility Name         | 0006 | 0035 |   030   |  A  |      |                   |
+ |    3  | Address Line 1       | 0036 | 0065 |   030   |  A  |      |                   |
+ |    4  | Address Line 2       | 0066 | 0095 |   030   |  A  |      |                   |
+ |    5  | Address Line 3       | 0096 | 0125 |   030   |  A  |      |                   |
+ |    6  | Address Line 4       | 0126 | 0155 |   030   |  A  |      |                   |
+ |    7  | City                 | 0156 | 0175 |   020   |  A  |      |                   |
+ |    8  | State                | 0176 | 0177 |   002   |  A  |      |                   |
+ |    9  | Zip Code             | 0178 | 0182 |   005   |  N  |      |                   |
+ |   10  | Expanded Zip Code    | 0183 | 0186 |   004   |  N  |      |                   |
+ |   11  | Contact Name         | 0187 | 0206 |   020   |  A  |      |                   |
+ |   12  | Contact Title        | 0207 | 0226 |   020   |  A  |      |                   |
+ |   13  | Area Code            | 0227 | 0229 |   003   |  A  |      |                   |
+ |   14  | Exchange             | 0230 | 0232 |   003   |  N  |      |                   |
+ |   15  | Phone Number         | 0233 | 0236 |   004   |  N  |      |                   |
+ |   16  | Extension            | 0237 | 0240 |   004   |  A  |      |                   |
+ |   17  | Certify Name         | 0241 | 0260 |   020   |  A  |      |                   |
+ |   18  | Certify Title        | 0261 | 0280 |   020   |  A  |      |                   |
+ |   19  | Certify Date         | 0281 | 0286 |   006   |  N  |      |                   |
+ |   20  | NERC Region          | 0287 | 0293 |   007   |  A  |      |                   |
+ |       |                      |      |      |         |     |      |                   |
+ -----------------------------------------------------------------------------------------
+
+
+
+ . A - Alpha/Numeric    .. LB - Left Justify, Blank Filled
+   N - Numeric             LZ - Left Justify, Zero Filled
+   D - Duplicate           RB - Right Justify, Blank Filled
+   S - Skip                RZ - Right Justify, Zero Filled
+                        Unless otherwise noted all alpha/numeric fields
+                        are left justified, blank filled. All numeric
+                        fields are right justified, zero filled.
+                        Numeric fields in this layout do not contain
+                        negative values or decimal points.
+
+
+
+
+ Form EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"
+ Utility file Information
+
+
+  Field                         Explanation
+  No.(s)
+  ------                        -----------
+
+   3-10        Form EIA-860 respondent mailing address
+
+  11-16        Form EIA-860 contact person's name, title, telephone number
+
+  17-19        Form EIA-860 certifying official's name, title, and
+               date of certification
+
+
+
+  20     North American Electric Reliability Council (NERC) regions,
+         NERC affiliate region, and/or areas in which the utility
+         operates.
+         The NERC regional councils are:
+           ECAR    - East Central Area Reliability Coordination Agreement
+           ERCOT   - Electric Reliability Council of Texas
+           FRCC    - Florida Reliability Coordinating Council
+           MAAC    - Mid-Atlantic Area Council
+           MAIN    - Mid-America Interconnected Network
+           MAPP    - Mid-Continent Area Power Pool
+           NPCC    - Northeast Power Coordinating Council
+           SERC    - Southeastern Electric Reliability Council
+           SPP     - Southwest Power Pool
+           WSCC    - Western Systems Coordinating Council
+
+         The Alaska electric systems:
+           ASCC    - Alaska Systems Coordinating Council
+
+         The state of Hawaii:
+           HI      - Hawaii
+
+
+1
+
+ Form EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"
+ Plant File Layout - ASCII Format - 1997
+
+
+ -----------------------------------------------------------------------------------------
+ |       |                      |             |         |     |      |                   |
+ | Field |      Field Name      |   Columns   | No. of  |  .  |  ..  |      Special      |
+ |  No.  |                      | From    To  | Columns |     |      |    Instructions   |
+ |       |                      |             |         |     |      |                   |
+ |-------|----------------------|-------------|---------|-----|------|-------------------|
+ |       |                      |      |      |         |     |      |                   |
+ |    1  | Utility Code         | 0001 | 0005 |   005   |  N  |      |                   |
+ |    2  | Plant Code           | 0006 | 0009 |   004   |  N  |      |                   |
+ |    3  | Plant Name           | 0010 | 0029 |   020   |  A  |      |                   |
+ |    4  | County Code          | 0030 | 0032 |   003   |  N  |      |                   |
+ |    5  | County Name          | 0033 | 0052 |   020   |  A  |      |                   |
+ |    6  | Plant State          | 0053 | 0054 |   002   |  A  |      |                   |
+ |    7  | Plant Zip Code       | 0055 | 0063 |   009   |  N  |      |                   |
+ |    8  | Water Source         | 0064 | 0097 |   034   |  A  |      |                   |
+ |    9  | Cogeneration?        | 0098 | 0098 |   001   |  A  |      |                   |
+ |   10  | Mobile Plant         | 0099 | 0099 |   001   |  A  |      | 'Y' if Mobile     |
+ |   11  | Notes                | 0100 | 0219 |   120   |  A  |      |                   |
+ |       |                      |      |      |         |     |      |                   |
+ -----------------------------------------------------------------------------------------
+
+
+ . A - Alpha/Numeric    .. LB - Left Justify, Blank Filled
+   N - Numeric             LZ - Left Justify, Zero Filled
+   D - Duplicate           RB - Right Justify, Blank Filled
+   S - Skip                RZ - Right Justify, Zero Filled
+                        Unless otherwise noted all alpha/numeric fields
+                        are left justified, blank filled. All numeric
+                        fields are right justified, zero filled.
+                        Numeric fields in this layout do not contain
+                        negative values or decimal points.
+
+
+1
+
+ Form EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"
+ Plant File Information, Meaning of Codes
+
+
+  Field       Field Name                  Codes
+  No.(s)
+  ------      ----------                  -----
+
+   9          Cogeneration Function?      Y=Yes
+                                          N=No
+
+
+
+
+
+1
+
+ Form EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"
+ Generator File Layout  - ASCII Format 1997
+
+
+ -----------------------------------------------------------------------------------------
+ |       |                      |             |         |     |      |                   |
+ | Field |      Field Name      |   Columns   | No. of  |  .  |  ..  |      Special      |
+ |  No.  |                      | From    To  | Columns |     |      |    Instructions   |
+ |       |                      |             |         |     |      |                   |
+ |-------|----------------------|-------------|---------|-----|------|-------------------|
+ |       |                      |      |      |         |     |      |                   |
+ |    1  | Multi-Generator Unit | 0001 | 0004 |   004   |  A  |      | Note 1            |
+ |    2  | Utility Code         | 0005 | 0009 |   005   |  N  |      |                   |
+ |    3  | Plant Code           | 0010 | 0013 |   004   |  N  |      |                   |
+ |    4  | Generator Code (ID)  | 0014 | 0017 |   004   |  A  |      |                   |
+ |    5  | Prime Mover          | 0018 | 0019 |   002   |  A  |      |                   |
+ |    6  | Nameplate Capacity   | 0020 | 0026 |   007   |  N  |      | Notes 2,4 In kW   |
+ |    7  | Ownership            | 0027 | 0027 |   001   |  A  |      |                   |
+ |    8  | Status Code          | 0028 | 0029 |   002   |  A  |      | Notes 2,4         |
+ |    9  | In-service Month     | 0030 | 0031 |   002   |  N  |      | Notes 2,4         |
+ |   10  | In-service Year      | 0032 | 0035 |   004   |  N  |      | Notes 2,4         |
+ |   11  | Mode Transport 1     | 0036 | 0038 |   003   |  A  |      | Notes 2,4         |
+ |   12  | Mode Transport 2     | 0039 | 0041 |   003   |  A  |      | Notes 2,4         |
+ |   13  | Energy Source 1      | 0042 | 0044 |   003   |  A  |      | Notes 2,4         |
+ |   14  | Energy Source 2      | 0045 | 0047 |   003   |  A  |      | Notes 2,4         |
+ |   15  | Summer Capability    | 0048 | 0054 |   007   |  N  |      | Notes 2,4 In kW   |
+ |   16  | Winter Capability    | 0055 | 0061 |   007   |  N  |      | Notes 2,4  In kW  |
+ |   17  | Nameplate Capacity   | 0062 | 0068 |   007   |  N  |      | Note 3  In kW     |
+ |   18  | Status Code          | 0069 | 0070 |   002   |  A  |      | Note 3            |
+ |   19  | Retirement Month     | 0071 | 0072 |   002   |  N  |      |                   |
+ |   20  | Retirement Year      | 0073 | 0076 |   004   |  N  |      |                   |
+ |   21  | Effective Mn (orig). | 0077 | 0078 |   002   |  N  |      | Note 3            |
+ |   22  | Effective Yr (orig)  | 0079 | 0082 |   004   |  N  |      | Note 3            |
+ |   23  | Effective Mn (cur)   | 0083 | 0084 |   002   |  N  |      | Note 3            |
+ |   24  | Effective Yr (cur)   | 0085 | 0088 |   004   |  N  |      | Note 3            |
+ |   25  | Mode Transport 1     | 0089 | 0091 |   003   |  A  |      | Note 3            |
+ |   26  | Mode Transport 2     | 0092 | 0094 |   003   |  A  |      | Note 3            |
+ |   27  | Energy Source 1      | 0095 | 0097 |   003   |  A  |      | Note 3            |
+ |   28  | Energy Source 2      | 0098 | 0100 |   003   |  A  |      | Note 3            |
+ |   29  | Summer Capability    | 0101 | 0107 |   007   |  N  |      | Note 3  In kW     |
+ |   30  | Winter Capability    | 0108 | 0114 |   007   |  N  |      | Note 3  In kW     |
+ |   31  | Est Summer Capability| 0115 | 0121 |   007   |  N  |      | Note 3  In kW     |
+ |   32  | Est Winter Capability| 0122 | 0128 |   007   |  N  |      | Note 3  In kW     |
+ |   33  |Summer Capability Flag| 0129 | 0129 |   001   |  A  |      | Notes 2,4         |
+ |   34  |Winter Capability Flag| 0130 | 0130 |   001   |  A  |      | Notes 2,4         |
+ |   35  | New Mover            | 0131 | 0132 |   002   |  A  |      |                   |
+ |   36  | Notes                | 0133 | 0252 |   120   |  A  |      |                   |
+ |       |                      |      |      |         |     |      |                   |
+ -----------------------------------------------------------------------------------------
+
+
+ . A - Alpha/Numeric    .. LB - Left Justify, Blank Filled
+   N - Numeric             LZ - Left Justify, Zero Filled
+   D - Duplicate           RB - Right Justify, Blank Filled
+   S - Skip                RZ - Right Justify, Zero Filled
+                        Unless otherwise noted all alpha/numeric fields
+                        are left justified, blank filled. All numeric
+                        fields are right justified, zero filled.
+                        Numeric fields in this layout do not contain
+                        decimal points.
+
+   kW                      kilowatts
+
+
+
+ Note 1: This field applies to generators that are reported as
+         a group.  This identical four-character code (the same
+         for all generators in that group) is the
+         identifier that links the generators reported as a group.
+         These generators have aggregate capabilitities.
+ Note 2: This field applies to existing generators
+         and retired or sold generators;
+         status code (field 9) 'OP', 'OS', 'SB',
+         'SD', 'RE' apply.
+ Note 3: This field applies to generators that are proposed to
+         start operation within 10 years; for generators that
+         are cancelled, delayed beyond the 10-year period,
+         indefinitely postponed;
+         for existing generators that are either
+         proposed for conversion to another energy source, or
+         proposed for other modification within 10 years;
+         for existing generators that are proposed for
+         retirement or proposed for a change in status or
+         change in ownership;
+         code (field 19) 'FC', 'RP', 'A ', 'D ', 'M ', 'RA',
+         'RT', 'CO', 'IP', 'TS', 'P ', 'L ', 'T ',
+         'U', 'V', 'OT' apply.
+
+Note 4:  An existing generator may have several proposed changes.
+         In such case,  these data (existing data) are repeated
+         with each proposed change.  The existing data in this case
+         should be considered only once.
+ 
+
+
+
+1
+
+ Form EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"
+ Generator File Information, Meaning of Codes
+
+
+  Field        Field Name        Codes
+  No.(s)
+  ------       ----------        -----
+
+   5           Prime Mover       AB - Atmospheric Fluidized Bed                                                       Combustion
+                                 CA - Combined Cycle Steam Turbine
+                                      with Supplemental Firing
+                                 CC - Combine Cycle - Total Unit
+                                 CE - Compressed Air Energy Storage
+                                 CH - Steam Turbine, Common Header
+                                 CS - Combined Cycle Single Shaft
+                                      (gas turbine and steam turbine
+                                       share a single generator)
+                                 CT - Combined Cycle Combustion
+                                      Turbine Part
+                                 CW - Combined Cycle Steam Turbine
+                                      Part (Waste Heat Boiler Only)
+                                 FC - Fuel Cell (electrochemical)
+                                 GE - Steam Turbine (geothermal)
+                                 GT - Combustion (gas) Turbine
+                                 HL - Hydraulic Turbine (pipeline)
+                                 HY - Hydraulic Turbine (conventional)
+                                 IC - Internal Combustion
+                                 IG - Integrated Coal Gasification
+                                      Combined Cycle
+                                 JE - Jet Engine
+                                 NB - Steam Turbine (Boiling Water
+                                      Nuclear Reactor)
+                                 NG - Steam Turbine (Graphite
+                                      Nuclear Reactor)
+                                 NH - Steam Turbine (High-Temperature
+                                      Gas-Cooled Nuclear Reactor
+                                 NP - Steam Turbine (Pressurized
+                                      Water Nuclear Reactor
+                                 OC - Ocean Thermal Turbine
+                                 PB - Pressurized Fluidized Bed
+                                      Combustion
+                                 PS - Hydraulic Turbine Reversible
+                                      (pumped storage)
+                                 PV - Photovoltaic
+                                 SS - Steam Turbine (Solar)
+                                 ST - Steam Turbine (Boiler)
+                                 VR - Various Types
+                                 WT - Wind Turbine
+                                 OT - Other (Explained in Notes)
+                                 NA - Unknown at this Time
+
+  7            Ownership         U - Utility owned, single ownership
+                                     by respondent
+                                 J - Jointly owned, with another
+                                     utility and/or nonutility, or
+                                     wholly owned by entity other
+                                     than respondent.
+  8            Status Code       OP - Operating (available to operate,
+                                      or on short-term scheduled or
+                                      forced outage (less than three
+                                      months)
+                                 OS - On long-term scheduled
+                                      (maintenance) or forced outage
+                                      (greater than three months)
+                                 RE - Retired (no longer in service
+                                      and not expected to be returned
+                                      to service)
+                                 SB - Cold Standby Reserve:
+                                      deactivated (mothballed), in
+                                      long-term stotage and cannot
+                                      be made available for service
+                                      in a short period of time,
+                                      usually three to six months
+                                      to activate
+                                 SD - Sold to nonutility
+
+  9,10         In-service Month -Date of initial commercial operation
+               In-service Year
+
+
+  11,12        Mode of Transportation
+  25,26
+               CV - Conveyer
+               PL - Pipeline
+               RR - Railroad
+               TK - Truck
+               WA - Water
+               UN - Unknown at this Time
+
+
+  13,14        Energy Sources    ANT - Anthracite
+  27,28                          BFG - Blast Furnace Gas
+                                 BIO - Biomass (Generic)
+                                 BIT - Bituminous Coal
+                                 COG - Coke Oven Gas
+                                 COL - Coal (generic)
+                                 COM - Coal-Oil Mixture
+                                 CRU - Crude Oil
+                                 CWM - Coal-Water Mixture
+                                 FO1 - No. 1 Fuel Oil
+                                 FO2 - No. 2 Fuel Oil
+                                 FO4 - No. 4 Fuel Oil
+                                 FO5 - No. 5 Fuel Oil
+                                 FO6 - No. 6 Fuel Oil
+                                 GAS - Gas (generic)
+                                 GST - Geothermal Steam
+                                 JF  - Jet Fuel
+                                 KER - Kerosene
+                                 LIG - Lignite
+                                 LNG - Liquified Natural Gas
+                                 LPG - Liquified Propane Gas
+                                 MF  - Multifueled
+                                       (two or more fuels burned
+                                        simultaneously not as a
+                                        mixture)
+                                 MTE - Methane
+                                 MTH - Methanol
+                                 NG  - Natural Gas
+                                 PC  - Petroleum Coke
+                                 PET - Petroleum (generic)
+                                 PL  - Plutonium
+                                 PRO - Propane
+                                 REF - Refuse, Bagasse and all
+                                       other nonwood waste
+                                 RG  - Refinery Gas
+                                 RRO - Re-Refined Motor Oil
+                                 SNG - Synthetic Natural Gas
+                                 STM - Steam
+                                 SUB - Subbituminous Coal
+                                 SUN - Solar
+                                 TH  - Thorium
+                                 TOP - Topped Crude Oil
+                                 UR  - Uranium
+                                 WAT - Water
+                                 WC  - Waste Coal (Culm)
+                                 WD  - Wood and Wood Waste
+                                 WH  - Waste Heat
+                                 WND - Wind
+                                 OT  - Other(explained under "Notes")
+                                 NA  - Not Available
+
+  18           Status Code       FC - Generator planned for
+                                      conversion to another fuel
+                                      or energy source
+                                 RP - Proposed for life extension
+                                     or repowering
+                                 A  - Proposed increase in generator
+                                     capability (rerate or relicense)
+                                 D  - Proposed decrease in generator
+                                     capability (rerate or relicense)
+                                 M  - Proposed to be put in
+                                      deactivated shutdown status
+                                 RA - Previously retired or
+                                      deactivated generator planned
+                                      for reactivation
+                                 RT - Scheduled for Retirement
+                                 CO - Proposed change in ownership
+                                     (including change in shares
+                                       of ownership)
+                                 IP - Proposed new generator canceled
+                                      or indefinitely postponed
+                                 TS - Proposed new generator,
+                                      construction complete, but not
+                                      yet in commercial operation
+                                      (including low power testing
+                                      of nuclear units)
+                                 P  - Proposed new generator, planned
+                                      for installation but not
+                                      utility authorized; not under
+                                      construction
+                                 L  - Proposed new generator,
+                                      regulatory approval pending;not
+                                      under construction; started
+                                      site preparation;
+                                 T  - Proposed new generator,
+                                      regulatory approval received,
+                                      but not under construction
+                                 U  - Proposed new generator under
+                                      construction, less than or
+                                      equal to 50 percent complete
+                                      (based on construction time
+                                      to first electricity date)
+                                 V  - Proposed new generator under
+                                      construction, more than
+                                      50 percent complete
+                                      (based on construction time
+                                      to first electricity date)
+                                 OT - Other
+
+
+  19,20   Retirement Month         - Date generator was retired from
+          Retirement Year            service, or date generator was
+                                     sold to nonutility;
+
+  21,22   Effective Mn (orig)      - Original date proposed
+          Effective Yr (orig)        new generator expected to
+                                     start generating or original
+                                     date proposed change in existing
+                                     generator expected to be
+                                     completed.
+
+
+  23,24   Effective Mn (cur)       - Current date new generator
+          Effective Yr (cur)         expected to start commercial
+                                     operation; for proposed
+                                     changes in existing generator,
+                                     current date that change is
+                                     expected to be completed.
+
+
+
+  29,30   Summer Capability        - Utility reported values for
+          Winter Capability          proposed generators;
+
+  31,32   Est Summer Capability    - Energy Information Administration's
+          Est Winter Capability      estimated values for proposed
+                                     generators.
+
+
+
+  33      Summer Capability Flag   - If this field contains an 'E',
+                                     then field 15 is the Energy
+                                     Information Administration's
+                                     estimated value.  If this field
+                                     is blank, then field 15 is a
+                                     utility reported value.
+
+  34      Winter Capability Flag   - If this field contains an 'E',
+                                     then field 16 is the Energy
+                                     Information Administration's
+                                     estimated value.  If this field
+                                     is blank, then field 16 is a
+  36      New Mover                - Proposed new prime mover after
+                                     modification to existing
+                                     unit/generator, if different
+                                     from current prime mover.
+                                     (Most applicable to conversions
+                                     of conventional steam operations
+                                     to combined cycle operations).
+
+1
+
+ Form EIA-860, "ANNUAL ELECTRIC GENERATOR REPORT"
+ Joint Ownership Generator File Layout ASCII Format
+
+
+ -----------------------------------------------------------------------------------------
+ |       |                      |             |         |     |      |                   |
+ | Field |      Field Name      |   Columns   | No. of  |  .  |  ..  |      Special      |
+ |  No.  |                      | From    To  | Columns |     |      |    Instructions   |
+ |       |                      |             |         |     |      |                   |
+ |-------|----------------------|-------------|---------|-----|------|-------------------|
+ |       |                      |      |      |         |     |      |                   |
+ |    1  | Utility Code         | 0001 | 0005 |   005   |  N  |      |                   |
+ |    2  | Plant Code           | 0006 | 0009 |   004   |  N  |      |                   |
+ |    3  | Generator Code       | 0010 | 0013 |   004   |  A  |      |                   |
+ |    4  | Owner                | 0014 | 0023 |   010   |  N  |      |                   |
+ |    5  | Percent Ownership    | 0024 | 0029 |   006   |  A  |      | Note 1            |
+ |    7  | Notes                | 0030 | 0149 |   120   |  A  |      |                   |
+ |       |                      |      |      |         |     |      |                   |
+ -----------------------------------------------------------------------------------------
+
+
+ . A - Alpha/Numeric    .. LB - Left Justify, Blank Filled
+   N - Numeric             LZ - Left Justify, Zero Filled
+   D - Duplicate           RB - Right Justify, Blank Filled
+   S - Skip                RZ - Right Justify, Zero Filled
+                        Unless otherwise noted all alpha/numeric fields
+                        are left justified, blank filled. All numeric
+                        fields are right justified, zero filled.
+
+
+ Note 1: This field contains two decimal places with explicit
+         decimal point (e.g., 100.00).
+
+         The numeric fields do not contain negative values.
+
+
