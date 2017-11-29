@@ -17,12 +17,17 @@ form860processed <- prep.form860processed("data-raw/generators/form860raw.tsv", 
 devtools::use_data(form860processed, overwrite=TRUE)
 
 # Generator Capacity ------------------------------------------------------
-source('data-raw/generators/pre2000_utilities.R')
+source('data-raw/generators/1990to2000_utilities.R')
 # data: https://www.eia.gov/electricity/data/eia860/
 # summer_capacity ~ MW
 # heat_rate ~ BTU/ kWh
-cols <- prep.generators.90to00("data-raw/generators/Utilities (1990-2000)/", filt=FALSE, all=FALSE)
+cols <- prep.generators.90to00("data-raw/generators/1990-2000/", seq(1990,2000))
 allcols <- sort(unique(unlist(cols)))
+
+for (i in seq(1, length( cols[[8]] ))) {
+  print(paste(i, cols[[8]][i], sep=": "))
+}
+
 
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
