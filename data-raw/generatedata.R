@@ -21,7 +21,7 @@ source('data-raw/generators/1990to2000_utilities.R')
 # data: https://www.eia.gov/electricity/data/eia860/
 # summer_capacity ~ MW
 # heat_rate ~ BTU/ kWh
-cols <- prep.generators.90to00("data-raw/generators/1990-2000/", seq(1990,2000))
+generators.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/", seq(1990,2000))
 allcols <- sort(unique(unlist(cols)))
 
 for (i in seq(1, length( cols[[8]] ))) {
@@ -83,8 +83,8 @@ devtools::use_data(marginalcosts, overwrite=TRUE)
 source('data-raw/costs/capitalcosts.R')
 # data:  https://www.eia.gov/outlooks/aeo/archive.php -- 'Assumptions'
 # table: 'Cost and Performance Characteristics of New Central Station Electricity Generating Technologies'
-# base.overnight ~ $/MW
-# variable.o.m, fixed.o.m ~ $/MWh (fixed converted internally)
+# overnight, om.fixed ~ $/MW (converted internally)
+# om.var ~ $/MWh (native units)
 capitalcosts <- prep.capitalcosts("data-raw/costs/overnight.cost.tsv", gdpdeflator)
 devtools::use_data(capitalcosts, overwrite=TRUE)
 
