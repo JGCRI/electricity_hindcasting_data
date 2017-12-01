@@ -28,7 +28,6 @@ for (i in seq(1, length( cols[[8]] ))) {
   print(paste(i, cols[[8]][i], sep=": "))
 }
 
-
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
