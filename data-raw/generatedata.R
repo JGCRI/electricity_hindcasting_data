@@ -23,6 +23,11 @@ source('data-raw/generators/1990to2000_utilities.R')
 # heat_rate ~ BTU/ kWh
 generators.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/")
 
+source('data-raw/generators/2001to2016_utilities.R')
+filez <- prep.generators.01to16("data-raw/generators/2001-2016/")
+
+generators <- rbind(generators.90to00, generators.01to16)
+devtools::use_data(generators, overwrite=TRUE)
 
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
