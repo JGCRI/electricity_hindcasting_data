@@ -1,4 +1,4 @@
-prep.generators.90to00 <- function(startingDir, ran)
+prep.generators.90to00 <- function(startingDir)
 {
   dirs<-list.dirs(startingDir, full.names=FALSE)
   generators.90to00 <- data.frame()
@@ -10,7 +10,6 @@ prep.generators.90to00 <- function(startingDir, ran)
     # extract year from directory name
     year <- str_extract(dir, "[1|2][0-9]{3}" )
     if (is.na(year)) {next}
-    if (! year %in% ran) {next}
 
     # get that year's generator-level data file
     filez <- list.files(paste(startingDir, dir, sep="/"))
@@ -45,8 +44,11 @@ prep.generators.90to00 <- function(startingDir, ran)
     # filter by nameplate, status, and retirement (only nameplate implemented currently)
     data.filt <- filtdata(data.conv)
 
+    # collapse duplicates -- usually when multiple changes planned, therefore same entry w/ different status2!
+    data.remdup <- remdup(data.filt)
+
     # append to master dataframe (outside for loop)
-    generators.90to00 <- rbind(generators.90to00, data.filt)
+    generators.90to00 <- rbind(generators.90to00, data.remdup)
   }
 
   generators.90to00
@@ -65,11 +67,11 @@ readdata <- function(path, year)
   data.raw
 }
 
-subdata <- function(data.raw, year)
+subdata <- function(df, year)
 {
 
   # normalize column names
-  names(data.raw) <- names(data.raw) %>%
+  names(df) <- names(df) %>%
     toupper() %>%
     gsub("AND", "&", .) %>%
     gsub(" ", "", .) %>%
@@ -123,15 +125,15 @@ subdata <- function(data.raw, year)
 
 
   # subset/rename cols
-  data.sub <- data.raw[,colinds]
+  data.sub <- df[,colinds]
   names(data.sub) <- colnames
 
   data.sub
 }
 
-filtdata <- function(data.conv, year)
+filtdata <- function(df, year)
 {
-  data.filt <- data.conv %>%
+  data.filt <- df %>%
     mutate(
       primemover = ifelse(is.na(primemover), "", primemover),
       fuel1 = ifelse(is.na(fuel1), "", fuel1),
@@ -147,4 +149,14 @@ filtdata <- function(data.conv, year)
     filter( nameplate != 0 )
 
   data.filt
+}
+
+remdup <- function(df)
+{
+  data.remdup <- df %>%
+    group_by(yr, utilcode, plntcode, gencode, primemover, fuel1, fuel2, nameplate, summer, winter, heatrate,
+             status1, startyr, endyr) %>%
+    summarise(status2 = paste(status2, sep=", "))
+
+  data.remdup
 }

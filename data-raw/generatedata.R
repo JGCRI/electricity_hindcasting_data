@@ -21,12 +21,8 @@ source('data-raw/generators/1990to2000_utilities.R')
 # data: https://www.eia.gov/electricity/data/eia860/
 # summer_capacity ~ MW
 # heat_rate ~ BTU/ kWh
-generators.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/", seq(1990,2000))
-allcols <- sort(unique(unlist(cols)))
+generators.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/")
 
-for (i in seq(1, length( cols[[8]] ))) {
-  print(paste(i, cols[[8]][i], sep=": "))
-}
 
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
