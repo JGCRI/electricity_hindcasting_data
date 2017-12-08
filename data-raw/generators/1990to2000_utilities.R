@@ -4,33 +4,31 @@ prep.generators.90to00 <- function(startingDir)
   generators.90to00 <- data.frame()
 
   # each year has files stored in its own directory underneath startingDir
-  for (i in seq(1:length(dirs)) ) {
-    dir <- dirs[i]
-
+  for (dir in dirs) {
     # extract year from directory name
-    year <- str_extract(dir, "[1|2][0-9]{3}" )
-    if (is.na(year)) {next}
+    yr.ind <- str_extract(dir, "[1|2][0-9]{3}" ) %>% as.numeric()
+    if (is.na(yr.ind)) {next}
 
     # get that year's generator-level data file
     filez <- list.files(paste(startingDir, dir, sep="/"))
-    if (year %in% seq(1990,1996) ) {
+    if (yr.ind %in% seq(1990,1996) ) {
       file <- "TYPE3"
-    } else if (year == 1997) {
+    } else if (yr.ind == 1997) {
       file <- "GENERTOR"
-    } else if (year %in% seq(1998, 2000) ) {
+    } else if (yr.ind %in% seq(1998, 2000) ) {
       file <- "ExistingGenerators"
     }
     genfile <- str_subset(filez, file)
 
     # read in data
     path <- paste(startingDir, dir, genfile, sep="/")
-    data.raw <- readdata(path, year)
+    data.raw <- readdata(path, yr.ind)
 
     # subset desired cols (index changes with year)
-    data.sub <- subdata(data.raw, year) %>%
-      mutate(yr = year) %>%
+    data.sub <- subdata(data.raw, yr.ind) %>%
+      mutate(yr = yr.ind) %>%
       select(yr, utilcode, plntcode, gencode, multigen,
-             primemover, fuel1, fuel2,
+             primemover, fuel, fuel2,
              nameplate, summer, winter, heatrate,
              status1, status2, startyr, endyr)
 
@@ -41,19 +39,23 @@ prep.generators.90to00 <- function(startingDir)
              winter = winter/1000,
              heatrate = heatrate*1000)
 
-    # filter by nameplate, status, and retirement (only nameplate implemented currently)
+    # normalize datatype of cols, then filter by nameplate and status
     data.filt <- filtdata(data.conv)
 
     # collapse duplicates -- usually when multiple changes planned, therefore same entry w/ different status2!
     data.remdup <- remdup(data.filt)
 
     # append to master dataframe (outside for loop)
-    generators.90to00 <- rbind(generators.90to00, data.remdup)
+    if (nrow(generators.90to00) == 0) {
+      generators.90to00 <- data.remdup
+    } else {
+      generators.90to00 <- rbind(generators.90to00, data.remdup)
+
+    }
   }
 
   generators.90to00
 }
-
 
 readdata <- function(path, year)
 {
@@ -87,7 +89,7 @@ subdata <- function(df, year)
                  19,20,22,24,39)
     colnames <- c("multigen", "utilcode", "plntcode", "gencode",
                   "primemover", "nameplate", "status1",
-                  "fuel1", "fuel2", "heatrate",
+                  "fuel", "fuel2", "heatrate",
                   "summer", "winter", "status2", "endyr", "startyr")
 
   } else if (year == 1997) {
@@ -98,7 +100,7 @@ subdata <- function(df, year)
                  20,37)
     colnames <- c("multigen", "utilcode", "plntcode", "gencode",
                   "primemover", "nameplate", "status1", "startyr",
-                  "fuel1", "fuel2", "summer", "winter", "status2",
+                  "fuel", "fuel2", "summer", "winter", "status2",
                   "endyr", "heatrate")
 
   } else if (year %in% seq(1998, 1999)) {
@@ -108,7 +110,7 @@ subdata <- function(df, year)
                  10,12,14,16,18,19,22,36)
     colnames <- c("utilcode", "plntcode", "gencode",
                   "primemover", "nameplate", "summer", "winter",
-                  "fuel1", "fuel2", "status1", "startyr", "endyr", "multigen", "status2", "heatrate")
+                  "fuel", "fuel2", "status1", "startyr", "endyr", "multigen", "status2", "heatrate")
 
   } else if (year == 2000) {
 
@@ -118,7 +120,7 @@ subdata <- function(df, year)
                  16,18,19,22,23)
     colnames <- c("utilcode", "plntcode", "gencode",
                   "primemover", "nameplate", "summer", "winter",
-                  "fuel1", "fuel2", "status1",
+                  "fuel", "fuel2", "status1",
                   "startyr", "endyr", "multigen", "status2", "heatrate")
 
   }
@@ -128,6 +130,23 @@ subdata <- function(df, year)
   data.sub <- df[,colinds]
   names(data.sub) <- colnames
 
+  data.sub <- data.sub %>%
+    mutate(utilcode = toupper(as.character(utilcode)),
+           plntcode = toupper(as.character(plntcode)),
+           gencode = toupper(as.character(plntcode)),
+           multigen = toupper(as.character(multigen)),
+           primemover = toupper(as.character(primemover)),
+           nameplate = as.numeric(nameplate),
+           summer = as.numeric(summer),
+           winter = as.numeric(winter),
+           heatrate = as.numeric(heatrate),
+           fuel = toupper(as.character(fuel)),
+           fuel2 = toupper(as.character(fuel2)),
+           status1 = toupper(as.character(status1)),
+           status2 = toupper(as.character(status2)),
+           startyr = as.numeric(startyr),
+           endyr = as.numeric(endyr) )
+
   data.sub
 }
 
@@ -136,7 +155,7 @@ filtdata <- function(df, year)
   data.filt <- df %>%
     mutate(
       primemover = ifelse(is.na(primemover), "", primemover),
-      fuel1 = ifelse(is.na(fuel1), "", fuel1),
+      fuel = ifelse(is.na(fuel), "", fuel),
       fuel2 = ifelse(is.na(fuel2), "", fuel2),
       status1 = ifelse(is.na(status1), "", status1),
       status2 = ifelse(is.na(status2), "", status2),
@@ -146,7 +165,7 @@ filtdata <- function(df, year)
       heatrate = ifelse(heatrate == 0, NA, heatrate)
       ) %>%
     filter( status1 %in% c("OP", "SB") ) %>%
-    filter( nameplate != 0 )
+    filter( !is.na(nameplate) )
 
   data.filt
 }
@@ -154,9 +173,10 @@ filtdata <- function(df, year)
 remdup <- function(df)
 {
   data.remdup <- df %>%
-    group_by(yr, utilcode, plntcode, gencode, primemover, fuel1, fuel2, nameplate, summer, winter, heatrate,
+    group_by(yr, utilcode, plntcode, gencode, multigen, primemover, fuel, fuel2, nameplate, summer, winter, heatrate,
              status1, startyr, endyr) %>%
-    summarise(status2 = paste(status2, sep=", "))
+    summarise(status2 = paste(status2, collapse=", ")) %>%
+    ungroup()
 
   data.remdup
 }
