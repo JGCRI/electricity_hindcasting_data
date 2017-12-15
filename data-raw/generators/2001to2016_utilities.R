@@ -36,12 +36,15 @@ prep.generators.01to16 <- function(startingDir)
 
     # normalize datatype of cols, then filter by nameplate and status
     data.filt <- filtdata(data.sub)
+    
+    # collapse duplicates -- only 2 pairs of duplicates, in 2001. 
+    data.remdup <- remdup(data.filt)
 
     # append to master dataframe (outside for loop)
     if (nrow(generators.01to16) == 0 ) {
-      generators.01to16 <- data.filt
+      generators.01to16 <- data.remdup
     } else {
-      generators.01to16 <- rbind(generators.01to16, data.filt)
+      generators.01to16 <- rbind(generators.01to16, data.remdup)
     }
   }
 
@@ -130,4 +133,14 @@ filtdata <- function(df, year)
     filter( !is.na(nameplate))
 
   data.filt
+}
+
+remdup <- function(df)
+{
+  data.remdup <- df %>%
+    group_by(yr, utilcode, plntcode, gencode, multigen, primemover, fuel, status1, startyr, endyr, nameplate, summer, winter, heatrate) %>%
+    summarise(status2 = paste(unique(status2), collapse=", ") ) %>% 
+    ungroup()
+  
+  data.remdup
 }

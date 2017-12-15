@@ -32,12 +32,12 @@ prep.generators.90to00 <- function(startingDir)
              nameplate, summer, winter, heatrate,
              status1, status2, startyr, endyr)
 
-    # convert capacities & heatrate to MW and BTU/MWH
+    # convert capacities to MW, keep heatrate in BTU/kWh
     data.conv <- data.sub %>%
       mutate(nameplate = nameplate/1000,
              summer = summer/1000,
              winter = winter/1000,
-             heatrate = heatrate*1000)
+             heatrate = heatrate)
 
     # normalize datatype of cols, then filter by nameplate and status
     data.filt <- filtdata(data.conv)
@@ -133,7 +133,7 @@ subdata <- function(df, year)
   data.sub <- data.sub %>%
     mutate(utilcode = toupper(as.character(utilcode)),
            plntcode = toupper(as.character(plntcode)),
-           gencode = toupper(as.character(plntcode)),
+           gencode = toupper(as.character(gencode)),
            multigen = toupper(as.character(multigen)),
            primemover = toupper(as.character(primemover)),
            nameplate = as.numeric(nameplate),
@@ -162,7 +162,9 @@ filtdata <- function(df, year)
       nameplate = ifelse(nameplate == 0, NA, nameplate),
       summer = ifelse(summer == 0, NA, summer),
       winter = ifelse(winter == 0, NA, winter),
-      heatrate = ifelse(heatrate == 0, NA, heatrate)
+      heatrate = ifelse(heatrate == 0, NA, heatrate),
+      startyr = ifelse(startyr == 0, NA, startyr),
+      endyr = ifelse(endyr == 0, NA, endyr)
       ) %>%
     filter( status1 %in% c("OP", "SB") ) %>%
     filter( !is.na(nameplate) )
@@ -173,10 +175,10 @@ filtdata <- function(df, year)
 remdup <- function(df)
 {
   data.remdup <- df %>%
-    group_by(yr, utilcode, plntcode, gencode, multigen, primemover, fuel, fuel2, nameplate, summer, winter, heatrate,
-             status1, startyr, endyr) %>%
-    summarise(status2 = paste(status2, collapse=", ")) %>%
+    group_by(yr, utilcode, plntcode, gencode, multigen, primemover, fuel, status1, startyr, endyr, nameplate, summer, winter, heatrate) %>%
+    summarise(status2 = paste(unique(status2), collapse=", ") ) %>% 
     ungroup()
 
   data.remdup
 }
+
