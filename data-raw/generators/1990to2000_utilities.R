@@ -33,11 +33,16 @@ prep.generators.90to00 <- function(startingDir)
              status1, status2, startyr, endyr)
 
     # convert capacities to MW, keep heatrate in BTU/kWh
-    data.conv <- data.sub %>%
-      mutate(nameplate = nameplate/1000,
-             summer = summer/1000,
-             winter = winter/1000,
-             heatrate = heatrate)
+    if (yr.ind <= 1997) {
+      data.conv <- data.sub %>%
+        mutate(nameplate = nameplate/1000,
+               summer = summer/1000,
+               winter = winter/1000,
+               heatrate = heatrate)
+    } else {
+      data.conv <- data.sub
+    }
+
 
     # normalize datatype of cols, then filter by nameplate and status
     data.filt <- filtdata(data.conv)
@@ -176,7 +181,7 @@ remdup <- function(df)
 {
   data.remdup <- df %>%
     group_by(yr, utilcode, plntcode, gencode, multigen, primemover, fuel, status1, startyr, endyr, nameplate, summer, winter, heatrate) %>%
-    summarise(status2 = paste(unique(status2), collapse=", ") ) %>% 
+    summarise(status2 = paste(unique(status2), collapse=", ") ) %>%
     ungroup()
 
   data.remdup
