@@ -72,7 +72,7 @@ devtools::use_data(capacityfactors, overwrite=TRUE)
 # Inflation Adjustment ----------------------------------------------------
 source('data-raw/costs/gdpdeflator.R')
 # data: https://fred.stlouisfed.org/series/GDPDEF
-gdpdeflator <- calc.gdpdeflator("data-raw/costs/GDPDEF.csv", "1975") # reference year
+gdpdeflator <- calc.gdpdeflator("data-raw/costs/GDPDEF.csv", "2010") # reference year
 
 # Fuel Prices -------------------------------------------------------------
 source('data-raw/costs/fuelprices.R')
@@ -81,7 +81,9 @@ source('data-raw/costs/fuelprices.R')
 # uranium data: ????
 # update w/ : https://www.eia.gov/electricity/data/eia423/
 # fuel.price ~ $/BTU
-fuelprices <- prep.fuelprices("data-raw/costs/energy.prices.txt.gz", "data-raw/costs/uranium.prices.txt.gz", gdpdeflator)
+fuelprices <- prep.fuelprices("data-raw/costs/fuel/energy.prices.txt.gz",
+                              "data-raw/costs/fuel/uranium.prices.txt.gz",
+                              gdpdeflator)
 devtools::use_data(fuelprices, overwrite=TRUE)
 
 # Marginal Costs ----------------------------------------------------------
@@ -90,22 +92,22 @@ source('data-raw/costs/marginalcosts.R')
 # marginal.cost ~ $/MWh (converted internally)
 # marginalcosts <- prep.marginalcosts(mapping, form860processed, fuelprices)
 # can include maximumheatrates by adding as argument
-heatrates <- read.csv("data-raw/costs/avghr.csv") %>%
+heatrates <- read.csv("data-raw/costs/fuel/avghr.csv") %>%
   mutate(oc = gsub("_", " ", oc)) %>%
   mutate(oc = ifelse(oc == "combined cycle", "conventional combined cycle", oc)) %>%
   mutate(oc = ifelse(oc == "combustion turbine", "conventional combustion turbine", oc)) %>%
   mutate(fuel = gsub("_", " ", fuel)) %>%
-  rename(overnight_category = oc,
-         fuel_general = fuel,
-         year = t,
+  rename(overnightcategory = oc,
+         fuel.general = fuel,
+         yr = t,
          heatrate = Val)
 
 marginalcosts <- heatrates %>%
-  left_join(fuelprices, by=c("year", "fuel_general")) %>%
+  left_join(fuelprices, by=c("yr", "fuel.general")) %>%
   mutate(marginal.cost = fuel.price*heatrate) %>% # $/Btu * Btu/Kwh = $/Kwh
   mutate(marginal.cost = marginal.cost*1e3) %>% # $/MWh
   filter(! is.na(marginal.cost)) %>%
-  select(year, overnight_category, fuel_general, marginal.cost)
+  select(yr, overnightcategory, fuel.general, marginal.cost)
 
 devtools::use_data(marginalcosts, overwrite=TRUE)
 
@@ -116,15 +118,18 @@ source('data-raw/costs/capitalcosts.R')
 # table: 'Cost and Performance Characteristics of New Central Station Electricity Generating Technologies'
 # overnight, om.fixed ~ $/MW (converted internally)
 # om.var ~ $/MWh (native units)
-capitalcosts <- prep.capitalcosts("data-raw/costs/overnight.cost.tsv", gdpdeflator)
+capitalcosts <- prep.capitalcosts("data-raw/costs/AEO/assumptions.final.csv",
+                                  "data-raw/costs/AEO/tech-oc.csv",
+                                  gdpdeflator)
 devtools::use_data(capitalcosts, overwrite=TRUE)
 
 
 # Levelized Capital Costs -------------------------------------------------
 source('data-raw/costs/levelize.R')
-# data: plant-level prices (/MWh) of producing electricity using overnight_category-fuel_general combos
-levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13)
+# equation: See data-raw/costs/gcam/Electricity Generation Assumptions.pdf for equation
 # constant fixed charge rate of 0.13 from GCAM
+# units: overnight.lev, om.fixed.lev, om.var ~ $/MWh
+levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13)
 devtools::use_data(levelizedcosts, overwrite=TRUE)
 
 
@@ -132,9 +137,17 @@ devtools::use_data(levelizedcosts, overwrite=TRUE)
 # source('data-raw/costs/full.R')
 # data: marginalcosts (endogenous to GCAM) plus levelizedcosts
 fullcosts <- levelizedcosts %>%
-  filter(! is.na(fuel_general)) %>% # need fuel for marginalcost
-  left_join(marginalcosts, by=c("year", "overnight_category", "fuel_general")) %>%
-  mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) %>% # renewables aren't assigned marginalcost
-  mutate(fullcost = levcost + marginal.cost)
+  left_join(marginalcosts, by=c("yr", "overnightcategory", "fuel.general")) %>%
+  mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) # renewables aren't assigned marginalcost
 
 write.csv(fullcosts, "fullcost.csv")
+
+cost.comp <- fullcosts %>%
+  mutate(om = om.fixed.lev + om.var) %>%
+  select(-om.fixed.lev, -om.var) %>%
+  group_by(yr, fuel.general, overnightcategory) %>%
+  summarise(marginal.cost = mean(marginal.cost)/1000,
+            overnight.lev = mean(overnight.lev)/1000,
+            om = mean(om)/1000) %>%
+  ungroup()
+write.csv(cost.comp, "data-raw/costs/gcam/comp.csv", row.names=F)
