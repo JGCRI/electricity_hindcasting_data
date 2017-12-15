@@ -2,10 +2,10 @@ prep.fuelprices <- function(energyprices, uraniumprices, gdpdeflator)
 {
   ## DATA
   energy.prices <- read.delim(energyprices) %>%
-    dplyr::rename(fuel_general = fuel_1_general)
+    dplyr::rename(fuel.general = fuel_1_general)
   uranium.prices <- read.delim(uraniumprices) %>%
     select(year, fuel.price=weighted.avg.price.nominal) %>%
-    mutate(fuel_general='uranium')
+    mutate(fuel.general='uranium')
 
   ## COMBINE
   fuelprices <- rbind(energy.prices, uranium.prices) %>%
