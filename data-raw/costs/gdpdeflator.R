@@ -15,7 +15,7 @@ calc.gdpdeflator <- function(deflatorfile, referenceyear)
   gdpdef <- gdpdef %>%
     mutate(deflator = reference_deflation / GDPDEF) %>%
     select(-GDPDEF) %>%
-    dplyr::rename(cost.year = year)
+    dplyr::rename(cost.yr = year)
 
   gdpdef
 

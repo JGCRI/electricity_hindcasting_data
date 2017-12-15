@@ -9,14 +9,14 @@ prep.fuelprices <- function(energyprices, uraniumprices, gdpdeflator)
 
   ## COMBINE
   fuelprices <- rbind(energy.prices, uranium.prices) %>%
-    rename(cost.year=year) # assumption
+    rename(cost.yr=year) # assumed that prices are reported in nominal $
 
   ## VALUE ADJUSTMENT
   fuelprices <- fuelprices %>%
-    inner_join(gdpdeflator) %>%
+    inner_join(gdpdeflator, by="cost.yr") %>%
     mutate(fuel.price = deflator * fuel.price) %>%
     mutate(fuel.price = fuel.price/1e6) %>% # $/1e6Btu -> $/Btu
     select( -deflator) %>%
-    rename(year=cost.year)
+    rename(year=cost.yr)
 }
 
