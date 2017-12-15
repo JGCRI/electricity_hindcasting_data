@@ -6,8 +6,8 @@ prep.generation.01to16 <- function(startingDir)
   for (i in seq(1:length(filez)) ) {
     file <- filez[i]
 
-    yr <- str_extract(file, "[1|2][0-9]{3}" ) %>% as.integer()
-    if (yr >= 2011) {skiplines <- 5
+    yr.ind <- str_extract(file, "[1|2][0-9]{3}" ) %>% as.integer()
+    if (yr.ind >= 2011) {skiplines <- 5
     } else {skiplines <- 7}
 
     data.raw <- read_excel(paste(startingDir, file, sep="/"), sheet=1, skip=skiplines)
@@ -20,32 +20,33 @@ prep.generation.01to16 <- function(startingDir)
       gsub(one_or_more("."), ".", .)
 
     data.filter <- data.raw %>%
-      select(year = YEAR,
-             plant_code = PLANT.ID,
-             utility_code = OPERATOR.ID,
-             chp = COMBINED.HEAT.POWER.PLANT,
-             prime_mover = REPORTED.PRIME.MOVER,
+      select(yr = YEAR,
+             plntcode = PLANT.ID,
+             utilcode = OPERATOR.ID,
+             # chp = COMBINED.HEAT.POWER.PLANT,
+             primemover = REPORTED.PRIME.MOVER,
              fuel = REPORTED.FUEL.TYPE.CODE,
              generation = NET.GENERATION.MEGAWATTHOURS.,
              consumption = ELEC.FUEL.CONSUMPTION.MMBTU)  %>%
-      filter(chp == 'N') %>% # no co-generators
-      select(-chp) %>%
+      # filter(chp == 'N') %>% # no co-generators
+      # select(-chp) %>%
       mutate(fuel = ifelse(fuel %in% c("MSB", "MSN"), "MSW", fuel)) %>%
       # at some point, they began delineating types of MSW, but these new codes won't match 860
-      mutate(plant_code = as.integer(plant_code)) %>%
-      filter(plant_code != 99999) # no estimates of plants that didn't respond
+      mutate(plntcode = str_replace(as.character(plntcode), "^[0]+", ""),
+             utilcode = str_replace(as.character(utilcode), "^[0]+", "")) %>%
+      filter(plntcode != 99999) %>% # no estimates of plants that didn't respond
+      mutate(consumption = consumption*1e6) # MMBtu -> Btu
 
-    data.filter$consumption <- data.filter$consumption*1e6 # MMBtu -> Btu
     ## DON'T NEED TO REMAP CODES BECAUSE THIS FORM MATCHES FORM860 FUEL/MOVER CODES
 
     ## RECORD NATIVE MISMAPPING
     # two movers entirely unused (CE and FC)
     # about 25% of all rows are missing a mover code
     mapping.pm <- data.filter %>%
-      select(prime_mover) %>%
-      group_by(prime_mover) %>%
+      select(primemover) %>%
+      group_by(primemover) %>%
       summarise(n=n()) %>%
-      arrange(prime_mover)
+      arrange(primemover)
     # a couple of erroneous fuel codes have been recorded.
     # only rows with codes matching 860 will be combined into new dataset
     mapping.fuel <- data.filter %>%
@@ -71,7 +72,7 @@ prep.generation.01to16 <- function(startingDir)
     if (file == filez[length(filez)]) {
       # prime mover
       read.csv(paste(startingDir, "movermismapping.csv", sep="/")) %>%
-        group_by(prime_mover) %>%
+        group_by(primemover) %>%
         summarise(n=sum(n)) %>%
         write.csv(file=paste(startingDir, "movermismapping.csv", sep="/"), row.names=FALSE)
       # fuel

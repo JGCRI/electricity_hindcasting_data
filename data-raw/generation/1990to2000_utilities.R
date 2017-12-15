@@ -4,16 +4,16 @@ prep.generation.90to00 <- function(startingDir)
   generation.90to00 <- data.frame()
   for (i in seq(1:length(filez)) ) {
     file <- filez[i]
-    yr <- str_extract(file, "[1|2][0-9]{3}" )
+    yr.ind <- str_extract(file, "[1|2][0-9]{3}" )
 
     data.raw <- read_excel(paste0(startingDir, file), sheet=1) %>%
-      mutate(year = as.numeric(yr) ) %>%     # modify in place (originally 2 digits)
+      mutate(yr = as.numeric(yr.ind) ) %>%     # modify in place (originally 2 digits)
       filter(is.na(STATUS) | STATUS == "A" ) %>%     # active (" ") or new addition ("A")
       select(-starts_with("STK")) %>%
       mutate(FUELTYP = ifelse(is.na(FUELTYP), "G", FUELTYP))
 
     ## ELECTRICITY GENERATION
-    if (yr >= 1996) {
+    if (yr.ind >= 1996) {
       # after 1996, some had monthly reporting req's -- others annual. the monthly reports use estimates
       # for those with annual reporting reqs.
       # for this reason, we just use the annual reports after 1996.
@@ -43,22 +43,22 @@ prep.generation.90to00 <- function(startingDir)
 
     ## TRUNCATE
     data.filter <- data.raw %>%
-      select(PMOVER, PMDESC, FUELTYP, FUELDESC, year, generation, consumption, UTILCODE, PCODE ) %>%
+      select(PMOVER, PMDESC, FUELTYP, FUELDESC, yr, generation, consumption, UTILCODE, PCODE ) %>%
       mutate(PMOVER = as.integer(PMOVER)) %>%
       mutate(PMDESC = as.character(PMDESC)) %>%
       mutate(FUELTYP = as.character(FUELTYP)) %>%
       mutate(FUELDESC = as.character(FUELDESC)) %>%
-      rename(utility_code = UTILCODE) %>%
-      mutate(utility_code = as.integer(utility_code)) %>%
-      rename(plant_code = PCODE) %>%
-      mutate(plant_code = as.integer(plant_code))
+      rename(utilcode = UTILCODE) %>%
+      mutate(utilcode = str_replace(as.character(utilcode), "^[0]+", "")) %>%
+      rename(plntcode = PCODE) %>%
+      mutate(plntcode = str_replace(as.character(plntcode), "^[0]+", ""))
 
     ## MAP FROM FORM759 TO FORM860 CODES
     # many entries have a mismatch between the two native cols used to identify PM and FUEL
     # inner_join() filters through only rows where both cols match the mapping given in the form's documentation
     # then replaces the two cols with a col whose codes correspond to the form860 mapping files
     mapping.pm <- read.csv(paste0(startingDir, "movermapping.csv")) %>%
-      select(PMOVER, PMDESC, prime_mover) %>%
+      select(PMOVER, PMDESC, primemover) %>%
       mutate(PMDESC = as.character(PMDESC))
     mapping.fuel <- read.csv(paste0(startingDir, "fuelmapping.csv")) %>%
       select(FUELTYP, FUELDESC, fuel, toBtu) %>%
@@ -68,7 +68,7 @@ prep.generation.90to00 <- function(startingDir)
     data.filter <- data.filter %>%
       inner_join( mapping.pm, by=c("PMOVER", "PMDESC") ) %>%
       select(-PMOVER, -PMDESC) %>%
-      mutate(prime_mover = as.character(prime_mover)) %>%
+      mutate(primemover = as.character(primemover)) %>%
       inner_join( mapping.fuel, by=c("FUELTYP", "FUELDESC")) %>%
       select(-FUELTYP, -FUELDESC) %>%
       mutate(fuel = as.character(fuel)) %>%
