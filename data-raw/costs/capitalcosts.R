@@ -1,27 +1,27 @@
 
-prep.capitalcosts <- function(aeofile, gdpdeflator)
+prep.capitalcosts <- function(aeofile, tech.oc.file, gdpdeflator )
 {
-
   ## DATA
-  overnight <- read.delim(aeofile) %>%
-    select(year, cost.year, overnight_category, base.overnight, variable.o.m, fixed.o.m) %>%
-    arrange(year, cost.year, overnight_category)
+  overnight <- read.csv(aeofile) %>%
+    select(Technology, yr, cost.yr, overnight.base, variable.o.m, fixed.o.m)
+  # native units: overnight.base ~ $/kW ; fixed.o.m ~ $/kW/yr ; variable.o.m ~ $/MWh
 
   ## NORMALIZE CATEGORIES TEXT
-  overnight$overnight_category <- gsub('_', ' ', overnight$overnight_category)
+  tech.oc.map <- read.csv(tech.oc.file)
+  overnight.oc <- overnight %>%
+    left_join(tech.oc.map, by=c("Technology")) %>%
+    filter(overnightcategory != "") %>%
+    mutate(overnightcategory = as.character(overnightcategory)) %>%
+    select(-Technology)
 
-  ## UNIT CONVERSIONS
-  overnight <- overnight %>%
-    mutate(fixed.o.m = fixed.o.m/1000,# /kW*yr -> /MW*yr
-           base.overnight = base.overnight/1000) # /kW -> /Mw
 
   ## VALUE ADJUSTMENT
-  capitalcosts <- overnight %>%
-    inner_join(gdpdeflator) %>%
-    mutate(overnight = deflator * base.overnight,
+  capitalcosts <- overnight.oc %>%
+    inner_join(gdpdeflator, by="cost.yr") %>%
+    mutate(overnight = deflator * overnight.base,
            om.var = deflator * variable.o.m,
            om.fixed = deflator * fixed.o.m) %>%
-    select(year, overnight_category, overnight, om.var, om.fixed)
+    select(yr, overnightcategory, overnight, om.var, om.fixed)
 
   capitalcosts
 
