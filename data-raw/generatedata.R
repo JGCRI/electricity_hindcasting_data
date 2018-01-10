@@ -146,7 +146,7 @@ devtools::use_data(levelizedcosts, overwrite=TRUE)
 fullcosts <- levelizedcosts %>%
   left_join(marginalcosts, by=c("yr", "overnightcategory", "fuel.general")) %>%
   mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) # renewables aren't assigned marginalcost
-
+devtools::use_data(fullcosts, overwrite=TRUE)
 write.csv(fullcosts, "fullcost.csv")
 
 cost.comp <- fullcosts %>%
