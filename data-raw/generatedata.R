@@ -66,7 +66,13 @@ generation <- swapids(generation, mapping) %>% # mapping onto oc-fg creates dupl
   ungroup()
 capacityfactors <- calc.capacityfactors(generators, generation)
 generators.cfl1 <- generators %>%
-  inner_join(capacityfactors, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general"))
+  inner_join(capacityfactors, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
+  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
+  summarise(nameplate=sum(nameplate)) %>%
+  ungroup() %>%
+  mutate_at(vars(ends_with("code")), as.character) %>%
+  mutate_if(is.factor, as.character)
+write.csv(generators.cfl1, "data-raw/costs/gcam/nameplate.csv", row.names=FALSE)
 devtools::use_data(capacityfactors, overwrite=TRUE)
 
 # Inflation Adjustment ----------------------------------------------------
@@ -81,8 +87,8 @@ source('data-raw/costs/fuelprices.R')
 # uranium data: ????
 # update w/ : https://www.eia.gov/electricity/data/eia423/
 # fuel.price ~ $/BTU
-fuelprices <- prep.fuelprices("data-raw/costs/fuel/energy.prices.txt.gz",
-                              "data-raw/costs/fuel/uranium.prices.txt.gz",
+fuelprices <- prep.fuelprices("data-raw/costs/fuel/energy.prices.tsv",
+                              "data-raw/costs/fuel/uranium.prices.tsv",
                               gdpdeflator)
 devtools::use_data(fuelprices, overwrite=TRUE)
 
@@ -103,8 +109,9 @@ heatrates <- read.csv("data-raw/costs/fuel/avghr.csv") %>%
          heatrate = Val)
 
 marginalcosts <- heatrates %>%
+  mutate(efficiency = 3412/heatrate) %>%
   left_join(fuelprices, by=c("yr", "fuel.general")) %>%
-  mutate(marginal.cost = fuel.price*heatrate) %>% # $/Btu * Btu/Kwh = $/Kwh
+  mutate(marginal.cost = fuel.price/efficiency) %>% # $/Btu * Btu/Kwh = $/Kwh
   mutate(marginal.cost = marginal.cost*1e3) %>% # $/MWh
   filter(! is.na(marginal.cost)) %>%
   select(yr, overnightcategory, fuel.general, marginal.cost)
@@ -116,7 +123,7 @@ devtools::use_data(marginalcosts, overwrite=TRUE)
 source('data-raw/costs/capitalcosts.R')
 # data:  https://www.eia.gov/outlooks/aeo/archive.php -- 'Assumptions'
 # table: 'Cost and Performance Characteristics of New Central Station Electricity Generating Technologies'
-# overnight, om.fixed ~ $/MW (converted internally)
+# overnight, om.fixed ~ $/kW
 # om.var ~ $/MWh (native units)
 capitalcosts <- prep.capitalcosts("data-raw/costs/AEO/assumptions.final.csv",
                                   "data-raw/costs/AEO/tech-oc.csv",
