@@ -22,6 +22,8 @@ generators.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 generators <- rbind(generators.90to00, generators.01to16) %>%
   mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel),
          fuel = ifelse(fuel=="WOC", "WC", fuel) )
+generators.new <- filter(generators, startyr == yr)
+devtools::use_data(generators.new, overwrite=TRUE)
 
 # See Capacity Factors cell for final .rda file
 
