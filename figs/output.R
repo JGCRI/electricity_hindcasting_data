@@ -86,7 +86,7 @@ potential.oc <- plot.agg(potential, "Potential Output", "overnight")
 # multiplot(output.fuel, output.oc, cols=2)
 # dev.off()
 
-png("figs/Output.png", width=11, height=8.5, units="in", res=250)
+png("figs/Output.png", width=8.5, height=11, units="in", res=250)
 grid_arrange_shared_legend(output.fuel, potential.fuel,
                            position="right", ncol=2, nrow=1)
 dev.off()
