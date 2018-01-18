@@ -3,7 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(energy.markets)
 
-data(capacityfactors)
+data(capacityfactors, capacityfactors.unfilt)
 
 # display & save stacked bar plot
 plot <- function(df, ptitle) {
@@ -23,11 +23,11 @@ plot <- function(df, ptitle) {
       geom_line(aes(color=overnightcategory))
   }
   # save
-  fn <- paste0("figs/", ptitle, ".png")
-  print(paste0("Saving to ", fn))
-  ggsave(filename=fn, plot=p, device="png", width=11, height=8, units="in")
+  # fn <- paste0("figs/", ptitle, ".png")
+  # print(paste0("Saving to ", fn))
+  # ggsave(filename=fn, plot=p, device="png", width=11, height=8, units="in")
 
-  p
+  return(p)
 }
 
 # aggregate by fuel/overnight, then plot
@@ -37,13 +37,36 @@ plot.agg <- function(df, ptitle, group) {
     summarise(capfac=mean(capfac)) %>%
     ungroup()
   ptitle <- paste0(ptitle, " by ", group)
-  plot(df.grp, ptitle)
+  p <- plot(df.grp, ptitle)
+  return(p)
 }
+
+# multiplot and share legend function
+source("figs/sharedlegend.R")
+
+# Capacity Factors Datasets -----------------------------------------------
 
 cf <- capacityfactors %>%
   group_by(yr, overnightcategory, fuel.general) %>%
   summarise(capfac = mean(capacityfactor)) %>%
   ungroup() %>%
   mutate(yr=as.factor(yr))
-plot.agg(cf, "CF", "fuel")
+cf.fuel <- plot.agg(cf, "CFL1", "fuel")
+
+cf.unfilt <- capacityfactors.unfilt %>%
+  filter(capacityfactor > 1) %>%
+  group_by(yr, overnightcategory, fuel.general) %>%
+  summarise(capfac = mean(capacityfactor)) %>%
+  ungroup() %>%
+  mutate(yr=as.factor(yr))
+cf.unfilt.fuel <- plot.agg(cf.unfilt, "CFG1", "fuel")
+
+
+# PLOTS -------------------------------------------------------------------
+
+png("figs/Capacity by fuel.png", width=15, height=8.5, units="in", res=250)
+grid_arrange_shared_legend(cf.fuel, cf.unfilt.fuel,
+                           position="right", ncol=2, nrow=1)
+dev.off()
+
 
