@@ -1,59 +1,56 @@
 library(energy.markets)
 library(dplyr)
 library(magrittr)
+library(ggplot2)
 
-data(modelinput, generators.new, mapping)
+data(generators, generators.cfl1)
 
-mi <- modelinput %>%
-  mutate(choice = paste(fuel.general, overnightcategory, sep="-")) %>%
-  select(-fuel.general, -overnightcategory) %>%
-  group_by(yr, choice) %>%
-  summarise(cost = mean(overnight.lev + om.fixed.lev + om.var + marginal.cost)) %>%
-  ungroup()
-
-
-# individual plot
-plot.all <- function(df, fold) {
+# display & save stacked bar plot
+plot <- function(df, ptitle) {
   p <- ggplot(df, aes(x=yr, y=nameplate)) +
-    geom_line(aes(col=choice))
-  fn <- paste0(fold, "/all.png")
+    ggtitle(ptitle) +
+    theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+    ylab("MW")
+  
+  if (grepl("fuel", ptitle)) {
+    p <- p +
+      geom_bar(aes(fill=fuel.general), stat="identity")
+  } else if (grepl("overnight", ptitle)) {
+    p <- p +
+      geom_bar(aes(fill=overnightcategory), stat="identity")
+  }
+  
+  # save
+  fn <- paste0("figs/", ptitle, ".png")
   ggsave(filename=fn, plot=p, device="png", width=11, height=8, units="in")
+  
+  p
 }
 
-# break out by fuel, facetign by overnight category
-plot.ind <- function(df, fold) {
-  lapply(unique(df$fuel.general), function(fg, df, fold) {
-    df2 <- df %>%
-      filter(fuel.general==fg)
-    p <- ggplot(df2, aes(x=yr, y=nameplate)) +
-      geom_line() +
-      facet_grid(fuel.general~overnightcategory) +
-      ylab("MW")
-    fn <- paste0(fold, "/", fg, ".png")
-    ggsave(filename=fn, plot=p, device="png", width=11, height=8, units="in")
-  }, gn, fold)
+# aggregate by fuel/overnight, then plot
+plot.agg <- function(df, ptitle, group) {
+  df.grp <- df %>% 
+    group_by_at(vars(yr, matches(group))) %>% 
+    summarise(nameplate=sum(nameplate)) %>% 
+    ungroup() 
+  ptitle <- paste0(ptitle, " by ", group)
+  plot(df.grp, ptitle)
 }
 
-folder <- "figs/capacityaddns/"
-gn <- generators.new %>%
-  left_join(mapping, by=c("primemover", "fuel")) %>%
-  select(-primemover, -fuel) %>%
-  filter(fuel.general != "" & overnightcategory != "") %>%
-  mutate(choice=paste(fuel.general, overnightcategory, sep="-"))
-  summarise(nameplate=sum(nameplate)) %>%
-  ungroup()
-plot.all(gn, folder)
-plot.ind(gn, folder)
 
 
-folder <- "figs/capacity/"
-g <- generators %>%
-  group_by(yr) %>%
-  #group_by(yr, fuel.general, overnightcategory) %>%
-  summarise(nameplate=sum(nameplate)) %>%
-  ungroup()
-  #mutate(choice=paste(fuel.general, overnightcategory, sep="-"))
-plot.all(g, folder)
-plot.ind(g, folder)
+# CFL1 Dataset ------------------------------------------------------------
+
+# new additions
+cfl1.new <- generators.cfl1 %>%
+  filter(yr == vintage) 
+plot.agg(cfl1.new, "Additions",  "fuel")
+plot.agg(cfl1.new, "Additions", "overnight")
+
+# full fleet
+cfl1 <- generators.cfl1
+plot.agg(cfl1, "Fleet", "fuel")
+plot.agg(cfl1, "Fleet", "overnight")
+
 
 
