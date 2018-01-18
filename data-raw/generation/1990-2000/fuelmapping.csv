@@ -1,0 +1,17 @@
+FUELTYP,FUELDESC,fuel,fuel_text,toBtu
+G,WAT,WAT,water,
+1,UR,UR,nuclear,
+2,FO2,FO2,light oil,5171000
+3,FO6,FO6,heavy oil,5171000
+4,ANT,ANT,anthracite,19146000
+5,PC,PC,coke,19146000
+6,BIT,BIT,bituminous,19146000
+7,LIG,LIG,lignite,19146000
+8,OIL,,oil,5171000
+9,NG,NG,natural gas,1037000
+A,GEO,GEO,geothermal,
+B,WOD,WD,wood,
+C,WAS,WAS,waste,
+D,WI,WND,wind,
+E,SP,SUN,solar - photovoltaic,
+F,SO,SUN,solar - thermal,

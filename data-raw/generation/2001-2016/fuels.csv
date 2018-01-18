@@ -1,0 +1,36 @@
+fuel(pre2008),fuel_text
+AB,Agricutural Crop Byproducts/Straw/Energy Crops
+BFG,Blast Furnace Gas
+BIT,Anthracite Coal and bituminous Coal
+BLQ,Black Liquor
+DFO,"Distillate Fuel Oil (Diesel, No.1, No.2, and No.4)"
+GEO,Geothermal
+JF,Jet Fuel
+KER,Kerosene
+LFG,Landfill Gas
+LIG,Lignite coal
+MSB,Biogenic Municipal Solid Waste
+MSN,Nonbiogenic Municipal Solid Waste
+NG,Natural Gas
+NUC,"Nuclear Fission (Uranium, Plutonium, Thorium)"
+OBG,Other Biomass Gas
+OBL,Other Biomass Liquids
+OBS,Other Biomass Solids
+OG,Other Gas
+OTH,Other
+PC,Petroleum coke
+PG,Gaseous Propane
+PUR,Purchased Steam
+RFO,"Residual Fuel Oil (including No. 5 and No. 6 fuel oils, and bunker C fuel oil."
+SC,"Coal-based Synfuel (including briquettes, pellets, or extrusions, which are formed by binding materials or processes that recycle materials)"
+SLW,Sludge Waste
+SUB,Sub-bituminous Coal
+SUN,Solar
+TDF,Tire-derived Fuels
+WAT,Water (Conv Hydro Turb)
+WC,Waste/Other Coal 
+WDL,Wood Waste Liquids (excl BLQ)
+WDS,Wood/Wood Waste Solids 
+WH,Waste heat
+WND,Wind
+WO,"Waste/Other Oil (Crude, LiqBut, LiqProp, Oil Waste, Sludge, Tar)"

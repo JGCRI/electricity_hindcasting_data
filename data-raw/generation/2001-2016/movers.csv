@@ -1,0 +1,14 @@
+primemover,text
+ST,"Steam Turbine (incl NUC, GEO, SOL steam; excl CombCycle)"
+GT,Combustion (Gas) Turbine
+IC,Internal Combustion
+CT,Combined Cycle Combustion - Turbine Part
+CA,Combined Cycle - Steam Part
+CS,Combined Cycle Single Shaft (Combustion and Steam share a single generator)
+HY,Hydraulic turbine
+PS,Hydraulic turbine -- Reversible (pumped storage)
+PV,Photovoltaic
+WT,Wind Turbine
+CE,Compressed Air Energy Storage
+FC,Fuel Cell
+OT,Other

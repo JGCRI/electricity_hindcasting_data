@@ -1,0 +1,44 @@
+year,table #,title,pg,Notes
+1996,28,Characteristics of New Fossil-Fueld Generating Technologies,48,"fossil fuel heat rates decline linearly 1995-2010. ""Middletown, USA"" -- regional multipliers ~ labor, factory equipment, site material. "
+1996,55,"Renewable Resources for Grid-Connected electric Power Generation: Cost and Performance Values for 2010, California ",85,"Reprted values for California region because ""most likely region for most new capacity"". Note most renewable enegy technologies (except solar thermal and geothermal0 are assumed to compete in all region"
+1997,33,Characteristics of New Generating Technologies,58,Heatrates decline linearly 1995-2010
+1998,37,Cost and Performance Characteristics of New Fossil and Nuclear Generating Technologies,67,
+1999,37,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,59,
+2000,37,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,67,
+2001,43,Cost and Performance Characteristics of New electricity generating Technologies,69,Base overnight is multiplied by project contingency factor and technological optimism factor = total construction cost used for capacity choice decision
+2001,45,Learning Parameters for New Generating Technologies,70,
+2001,46,Characteristics of Generic Distributed Generators,71,
+2002,38,Cost and Performance Characteristics of New electricity generating Technologies,68,
+2002,40,Learning Parameters for New Generating Technologies,69,
+2002,41,Characteristics of Generic Distributed Generators,70,
+2003,40,Cost and Performance Characteristics of New electricity generating Technologies,73,distributed included
+2003,42,Learning Parameters for New Generating Technologies,74,
+2004,38,Cost and Performance Characteristics of New electricity generating Technologies,71,
+2004,39,Learning Parameters for New Generating Technologies,72,
+2005,38,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,67,
+2005,39,Learning Parameters for New Generating Technologies,68,
+2006,38,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,73,
+2006,39,Learning Parameters for New Generating Technologies,74,
+2007,39,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,77,
+2007,40,Learning Parameters for New Generating Technologies,78,
+2008,38,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,79,
+2008,39,Learning Parameters for New Generating Technologies,80,
+2009,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,89,
+2009,8.3,Learning Parameters for New Generating Technologies,90,
+2010,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,91,
+2010,8.3,Learning Parameters for New Generating Technologies,92,
+2011,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,97,"eia commissioned external consultant to develop current cost estimates for utility-scale electric generating plants. Overnight costs in 8.2 represent estimated cost of building a plant in a typical region of the country. Regional variations account for multiple factors, such as difference si nterrain, weather, population, and labor wages. The base overnight cost is multiplied by a project contingency factor and a technological optimism factor (described later in this chapter), resulting in the total construction cost for the first-of-a-kind unit used for the capacity choice decision."
+2011,8.3,Learning Parameters for New Generating Technologies,98,
+2012,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,93,
+2012,8.3,Learning Parameters for New Generating Technologies,94,
+2013,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,103,"eia commissioned an external consultant to update current  cost estimates for utility-scale electric generating plants. This reprot used a consistent methodology, similar to the one used t develop the estimates for aeo2011 and aeo2012, but accoutned for more recent data and experience. "
+2013,8.3,Learning Parameters for New Generating Technologies,104,
+2014,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,97,
+2014,8.3,Learning Parameters for New Generating Technologies,98,
+2015,8.2`,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,105-6,"EIA reviewed capital cost assumptions for solar PV and wind plants based on an assessment of costs reported in trade press and data compiled in Lawrence Berkeley National Laboratory publications [84]. Wind costs were updated based on clear trends in the data, while EIA’s review of PV costs indicated that no revision was warranted, beyond the learning adjustment for recent builds"
+2015,8.3,Learning Parameters for New Generating Technologies,107,
+2016,8.2,Cost and Performance Characteristics of New Central Station Electricity Generating Technologies,107,"Updated costs were used for coal with carbon
+capture and sequestration (CCS), the combined cycle (without CCS) technologies, the combustion turbine
+technologies, advanced nuclear, onshore wind and solar photovoltaic (PV)."
+2016,8.3,Total overnight capital costs of new electricity generating technologies by region,108,
+2016,8.4,Learning Parameters for New Generating Technologies,109,

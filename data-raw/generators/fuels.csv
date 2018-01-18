@@ -1,0 +1,63 @@
+fuel,text,fuel.general,notes
+AB,Agriculture Crop Byproducts/Straw/Energy Crops,biomass,
+ANT,"(Anthracite Coal, Bituminous Coal)",coal,
+BFG,Blast Furnace Gas,,useful?
+BIT, Bituminous Coal,coal,
+BLQ,Black Liquor,,useful?
+DFO,"Distillate Fuel Oil (includes all Diesel and No. 1, No. 2, and No. 4 Fuel Oils) ",oil,
+FO1, No. 1 Fuel Oil,oil,
+FO2, No. 2 Fuel Oil,oil,
+FO4, No. 4 Fuel Oil,oil,
+FO5, No. 5 Fuel Oil,oil,
+FO6, No. 6 Fuel Oil,oil,
+GEO,Geothermal,geothermal,
+GST, Geothermal Steam,geothermal,
+JF,Jet Fuel ,oil,
+KER,Kerosene ,oil,
+LFG,Landfill Gas,natural gas,
+LIG,Lignite Coal,coal,
+LPG, Liquified Propane Gas,,useful?
+MF, Multifueled,,
+MSW,Municipal Solid Waste,,
+MTE,Methane,natural gas,
+MWH,Megawatt Hour (MWh),,
+NG,Natural Gas,natural gas,
+NUC,"Nuclear (Uranium, Plutonium, Thorium)",uranium,
+OBG,"Other Biomass Gases (Digester Gas, Methane, and other biomass gases)",natural gas,biomass?
+OBL,"Other  Biomass Liquid (Ethanol, Fish Oil, Liquid Acetonitrile Waste, Medical Waste, Tall Oil, Waste Alcohol, and other Biomass not specified)",oil,biomass?
+OBS,"Other Biomass Solid (Animal Manure and Waste, Solid Byproducts, and other solid biomass not specified) ",biomass,
+OG,"Other Gas (Butane, Coal Processes, Coke-Oven, Refinery, and other processes)",,useful?
+OO,,,2 in 00-01
+OT, Other (explain under notes),,
+OTH,"Other (Batteries, Chemicals, Coke Breeze, Hydrogen, Pitch, Sulfur, Tar Coal, and miscellaneous technologies)",,
+PC,Petroleum Coke,coal,
+PG,Propane,oil,
+PUR,Purchased Steam,,useful?
+RC,Refined Coal,coal,
+REF, Refuse Bagasse and all other nonwood waste,biomass,
+RFO,Residual Fuel Oil (includes No. 5 and No. 6 Fuel Oils and Bunker C Fuel Oil),oil,
+RG, Refinery Gas,,useful?
+SC,coal synfuel,coal,prior
+SG,"synthetic gas, other than coal derived",natural gas,prior
+SGC,"Synthetic Gas, derived from coal",natural gas,
+SGP,synthetic gas from petroleum coke,natural gas,prior
+SLW,Sludge Waste,,useful?
+SNG, Synthetic Natural Gas,natural gas,
+SUB,Subbituminous Coal,coal,
+SUN,"Solar (Photovoltaic, Thermal)",solar,
+TDF,Tires,,
+UR, Uranium,uranium,
+WAT,"Water (Conventional, Pumped Storage)",water,
+WC,"Waste/Other Coal (Anthracite Culm, Bituminous Gob, Fine Coal, Lignite Waste, Waste Coal) ",coal,
+WD, Wood and Wood Waste,biomass,
+WDL,"Wood Waste Liquids (Red Liquor, Sludge Wood, Spent Sulfite Liquor, and other wood related liquids not ",biomass,
+WDS,"Wood/Wood Waste Solids (Paper Pellets, Railroad Ties, Utility Poles, Wood Chips, and other wood solids)",biomass,
+WH,Waste Heat,,useful?
+WND,Wind,wind,
+WO,"Oil-Other and Waste Oil (Butane (Liquid), Crude Oil, Liquid Byproducts, Oil Waste, Propane (Liquid),
+Re-refined ",oil,
+SO,solar - thermal,solar,from generation forms
+SP,solar - photovoltaic,solar,from generation forms
+WAS,waste,,from generation forms
+WOD,wood,biomass,from generation forms
+WI,wind,wind,from generation forms

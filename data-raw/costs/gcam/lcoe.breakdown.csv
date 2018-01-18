@@ -1,0 +1,24 @@
+technology,cost of fuel ($/MWh),levelized.fuel.cost,levelized.capital.cost,levelized.om.cost
+coal (conv pul),7.62,20.1,50.6,7.4
+coal (conv pul CCS),7.62,27.2,107.6,15.1
+coal (IGCC),7.62,19.5,74.2,11.5
+coal (IGCC CCS),7.62,23.8,122.4,20
+gas (steam/CT),20.53,60.4,14,10.9
+gas (CC),20.53,39.5,18.4,4.8
+gas (CC CCS),20.53,48.9,39.1,9.9
+refined liquids (steam/CT),40.58,119.4,14,10.9
+refined liquids (CC),40.58,78,18.4,4.8
+refined liquids (CC CCS),40.58,103.7,46.5,11.7
+biomass (conv),22.98,91.9,69.8,22.7
+biomass (IGCC),22.98,124.8,119.5,29.9
+biomass (IGCC CCS),22.98,76.6,111.3,35
+Gen_II_LWR,2.72,93.4,151.9,42.1
+Gen_III,2.72,8.2,33.3,15.5
+wind (on-shore),0,8.2,90.7,14
+wind_storage,0,0,82.3,15.4
+PV,0,0,218,18.5
+PV_storage,0,0,228.3,22.8
+CSP,0,0,479.4,27.4
+CSP_storage,0,0,292.2,25.1
+geothermal,0,0,187.3,11.4
+rooftop_pv,0,0,87.9,12.7
