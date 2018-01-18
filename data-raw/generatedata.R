@@ -22,18 +22,14 @@ generators.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 generators <- rbind(generators.90to00, generators.01to16) %>%
   mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel),
          fuel = ifelse(fuel=="WOC", "WC", fuel) )
-generators.new <- filter(generators, startyr == yr)
-devtools::use_data(generators.new, overwrite=TRUE)
 
-# See Capacity Factors cell for final .rda file
-
+# See Capacity Factors cell for use_data()
 
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
 mapping <- prep.mapping('data-raw/generators/fuels.csv', 'data-raw/generators/overnightcategories.csv')
 devtools::use_data(mapping, overwrite=TRUE)
-
 
 # Generation & Consumption ------------------------------------------------
 source('data-raw/generation/1990to2000_utilities.R')
@@ -61,32 +57,41 @@ source('data-raw/costs/capacityfactors.R')
 # data: form860 generator capacities & forms759/906/920/923 plant generation output
 # carries original capacity and generation as well (for weighting capital costs)
 
-# must map generators & generation to these IDs
+# map to oc-fg instead of pm-f
+# filter empty oc | fg
 swapids <- function(df, mapping) {
   df.swap <- df %>%
     left_join(mapping, by=c("primemover", "fuel")) %>%
-    filter(overnightcategory != "" & fuel.general != "") %>%
+    filter(overnightcategory != "" | fuel.general != "") %>%
     select(-primemover, -fuel)
 }
-generators <- swapids(generators, mapping)
-generation <- swapids(generation, mapping) %>% # mapping onto oc-fg creates duplicate rows. aggregate
+
+# save full generators dataset
+generators <- swapids(generators, mapping) %>%
+  dplyr::rename(vintage=startyr) %>%
+  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general, vintage) %>%
+  summarise(nameplate=sum(nameplate)) %>%
+  ungroup()
+devtools::use_data(generators, overwrite=TRUE)
+
+# mapping to oc-fg creates duplicate rows bc reported (plant x primemover x fuel)
+# sum 'em up!
+generation <- swapids(generation, mapping) %>%
   group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
   summarise(generation=sum(generation)) %>%
   ungroup()
 
+# calculate and save capacityfactors
 capacityfactors <- calc.capacityfactors(generators, generation)
 devtools::use_data(capacityfactors, overwrite=TRUE)
 
 # save generators that contribute to capacity factor less than 1
-generators <- generators %>%
+generators.cfl1 <- generators %>%
   inner_join(capacityfactors, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
-  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
+  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general, vintage) %>%
   summarise(nameplate=sum(nameplate)) %>%
-  ungroup() %>%
-  mutate_at(vars(ends_with("code")), as.character) %>%
-  mutate_if(is.factor, as.character)
-devtools::use_data(generators, overwrite=TRUE)
-
+  ungroup()
+devtools::use_data(generators.cfl1, overwrite=TRUE)
 
 # Inflation Adjustment ----------------------------------------------------
 source('data-raw/costs/gdpdeflator.R')

@@ -1,7 +1,7 @@
 calc.capacityfactors <- function(generators, plantgeneration)
 {
   plantcapacity <- generators %>%
-    select(yr, nameplate, utilcode, plntcode, gencode, overnightcategory, fuel.general) %>%
+    select(yr, nameplate, utilcode, plntcode, overnightcategory, fuel.general) %>%
     rename(capacity = nameplate) %>%
     group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
     summarise(capacity=sum(capacity)) %>%
