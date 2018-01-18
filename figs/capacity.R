@@ -39,20 +39,15 @@ gn <- generators.new %>%
   left_join(mapping, by=c("primemover", "fuel")) %>%
   select(-primemover, -fuel) %>%
   filter(fuel.general != "" & overnightcategory != "") %>%
-  group_by(yr) %>%
-  #group_by(yr, fuel.general, overnightcategory) %>%
+  mutate(choice=paste(fuel.general, overnightcategory, sep="-"))
   summarise(nameplate=sum(nameplate)) %>%
   ungroup()
-  #mutate(choice=paste(fuel.general, overnightcategory, sep="-"))
 plot.all(gn, folder)
 plot.ind(gn, folder)
 
 
 folder <- "figs/capacity/"
 g <- generators %>%
-  left_join(mapping, by=c("primemover", "fuel")) %>%
-  select(-primemover, -fuel) %>%
-  filter(fuel.general != "" & overnightcategory != "") %>%
   group_by(yr) %>%
   #group_by(yr, fuel.general, overnightcategory) %>%
   summarise(nameplate=sum(nameplate)) %>%
