@@ -16,10 +16,10 @@ plot <- function(df, ptitle) {
   # geom_bar()
   if (grepl("fuel", ptitle)) {
     p <- p +
-      geom_bar(aes(fill=fuel.general), stat="identity")
+      geom_bar(aes(fill=fuel), stat="identity")
   } else if (grepl("overnight", ptitle)) {
     p <- p +
-      geom_bar(aes(fill=overnightcategory), stat="identity")
+      geom_bar(aes(fill=overnight), stat="identity")
   }
 
   # save
@@ -39,58 +39,74 @@ plot.agg <- function(df, ptitle, group) {
   p <- plot(df.grp, ptitle)
   return(p)
 }
+
 # multiplot w/ one legend function
 source("figs/sharedlegend.R")
+# 1 2
+# 3 4
+
+# multiplot w/ multiple legends
+source("figs/multiplot.R")
+# 1 3
+# 2 4
 
 
 # CFL1 Dataset ------------------------------------------------------------
 
 # new additions
 cfl1.new <- generators.cfl1 %>%
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
   filter(yr == vintage) %>%
-  mutate(yr = as.factor(yr)) %>%
-  mutate(overnightcategory = gsub("conventional ", "", overnightcategory))
+  mutate(yr = as.factor(yr))
 
 cfl1.new.fuel <- plot.agg(cfl1.new, "CFL1 Additions",  "fuel")
 cfl1.new.oc <- plot.agg(cfl1.new, "CFL1 Additions", "overnight")
 
 # full fleet
 cfl1 <- generators.cfl1 %>%
-  mutate(yr = as.factor(yr))%>%
-  mutate(overnightcategory = gsub("conventional ", "", overnightcategory))
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  mutate(yr = as.factor(yr))
+
 cfl1.fuel <- plot.agg(cfl1, "CFL1 Fleet", "fuel")
 cfl1.oc <- plot.agg(cfl1, "CFL1 Fleet", "overnight")
 
 # Original Dataset --------------------------------------------------------
 # new additions
 orig.new <- generators %>%
-  filter(yr == vintage) %>%
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
   mutate(yr = as.factor(yr)) %>%
-  mutate(overnightcategory = gsub("conventional ", "", overnightcategory))
+  filter(yr == vintage)
+
 orig.new.fuel <- plot.agg(orig.new, "ORIG Additions",  "fuel")
 orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
 
 # full fleet
 orig <- generators %>%
-  mutate(yr = as.factor(yr)) %>%
-  mutate(overnightcategory = gsub("conventional ", "", overnightcategory))
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  mutate(yr = as.factor(yr))
+
 orig.fuel <- plot.agg(orig, "ORIG Fleet", "fuel")
 orig.oc <- plot.agg(orig, "ORIG Fleet", "overnight")
-
 
 
 # PLOTS -------------------------------------------------------------------
 
 ## SAVE CFL1 PLOT
 png("figs/CFL1.png", width=11, height=8.5, units="in", res=250)
-grid_arrange_shared_legend(cfl1.new.fuel, cfl1.new.oc, cfl1.fuel, cfl1.oc,
-                           position="right", ncol=2, nrow=2)
+multiplot(cfl1.new.fuel,cfl1.fuel, cfl1.new.oc,cfl1.oc, cols=2)
 dev.off()
 
 ## SAVE ORIG PLOT
 png("figs/ORIG.png", width=11, height=8.5, units="in", res=250)
-grid_arrange_shared_legend(orig.new.fuel, orig.new.oc, orig.fuel, orig.oc,
-                           position="right", ncol=2, nrow=2)
+multiplot(orig.new.fuel, orig.fuel, orig.new.oc, orig.oc, cols=2)
 dev.off()
 
 ## SAVE FUEL PLOT
@@ -103,5 +119,21 @@ dev.off()
 png("figs/Capacity by overnight.png", width=11, height=8.5, units="in", res=250)
 grid_arrange_shared_legend(cfl1.new.oc, cfl1.oc, orig.new.oc, orig.oc,
                            position="right", ncol=2, nrow=2)
+dev.off()
+
+
+
+# XOR (Original, CFL1) ----------------------------------------------------
+data(capacityfactors)
+xor <- generators %>%
+  anti_join(capacityfactors, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  mutate(yr = as.factor(yr))
+xor.fuel <- plot.agg(xor, "XOR Fleet", "fuel")
+
+png("figs/xor by fuel.png", width=11, height=8.5, units="in", res=250)
+print(xor.fuel)
 dev.off()
 
