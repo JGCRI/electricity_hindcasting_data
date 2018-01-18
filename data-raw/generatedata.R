@@ -49,7 +49,8 @@ generation <- rbind(generation.90to00, generation.01to16) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
-devtools::use_data(generation, overwrite=TRUE)
+
+# See Capacity Factors cell for use_data()
 
 
 # Capacity Factors ---------------------------------------------------------
@@ -80,6 +81,7 @@ generation <- swapids(generation, mapping) %>%
   group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
   summarise(generation=sum(generation)) %>%
   ungroup()
+devtools::use_data(generation, overwrite=TRUE)
 
 # calculate and save capacityfactors
 cf <- calc.capacityfactors(generators, generation)
