@@ -82,8 +82,11 @@ generation <- swapids(generation, mapping) %>%
   ungroup()
 
 # calculate and save capacityfactors
-capacityfactors <- calc.capacityfactors(generators, generation)
+cf <- calc.capacityfactors(generators, generation)
+capacityfactors <- cf$cf
+capacityfactors.unfilt <- cf$cf.unfilt
 devtools::use_data(capacityfactors, overwrite=TRUE)
+devtools::use_data(capacityfactors.unfilt, overwrite=TRUE)
 
 # save generators that contribute to capacity factor less than 1
 generators.cfl1 <- generators %>%
