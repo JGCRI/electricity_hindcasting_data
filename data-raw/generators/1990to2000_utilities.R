@@ -33,15 +33,15 @@ prep.generators.90to00 <- function(startingDir)
              status1, status2, startyr, endyr)
 
     # convert capacities to MW, keep heatrate in BTU/kWh
-    if (yr.ind <= 1997) {
+    #if (yr.ind <= 1997) {
       data.conv <- data.sub %>%
         mutate(nameplate = nameplate/1000,
                summer = summer/1000,
                winter = winter/1000,
                heatrate = heatrate)
-    } else {
-      data.conv <- data.sub
-    }
+    # } else {
+    #   data.conv <- data.sub
+    # }
 
 
     # normalize datatype of cols, then filter by nameplate and status
