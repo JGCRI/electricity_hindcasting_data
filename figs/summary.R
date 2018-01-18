@@ -5,6 +5,9 @@
 # Look at investment vs capacity factor
 # Other parameters to illuminate relationship between investment and performance characteristics?
 
+library(magrittr)
+library(dplyr)
+library(ggplot2)
 
 # overnight categories ----------------------------------------------------
 capcats <- capitalcosts %>%

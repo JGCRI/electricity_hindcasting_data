@@ -1,4 +1,3 @@
-library(energy.markets)
 library(dplyr)
 library(magrittr)
 library(ggplot2)
@@ -11,7 +10,7 @@ plot <- function(df, ptitle) {
     ggtitle(ptitle) +
     theme(axis.text.x = element_text(angle = 45, hjust=1)) +
     ylab("MW")
-  
+
   if (grepl("fuel", ptitle)) {
     p <- p +
       geom_bar(aes(fill=fuel.general), stat="identity")
@@ -19,20 +18,20 @@ plot <- function(df, ptitle) {
     p <- p +
       geom_bar(aes(fill=overnightcategory), stat="identity")
   }
-  
+
   # save
   fn <- paste0("figs/", ptitle, ".png")
   ggsave(filename=fn, plot=p, device="png", width=11, height=8, units="in")
-  
+
   p
 }
 
 # aggregate by fuel/overnight, then plot
 plot.agg <- function(df, ptitle, group) {
-  df.grp <- df %>% 
-    group_by_at(vars(yr, matches(group))) %>% 
-    summarise(nameplate=sum(nameplate)) %>% 
-    ungroup() 
+  df.grp <- df %>%
+    group_by_at(vars(yr, matches(group))) %>%
+    summarise(nameplate=sum(nameplate)) %>%
+    ungroup()
   ptitle <- paste0(ptitle, " by ", group)
   plot(df.grp, ptitle)
 }
@@ -43,7 +42,7 @@ plot.agg <- function(df, ptitle, group) {
 
 # new additions
 cfl1.new <- generators.cfl1 %>%
-  filter(yr == vintage) 
+  filter(yr == vintage)
 plot.agg(cfl1.new, "Additions",  "fuel")
 plot.agg(cfl1.new, "Additions", "overnight")
 
