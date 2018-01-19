@@ -64,7 +64,7 @@ source("figs/sharedlegend.R")
 
 # Capacity Factors Datasets -----------------------------------------------
 
-cf <- capacityfactors %>%
+cfl1 <- capacityfactors %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = overnightcategory) %>%
   mutate(overnight = gsub("conventional ", "", overnight)) %>%
@@ -72,9 +72,9 @@ cf <- capacityfactors %>%
   summarise(capfac = mean(capacityfactor)) %>%
   ungroup()
 
-cf.fuel <- plot.agg(cf, "CFL1", "fuel")
+cfl1.fuel <- plot.agg(cf, "CFL1", "fuel")
 
-cf.unfilt <- capacityfactors.unfilt %>%
+cfg1 <- capacityfactors.unfilt %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = overnightcategory) %>%
   mutate(overnight = gsub("conventional ", "", overnight)) %>%
@@ -82,14 +82,14 @@ cf.unfilt <- capacityfactors.unfilt %>%
   group_by(yr, overnight, fuel) %>%
   summarise(capfac = mean(capacityfactor)) %>%
   ungroup()
-cf.unfilt.fuel <- plot.agg(cf.unfilt, "CFG1", "fuel")
+cfg1.fuel <- plot.agg(cfg1, "CFG1", "fuel")
 
 
 # PLOTS -------------------------------------------------------------------
 fn <- "figs/CF by fuel.png"
 print(paste0("Saving ", fn))
 png(fn, width=11, height=11, units="in", res=250)
-grid_arrange_shared_legend(cf.fuel, cf.unfilt.fuel,
+grid_arrange_shared_legend(cfl1.fuel, cfg1.fuel,
                            position="right", ncol=2, nrow=1)
 dev.off()
 

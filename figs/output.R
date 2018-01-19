@@ -65,9 +65,8 @@ output.fuel <- plot.agg(output, "Output", "fuel")
 output.oc <- plot.agg(output, "Output", "overnight")
 
 
-
-# Potential Generation Data -----------------------------------------------
-potential <- generators %>%
+# ORIG Potential Generatin Data -------------------------------------------
+potential.orig <- generators %>%
   dplyr::rename(fuel=fuel.general,
                 overnight=overnightcategory) %>%
   mutate(overnight = gsub("conventional ", "", overnight)) %>%
@@ -77,8 +76,22 @@ potential <- generators %>%
   mutate(generation = 8760*nameplate,
          yr=as.factor(yr))
 
-potential.fuel <- plot.agg(potential, "Potential Output", "fuel")
-potential.oc <- plot.agg(potential, "Potential Output", "overnight")
+potential.orig.fuel <- plot.agg(potential.orig, "ORIG Potential Output", "fuel")
+potential.orig.oc <- plot.agg(potential.orig, "ORIG Potential Output", "overnight")
+
+# CFL1 Potential Generation Data -----------------------------------------------
+potential.cfl1 <- generators.cfl1 %>%
+  dplyr::rename(fuel=fuel.general,
+                overnight=overnightcategory) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  group_by(yr, overnight, fuel) %>%
+  summarise(nameplate=sum(nameplate)) %>%
+  ungroup() %>%
+  mutate(generation = 8760*nameplate,
+         yr=as.factor(yr))
+
+potential.cfl1.fuel <- plot.agg(potential.cfl1, "CFL1 Potential Output", "fuel")
+potential.cfl1.oc <- plot.agg(potential.cfl1, "CFL1 Potential Output", "overnight")
 
 # PLOT --------------------------------------------------------------------
 
@@ -86,7 +99,9 @@ potential.oc <- plot.agg(potential, "Potential Output", "overnight")
 # multiplot(output.fuel, output.oc, cols=2)
 # dev.off()
 
-png("figs/Output.png", width=8.5, height=11, units="in", res=250)
-grid_arrange_shared_legend(output.fuel, potential.fuel,
-                           position="right", ncol=2, nrow=1)
+fn <- "figs/Output.png"
+print(paste0("Saving ", fn))
+png(fn, width=8.5, height=11, units="in", res=250)
+grid_arrange_shared_legend(potential.orig.fuel, output.fuel, potential.cfl1.fuel,
+                           position="right", ncol=1, nrow=3)
 dev.off()
