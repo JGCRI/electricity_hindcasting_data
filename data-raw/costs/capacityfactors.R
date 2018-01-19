@@ -18,7 +18,8 @@ calc.capacityfactors <- function(generators, plantgeneration)
     select(yr, utilcode, plntcode, overnightcategory, fuel.general, capacityfactor)
 
   cf <- cf.unfilt %>%
-    filter(capacityfactor < 1) # unsure why we have capacity factors greather than one
+    mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor))
+  # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
 
   data <- list(cf.unfilt, cf)
   names(data) <- c("cf.unfilt", "cf")
