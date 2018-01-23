@@ -23,13 +23,13 @@ prep.generation.90to00 <- function(startingDir)
       # sum over 12 GEN## columns (12 monthly reports contained in one workbook)
       gencols <- "GEN"
     }
-    data.raw <- mutate_at(data.raw, vars(starts_with(gencols)), as.numeric )
-    data.raw$total.generation <- data.raw %>%
-      select( starts_with(gencols) ) %>%
-      rowSums(.)
+    data.raw <- mutate_at(data.raw, vars(starts_with(gencols)), as.numeric ) # make GEN data numeric
+    data.raw$total.generation <- data.raw %>% # create column
+      select( starts_with(gencols) ) %>% # by subsetting
+      rowSums(.)  # then summing
     data.raw <- data.raw %>%
-      select(-starts_with(gencols) ) %>%
-      rename(generation=total.generation)
+      select(-starts_with(gencols) ) %>% # drop original GEN data cols
+      rename(generation=total.generation) # use total annual generation data
 
     ## FUEL CONSUMPTION
     # "consumption" col isn't renamed after 1996
@@ -43,14 +43,27 @@ prep.generation.90to00 <- function(startingDir)
 
     ## TRUNCATE
     data.filter <- data.raw %>%
-      select(PMOVER, PMDESC, FUELTYP, FUELDESC, yr, generation, consumption, UTILCODE, PCODE ) %>%
+      {if(yr.ind ==1990)
+        select(., PMOVER, PMDESC, FUELTYP, FUELDESC, yr, generation, consumption, PCODE, UTILCODE, UCODE) %>%
+        dplyr::rename(NAD = UCODE)
+        else if (yr.ind %in% 1991:1994)
+          select(., PMOVER, PMDESC, FUELTYP, FUELDESC, yr, generation, consumption, PCODE, UTILCODE) %>%
+          dplyr::rename(NAD = UTILCODE) %>%
+          mutate(UTILCODE = "")
+        else if (yr.ind == 1995)
+          select(., PMOVER, PMDESC, FUELTYP, FUELDESC, yr, generation, consumption, PCODE, UTILCODE, NAD_UTIL) %>%
+          dplyr::rename(NAD = UTILCODE,
+                        UTILCODE = NAD_UTIL)
+        else
+          select(., PMOVER, PMDESC, FUELTYP, FUELDESC, yr, generation, consumption, PCODE, UTILCODE, UCODE) %>%
+          dplyr::rename(NAD = UCODE)} %>% # now has UTILCODE as well as NAD column
       mutate(PMOVER = as.integer(PMOVER)) %>%
       mutate(PMDESC = as.character(PMDESC)) %>%
       mutate(FUELTYP = as.character(FUELTYP)) %>%
       mutate(FUELDESC = as.character(FUELDESC)) %>%
       rename(utilcode = UTILCODE) %>%
-      mutate(utilcode = str_replace(as.character(utilcode), "^[0]+", "")) %>%
       rename(plntcode = PCODE) %>%
+      mutate(utilcode = str_replace(as.character(utilcode), "^[0]+", "")) %>%
       mutate(plntcode = str_replace(as.character(plntcode), "^[0]+", ""))
 
     ## MAP FROM FORM759 TO FORM860 CODES
