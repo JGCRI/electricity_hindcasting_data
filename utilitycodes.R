@@ -34,17 +34,19 @@ test3 <- generators %>%
   summarise(cap=sum(nameplate)) %>%
   ungroup()  %>%
   mutate(plntcode = as.numeric(plntcode)) %>%
-  spread(key=yr, value=cap, -utilcode)
+  spread(key=yr, value=cap)
 View(test3)
+View(filter(test3, is.na(test3[,"1992"]) & !is.na(test3[,"1991"])))
 
-test3a <- generators.01to16 %>%
-  rbind(generators.90to00) %>%
+test3a <- generators.90to00 %>%
+  # rbind(generators.01to16) %>%
   group_by(plntcode, yr) %>%
   summarise(cap=sum(nameplate)) %>%
   ungroup() %>%
   mutate(plntcode = as.numeric(plntcode)) %>%
   spread(key=yr, value=cap)
-View(test3a)
+View(filter(test3a, is.na(test3a[,"1992"]) & !is.na(test3a[,"1991"])))
+View(test3a[,1:8])
 
 # look at NAD assigned to (pcode)-key
 test4 <- generation.90to00 %>%
