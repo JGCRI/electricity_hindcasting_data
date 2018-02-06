@@ -28,7 +28,11 @@ generators <- rbind(generators.90to00, generators.01to16) %>%
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
-mapping <- prep.mapping('data-raw/generators/fuels.csv', 'data-raw/generators/overnightcategories.csv')
+mapping.full <- prep.mapping(generators, 'data-raw/generators/fuels.csv', 'data-raw/generators/movers.csv') %>%
+  mutate(tech = ifelse(fuel.general == "biomass", "biomass (conv)", tech),
+         tech = ifelse(fuel.general == "wind", "wind (wind)", tech))
+devtools::use_data(mapping.full, overwrite=TRUE)
+mapping <- filter(mapping.full, fuel.general != "")
 devtools::use_data(mapping, overwrite=TRUE)
 
 # Generation & Consumption ------------------------------------------------
