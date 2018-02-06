@@ -165,6 +165,40 @@ and.out <- inner_join(gen, out, by=c("yr", "utilcode", "plntcode", "overnight", 
   filter(generation>0)
 and.out.fuel <- plot.agg(and.out, "AND.OUT Fleet", "fuel")
 
+
+# merged cap data ---------------------------------------------------------
+data(mapping)
+merged <- read.delim("C:/Users/guti220/Downloads/merged.tsv")
+merged.map <- merged %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  select(-primemover, -fuel) %>%
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory,
+                vintage = startyr) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  mutate(yr = as.factor(yr)) %>%
+  filter(!is.na(generation)) %>%
+  group_by(yr, utilcode, plntcode, overnight, fuel, vintage) %>%
+  summarise(nameplate = sum(nameplate)) %>%
+  ungroup()
+
+# new additions
+mer.new <- merged.map %>%
+  filter(yr == vintage)
+
+mer.new.fuel <- plot.agg(mer.new, "MERGED Additions",  "fuel")
+mer.new.oc <- plot.agg(mer.new, "MERGED Additions", "overnight")
+
+# full fleet
+mer <- merged.map %>% # aggregate over vintage
+  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
+  summarise(nameplate = sum(nameplate)) %>%
+  ungroup() #%>%
+  # filter(! yr %in% c(1998, 1999, 2000))
+mer.fuel <- plot.agg(mer, "MERGED Fleet", "fuel")
+mer.oc <- plot.agg(mer, "MERGED Fleet", "overnight")
+
+
 # PLOTS -------------------------------------------------------------------
 
 ## SAVE cf PLOT

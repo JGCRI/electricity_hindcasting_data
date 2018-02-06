@@ -4,6 +4,8 @@ library(ggplot2)
 
 data(generation, generators)
 
+# functions ---------------------------------------------------------------
+
 # display & save stacked bar plot
 plot <- function(df, ptitle) {
 
@@ -93,6 +95,24 @@ potential.cfl1 <- generators.cfl1 %>%
 potential.cfl1.fuel <- plot.agg(potential.cfl1, "CFL1 Potential Output", "fuel")
 potential.cfl1.oc <- plot.agg(potential.cfl1, "CFL1 Potential Output", "overnight")
 
+
+
+# merged output data ------------------------------------------------------
+merged <- read.delim("C:/Users/guti220/Downloads/merged.tsv")
+merged.map <- merged %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  select(-primemover, -fuel) %>%
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory,
+                vintage = startyr) %>%
+  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  mutate(yr = as.factor(yr)) %>%
+  filter(!is.na(generation)) %>%
+  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
+  summarise(generation = sum(generation)) %>%
+  ungroup()
+
+merged.fuel <- plot.agg(merged.map, "MERGED", "fuel")
 # PLOT --------------------------------------------------------------------
 
 # png("figs/Output.png", width=11, height=5, units="in", res=250)
