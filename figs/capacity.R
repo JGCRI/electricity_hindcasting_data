@@ -95,8 +95,7 @@ data(generators)
 # new additions
 orig <- generators %>%
   dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+                overnight = tech) %>%
   mutate(yr = as.factor(yr))
 
 orig.new <- orig %>%
@@ -162,12 +161,13 @@ and.out <- inner_join(gen, out, by=c("yr", "utilcode", "plntcode", "overnight", 
 and.out.fuel <- plot.agg(and.out, "AND.OUT Fleet", "fuel")
 
 
-# merged cap data ---------------------------------------------------------
+# MERGED Dataset ---------------------------------------------------------
 merged <- read.csv("C:/Users/guti220/Desktop/energy.markets/merged.map.csv", stringsAsFactors=FALSE) %>%
   select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = tech,
                 vintage = startyr) %>%
+  filter(fuel != "") %>%
   mutate(yr = as.factor(yr)) %>%
   filter(!is.na(generation)) %>%
   group_by(yr, utilcode, plntcode, overnight, fuel, vintage) %>%
@@ -185,8 +185,7 @@ mer.new.oc <- plot.agg(mer.new, "MERGED Additions", "overnight")
 mer <- merged %>% # aggregate over vintage
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
-  ungroup() #%>%
-  # filter(! yr %in% c(1998, 1999, 2000))
+  ungroup()
 mer.fuel <- plot.agg(mer, "MERGED Fleet", "fuel")
 mer.oc <- plot.agg(mer, "MERGED Fleet", "overnight")
 
@@ -231,14 +230,14 @@ print(xor.fuel)
 dev.off()
 
 ## SAVE MERGED.FUEL PLOT
-fn <- "merged.fuel.png"
+fn <- "C:/Users/guti220/Desktop/2.9.18 mtg/merged.fuel.png"
 print(paste0("Saving ", fn))
 png(fn, width=11, height=8.5, units="in", res=250)
 grid_arrange_shared_legend(mer.fuel, mer.new.fuel, ncol=1, nrow=2)
 dev.off()
 
 ## SAVE ORIG.FUEL PLOT
-fn <- "orig.fuel.png"
+fn <- "C:/Users/guti220/Desktop/2.9.18 mtg/orig.fuel.png"
 print(paste0("Saving ", fn))
 png(fn, width=11, height=8.5, units="in", res=250)
 grid_arrange_shared_legend(orig.fuel, orig.new.fuel, ncol=1, nrow=2)

@@ -19,10 +19,10 @@ source('data-raw/generators/2001to2016_utilities.R')
 generators.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 
 # fix code errors
-generators <- rbind(generators.90to00, generators.01to16) %>%
+generators.unmapped <- rbind(generators.90to00, generators.01to16) %>%
   mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel),
          fuel = ifelse(fuel=="WOC", "WC", fuel) )
-
+devtools::use_data(generators.unmapped, overwrite=TRUE)
 # See Capacity Factors cell for use_data()
 
 # Mapping file ------------------------------------------------------------
@@ -49,12 +49,12 @@ source('data-raw/generation/2001to2016_utilities.R')
 generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
   mutate(NAD="")
 
-generation <- rbind(generation.90to00, generation.01to16) %>%
+generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
   group_by(yr, utilcode, plntcode, primemover, fuel) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
-
+devtools::use_data(generation.unmapped, overwrite=TRUE)
 # See Capacity Factors cell for use_data()
 
 
@@ -73,7 +73,7 @@ swapids <- function(df, mapping) {
 }
 
 # save full generators dataset
-generators <- swapids(generators, mapping) %>%
+generators <- swapids(generators.unmapped, mapping) %>%
   dplyr::rename(vintage=startyr) %>%
   group_by(yr, utilcode, plntcode, tech, fuel.general, vintage) %>%
   summarise(nameplate=sum(nameplate)) %>%
@@ -82,7 +82,7 @@ devtools::use_data(generators, overwrite=TRUE)
 
 # mapping to oc-fg creates duplicate rows bc reported (plant x primemover x fuel)
 # sum 'em up!
-generation <- swapids(generation, mapping) %>%
+generation <- swapids(generation.unmapped, mapping) %>%
   group_by(yr, utilcode, plntcode, tech, fuel.general) %>%
   summarise(generation=sum(generation)) %>%
   ungroup()
