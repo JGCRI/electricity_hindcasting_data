@@ -1,8 +1,9 @@
 library(dplyr)
 library(magrittr)
 library(ggplot2)
+library(tidyr)
 
-data(generators, generators.cf)
+data(generators)#, generators.cf)
 
 
 # Functions ---------------------------------------------------------------
@@ -93,23 +94,19 @@ cf.oc <- plot.agg(cf, "CF Fleet", "overnight")
 
 # Original Dataset --------------------------------------------------------
 # new additions
-orig.new <- generators %>%
-  dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  mutate(yr = as.factor(yr)) %>%
-  filter(yr == vintage)
-
-orig.new.fuel <- plot.agg(orig.new, "ORIG Additions",  "fuel")
-orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
-
-# full fleet
 orig <- generators %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = overnightcategory) %>%
   mutate(overnight = gsub("conventional ", "", overnight)) %>%
   mutate(yr = as.factor(yr))
 
+orig.new <- orig %>%
+  filter(yr == vintage)
+
+orig.new.fuel <- plot.agg(orig.new, "ORIG Additions",  "fuel")
+orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
+
+# full fleet
 orig.fuel <- plot.agg(orig, "ORIG Fleet", "fuel")
 orig.oc <- plot.agg(orig, "ORIG Fleet", "overnight")
 
@@ -167,15 +164,11 @@ and.out.fuel <- plot.agg(and.out, "AND.OUT Fleet", "fuel")
 
 
 # merged cap data ---------------------------------------------------------
-data(mapping)
-merged <- read.delim("C:/Users/guti220/Downloads/merged.tsv")
-merged.map <- merged %>%
-  left_join(mapping, by=c("primemover", "fuel")) %>%
+merged <- read.csv("C:/Users/guti220/Desktop/energy.markets/merged.map.csv", stringsAsFactors=FALSE) %>%
   select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory,
+                overnight = tech,
                 vintage = startyr) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
   mutate(yr = as.factor(yr)) %>%
   filter(!is.na(generation)) %>%
   group_by(yr, utilcode, plntcode, overnight, fuel, vintage) %>%
@@ -183,14 +176,14 @@ merged.map <- merged %>%
   ungroup()
 
 # new additions
-mer.new <- merged.map %>%
+mer.new <- merged %>%
   filter(yr == vintage)
 
 mer.new.fuel <- plot.agg(mer.new, "MERGED Additions",  "fuel")
 mer.new.oc <- plot.agg(mer.new, "MERGED Additions", "overnight")
 
 # full fleet
-mer <- merged.map %>% # aggregate over vintage
+mer <- merged %>% # aggregate over vintage
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
   ungroup() #%>%
@@ -238,5 +231,16 @@ png(fn, width=11, height=8.5, units="in", res=250)
 print(xor.fuel)
 dev.off()
 
+## SAVE MERGED.FUEL PLOT
+fn <- "merged.fuel.png"
+print(paste0("Saving ", fn))
+png(fn, width=11, height=8.5, units="in", res=250)
+grid_arrange_shared_legend(mer.fuel, mer.new.fuel, ncol=1, nrow=2)
+dev.off()
 
-
+## SAVE ORIG.FUEL PLOT
+fn <- "orig.fuel.png"
+print(paste0("Saving ", fn))
+png(fn, width=11, height=8.5, units="in", res=250)
+grid_arrange_shared_legend(orig.fuel, orig.new.fuel, ncol=1, nrow=2)
+dev.off()
