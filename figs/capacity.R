@@ -3,8 +3,6 @@ library(magrittr)
 library(ggplot2)
 library(tidyr)
 
-data(generators)#, generators.cf)
-
 
 # Functions ---------------------------------------------------------------
 
@@ -92,7 +90,8 @@ cf <- generators.cf %>%
 cf.fuel <- plot.agg(cf, "CF Fleet", "fuel")
 cf.oc <- plot.agg(cf, "CF Fleet", "overnight")
 
-# Original Dataset --------------------------------------------------------
+# CAP Dataset --------------------------------------------------------
+data(generators)
 # new additions
 orig <- generators %>%
   dplyr::rename(fuel = fuel.general,

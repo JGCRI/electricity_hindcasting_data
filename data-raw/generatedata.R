@@ -46,7 +46,8 @@ source('data-raw/generation/2001to2016_utilities.R')
 # data: https://www.eia.gov/electricity/data/eia923/
 # generation ~ MWh
 # consumption ~ Btu
-generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/")
+generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
+  mutate(NAD="")
 
 generation <- rbind(generation.90to00, generation.01to16) %>%
   group_by(yr, utilcode, plntcode, primemover, fuel) %>%
@@ -67,14 +68,14 @@ source('data-raw/costs/capacityfactors.R')
 swapids <- function(df, mapping) {
   df.swap <- df %>%
     left_join(mapping, by=c("primemover", "fuel")) %>%
-    filter(overnightcategory != "" | fuel.general != "") %>%
+    filter(tech != "" | fuel.general != "") %>%
     select(-primemover, -fuel)
 }
 
 # save full generators dataset
 generators <- swapids(generators, mapping) %>%
   dplyr::rename(vintage=startyr) %>%
-  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general, vintage) %>%
+  group_by(yr, utilcode, plntcode, tech, fuel.general, vintage) %>%
   summarise(nameplate=sum(nameplate)) %>%
   ungroup()
 devtools::use_data(generators, overwrite=TRUE)
@@ -82,7 +83,7 @@ devtools::use_data(generators, overwrite=TRUE)
 # mapping to oc-fg creates duplicate rows bc reported (plant x primemover x fuel)
 # sum 'em up!
 generation <- swapids(generation, mapping) %>%
-  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
+  group_by(yr, utilcode, plntcode, tech, fuel.general) %>%
   summarise(generation=sum(generation)) %>%
   ungroup()
 devtools::use_data(generation, overwrite=TRUE)
