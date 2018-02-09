@@ -12,18 +12,21 @@ library(rebus)
 # nameplate, summer, winter ~ MW
 # heatrate ~ BTU/ kWh
 
-source('data-raw/generators/1990to2000_utilities.R')
-generators.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/")
+source('data-raw/generators/1990to2000_utilities.R') # generator-level
+capacity.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/")
 
-source('data-raw/generators/2001to2016_utilities.R')
-generators.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
+source('data-raw/generators/2001to2016_utilities.R') # generator-level
+capacity.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 
-# fix code errors
-generators <- rbind(generators.90to00, generators.01to16) %>%
-  mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel),
-         fuel = ifelse(fuel=="WOC", "WC", fuel) )
-
-# See Capacity Factors cell for use_data()
+# save unmapped data
+capacity.unmapped <- rbind(capacity.90to00, capacity.01to16) %>%
+  mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel), # fix code errors
+         fuel = ifelse(fuel=="WOC", "WC", fuel) ) %>%
+  dplyr::rename(vintage=startyr) %>% # use vintage instead of startyr
+  group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
+  summarise(nameplate=sum(nameplate)) %>%
+  ungroup()
+devtools::use_data(capacity.unmapped, overwrite=TRUE)
 
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
@@ -42,16 +45,15 @@ source('data-raw/generation/2001to2016_utilities.R')
 # data: https://www.eia.gov/electricity/data/eia923/
 # generation ~ MWh
 # consumption ~ Btu
-generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/")
+generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
+  mutate(NAD="")
 
-generation <- rbind(generation.90to00, generation.01to16) %>%
+generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
   group_by(yr, utilcode, plntcode, primemover, fuel) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
-
-# See Capacity Factors cell for use_data()
-
+devtools::use_data(generation.unmapped, overwrite=TRUE)
 
 # Capacity Factors ---------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
@@ -63,40 +65,31 @@ source('data-raw/costs/capacityfactors.R')
 swapids <- function(df, mapping) {
   df.swap <- df %>%
     left_join(mapping, by=c("primemover", "fuel")) %>%
-    filter(overnightcategory != "" | fuel.general != "") %>%
     select(-primemover, -fuel)
 }
 
-# save full generators dataset
-generators <- swapids(generators, mapping) %>%
-  dplyr::rename(vintage=startyr) %>%
-  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general, vintage) %>%
-  summarise(nameplate=sum(nameplate)) %>%
+# map to fuel.general, overnight IDs, then aggregate over redundant mappings
+capacity <- swapids(capacity.unmapped, mapping) %>%
+  group_by(yr, utilcode, plntcode, vintage, overnightcategory, fuel.general) %>%
+  summarise(nameplate = sum(nameplate) ) %>%
   ungroup()
-devtools::use_data(generators, overwrite=TRUE)
+devtools::use_data(capacity, overwrite=TRUE)
 
 # mapping to oc-fg creates duplicate rows bc reported (plant x primemover x fuel)
 # sum 'em up!
-generation <- swapids(generation, mapping) %>%
+generation <- swapids(generation.unmapped, mapping) %>%
   group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
-  summarise(generation=sum(generation)) %>%
+  summarise(generation=sum(generation),
+            consumption=sum(consumption)) %>%
   ungroup()
 devtools::use_data(generation, overwrite=TRUE)
 
 # calculate and save capacityfactors
-cf <- calc.capacityfactors(generators, generation)
+cf <- calc.capacityfactors(capacity, generation)
 capacityfactors <- cf$cf
-capacityfactors.unfilt <- cf$cf.unfilt
+capacityfactors.clamp <- cf$cf.clamp
 devtools::use_data(capacityfactors, overwrite=TRUE)
-devtools::use_data(capacityfactors.unfilt, overwrite=TRUE)
-
-# save generators that contribute to capacity factor less than 1
-generators.cfl1 <- generators %>%
-  inner_join(capacityfactors, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
-  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general, vintage) %>%
-  summarise(nameplate=sum(nameplate)) %>%
-  ungroup()
-devtools::use_data(generators.cfl1, overwrite=TRUE)
+devtools::use_data(capacityfactors.clamp, overwrite=TRUE)
 
 # Inflation Adjustment ----------------------------------------------------
 source('data-raw/costs/gdpdeflator.R')
@@ -163,7 +156,7 @@ source('data-raw/costs/levelize.R')
 # equation: See data-raw/costs/gcam/Electricity Generation Assumptions.pdf for equation
 # constant fixed charge rate of 0.13 from GCAM
 # units: overnight.lev, om.fixed.lev, om.var ~ $/MWh
-levelizedcosts <- calc.levelizedcosts(capacityfactors, capitalcosts, mapping, 0.13)
+levelizedcosts <- calc.levelizedcosts(capacityfactors.clamp, capitalcosts, mapping, 0.13)
 devtools::use_data(levelizedcosts, overwrite=TRUE)
 
 
@@ -171,11 +164,12 @@ devtools::use_data(levelizedcosts, overwrite=TRUE)
 # Full Cost ---------------------------------------------------------------
 # source('data-raw/costs/full.R')
 # data: marginalcosts (endogenous to GCAM) + levelizedcosts + generation
-modelinput <- levelizedcosts %>%
+master <- levelizedcosts %>%
   left_join(marginalcosts, by=c("yr", "overnightcategory", "fuel.general")) %>%
   mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) %>%  # renewables aren't assigned marginalcost
-  left_join(generation, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general"))
-devtools::use_data(modelinput, overwrite=TRUE)
+  left_join(generation, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
+  left_join(capacity, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general"))
+devtools::use_data(master, overwrite=TRUE)
 
 cost.comp <- fullcosts %>%
   mutate(om = om.fixed.lev + om.var) %>%

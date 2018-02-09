@@ -11,18 +11,18 @@ calc.capacityfactors <- function(generators, plantgeneration)
     select(yr, generation, utilcode, plntcode, overnightcategory, fuel.general) %>%
     filter(generation > 0) # drop generators that used more energy than they produced
 
-  cf.unfilt <- plantcapacity %>%
+  cf <- plantcapacity %>%
     inner_join(plantgeneration, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general") ) %>%
     mutate(potentialgeneration = capacity * 8760) %>%
     mutate(capacityfactor = generation/potentialgeneration) %>%
     select(yr, utilcode, plntcode, overnightcategory, fuel.general, capacityfactor)
 
-  cf <- cf.unfilt %>%
+  cf.clamp <- cf %>%
     mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor))
   # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
 
-  data <- list(cf.unfilt, cf)
-  names(data) <- c("cf.unfilt", "cf")
+  data <- list(cf, cf.clamp)
+  names(data) <- c("cf", "cf.clamp")
   # cf used in later calculations
 
   data
