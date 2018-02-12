@@ -1,0 +1,191 @@
+"yr","overnightcategory","fuel.general","marginal.cost"
+1991,"coal","coal",0.00627858561302759
+1992,"coal","coal",0.00596067039610313
+1993,"coal","coal",0.00571094874099783
+1994,"coal","coal",0.00546408861754141
+1995,"coal","coal",0.0052079397826745
+1996,"coal","coal",0.0050019503571612
+1997,"coal","coal",0.00485919414680723
+1998,"coal","coal",0.00473355247824517
+1999,"coal","coal",0.00454651441266802
+2000,"coal","coal",0.00437564379962563
+2001,"coal","coal",0.00436799623590919
+2002,"coal","coal",0.00428670652075544
+2003,"coal","coal",0.00433229159746414
+2004,"coal","coal",0.00451260625218531
+2005,"coal","coal",0.0049952243774726
+2006,"coal","coal",0.00536564799038236
+2007,"coal","coal",0.00551073076488029
+2008,"coal","coal",0.00621185292982996
+2009,"coal","coal",0.00668443248189012
+2010,"coal","coal",0.00674746189917937
+2011,"coal","coal",0.00697988989621403
+2012,"coal","coal",0.00692474162520358
+2013,"coal","coal",0.00666272983567203
+2014,"coal","coal",0.00656700295850549
+1991,"conventional combined cycle","natural gas",0.0102676539412831
+1992,"conventional combined cycle","natural gas",0.0107523996291109
+1993,"conventional combined cycle","natural gas",0.0111065155069018
+1994,"conventional combined cycle","natural gas",0.00957470403449814
+1995,"conventional combined cycle","natural gas",0.00788421050916415
+1996,"conventional combined cycle","natural gas",0.0104786730393631
+1997,"conventional combined cycle","natural gas",0.00994063971794662
+1998,"conventional combined cycle","natural gas",0.00839666754215611
+1999,"conventional combined cycle","natural gas",0.00908976468889042
+2000,"conventional combined cycle","natural gas",0.0146420421657322
+2001,"conventional combined cycle","natural gas",0.0161610332396468
+2002,"conventional combined cycle","natural gas",0.011778248158368
+2003,"conventional combined cycle","natural gas",0.0182781848460215
+2004,"conventional combined cycle","natural gas",0.016945583348785
+2005,"conventional combined cycle","natural gas",0.0218902643703254
+2006,"conventional combined cycle","natural gas",0.0178434965697085
+2007,"conventional combined cycle","natural gas",0.0172503881554069
+2008,"conventional combined cycle","natural gas",0.021059738363154
+2009,"conventional combined cycle","natural gas",0.0124081613471912
+2010,"conventional combined cycle","natural gas",0.0121251963657679
+2011,"conventional combined cycle","natural gas",0.0109161283243062
+2012,"conventional combined cycle","natural gas",0.00803001847148924
+2013,"conventional combined cycle","natural gas",0.00955210150371515
+2014,"conventional combined cycle","natural gas",0.0107923167693073
+1991,"conventional combined cycle","oil",0.0135790412533027
+1992,"conventional combined cycle","oil",0.0133946206259196
+1993,"conventional combined cycle","oil",0.0123710102657615
+1994,"conventional combined cycle","oil",0.0124690557335873
+1995,"conventional combined cycle","oil",0.0130484071672295
+1996,"conventional combined cycle","oil",0.0152287135084162
+1997,"conventional combined cycle","oil",0.0131832943565158
+1998,"conventional combined cycle","oil",0.00964891225661118
+1999,"conventional combined cycle","oil",0.01132370507205
+2000,"conventional combined cycle","oil",0.0193426112251086
+2001,"conventional combined cycle","oil",0.0172530820350163
+2002,"conventional combined cycle","oil",0.0155196581128704
+2003,"conventional combined cycle","oil",0.0193927861519591
+2004,"conventional combined cycle","oil",0.0182157744242153
+2005,"conventional combined cycle","oil",0.0261945885536394
+2006,"conventional combined cycle","oil",0.0288724156982347
+2007,"conventional combined cycle","oil",0.030892964220065
+2008,"conventional combined cycle","oil",0.0516140121785383
+2009,"conventional combined cycle","oil",0.0331847231089356
+2010,"conventional combined cycle","oil",0.042792368112544
+2011,"conventional combined cycle","oil",0.0620810828113477
+2012,"conventional combined cycle","oil",0.0635551879096342
+2013,"conventional combined cycle","oil",0.0581512418922209
+2014,"conventional combined cycle","oil",0.0538330034812773
+1991,"conventional combustion turbine","natural gas",0.0129966248603743
+1992,"conventional combustion turbine","natural gas",0.0135277091152168
+1993,"conventional combustion turbine","natural gas",0.01453035487656
+1994,"conventional combustion turbine","natural gas",0.0124389408115282
+1995,"conventional combustion turbine","natural gas",0.0106629307059356
+1996,"conventional combustion turbine","natural gas",0.0140718079194374
+1997,"conventional combustion turbine","natural gas",0.013818717534675
+1998,"conventional combustion turbine","natural gas",0.0117212063483174
+1999,"conventional combustion turbine","natural gas",0.0125950391386743
+2000,"conventional combustion turbine","natural gas",0.0204215431065228
+2001,"conventional combustion turbine","natural gas",0.021827252437987
+2002,"conventional combustion turbine","natural gas",0.0166287512523224
+2003,"conventional combustion turbine","natural gas",0.0253680180743863
+2004,"conventional combustion turbine","natural gas",0.0250534256134111
+2005,"conventional combustion turbine","natural gas",0.0325630893784656
+2006,"conventional combustion turbine","natural gas",0.0271341092291538
+2007,"conventional combustion turbine","natural gas",0.0264823168831586
+2008,"conventional combustion turbine","natural gas",0.0319010116843589
+2009,"conventional combustion turbine","natural gas",0.0188610578794911
+2010,"conventional combustion turbine","natural gas",0.0184448124267292
+2011,"conventional combustion turbine","natural gas",0.0166103759810468
+2012,"conventional combustion turbine","natural gas",0.0121256969669934
+2013,"conventional combustion turbine","natural gas",0.0141668118167138
+2014,"conventional combustion turbine","natural gas",0.0160348629147529
+1991,"conventional combustion turbine","oil",0.0158440827523487
+1992,"conventional combustion turbine","oil",0.0147566680746026
+1993,"conventional combustion turbine","oil",0.013712718305772
+1994,"conventional combustion turbine","oil",0.0137736623344695
+1995,"conventional combustion turbine","oil",0.0145669600892844
+1996,"conventional combustion turbine","oil",0.0169217213629277
+1997,"conventional combustion turbine","oil",0.01497116692413
+1998,"conventional combustion turbine","oil",0.0109872976576148
+1999,"conventional combustion turbine","oil",0.0128314363307451
+2000,"conventional combustion turbine","oil",0.0220113969946253
+2001,"conventional combustion turbine","oil",0.0192090991629446
+2002,"conventional combustion turbine","oil",0.0177627914638491
+2003,"conventional combustion turbine","oil",0.0219436411417534
+2004,"conventional combustion turbine","oil",0.021422341227584
+2005,"conventional combustion turbine","oil",0.0309287995213328
+2006,"conventional combustion turbine","oil",0.0345732180005468
+2007,"conventional combustion turbine","oil",0.0372208120416225
+2008,"conventional combustion turbine","oil",0.0625429327363244
+2009,"conventional combustion turbine","oil",0.0412710798086491
+2010,"conventional combustion turbine","oil",0.0546895779601407
+2011,"conventional combustion turbine","oil",0.0794929320467933
+2012,"conventional combustion turbine","oil",0.0849189573030934
+2013,"conventional combustion turbine","oil",0.0793237479972884
+2014,"conventional combustion turbine","oil",0.0729978564941101
+1994,"nuclear","uranium",0.0437493680928763
+1995,"nuclear","uranium",0.046644324873023
+1996,"nuclear","uranium",0.0574573857417723
+1997,"nuclear","uranium",0.0514528061638897
+1998,"nuclear","uranium",0.047952528966064
+1999,"nuclear","uranium",0.0449408590338168
+2000,"nuclear","uranium",0.0415668346549499
+2001,"nuclear","uranium",0.0374492231529659
+2002,"nuclear","uranium",0.0376403194638562
+2003,"nuclear","uranium",0.0383757677049088
+2004,"nuclear","uranium",0.0436110323306384
+2005,"nuclear","uranium",0.0481866492978321
+2006,"nuclear","uranium",0.0605838615293096
+2007,"nuclear","uranium",0.104791007843762
+2008,"nuclear","uranium",0.143330239736519
+2009,"nuclear","uranium",0.142288479207658
+2010,"nuclear","uranium",0.150990351699883
+2011,"nuclear","uranium",0.167185454371892
+2012,"nuclear","uranium",0.162472025390179
+2013,"nuclear","uranium",0.150737625973883
+2014,"nuclear","uranium",0.131602682589879
+2015,"nuclear","uranium",0.124449699362795
+1991,"steam turbine","natural gas",0.0095609796493195
+1992,"steam turbine","natural gas",0.0100930022472019
+1993,"steam turbine","natural gas",0.0108405382042243
+1994,"steam turbine","natural gas",0.00926473095417664
+1995,"steam turbine","natural gas",0.00807807033061406
+1996,"steam turbine","natural gas",0.0105497595462696
+1997,"steam turbine","natural gas",0.0108749485806407
+1998,"steam turbine","natural gas",0.00928045678920773
+1999,"steam turbine","natural gas",0.00986379675517443
+2000,"steam turbine","natural gas",0.0161456409612523
+2001,"steam turbine","natural gas",0.0164324026519497
+2002,"steam turbine","natural gas",0.0133128771343851
+2003,"steam turbine","natural gas",0.0197970454016765
+2004,"steam turbine","natural gas",0.021304122410772
+2005,"steam turbine","natural gas",0.0279377036651485
+2006,"steam turbine","natural gas",0.0240215483673368
+2007,"steam turbine","natural gas",0.0237685168724361
+2008,"steam turbine","natural gas",0.0285968208576876
+2009,"steam turbine","natural gas",0.0170124784177728
+2010,"steam turbine","natural gas",0.0165764595545135
+2011,"steam turbine","natural gas",0.0149520663381987
+2012,"steam turbine","natural gas",0.010950983824874
+2013,"steam turbine","natural gas",0.0128997598760228
+2014,"steam turbine","natural gas",0.014667854914462
+1991,"steam turbine","oil",0.0114168757883649
+1992,"steam turbine","oil",0.0112071495074898
+1993,"steam turbine","oil",0.010441281697098
+1994,"steam turbine","oil",0.0104526834694856
+1995,"steam turbine","oil",0.0111167645359723
+1996,"steam turbine","oil",0.0128888323126674
+1997,"steam turbine","oil",0.0115044267274917
+1998,"steam turbine","oil",0.00845252615588042
+1999,"steam turbine","oil",0.00985123562415615
+2000,"steam turbine","oil",0.0169286517673894
+2001,"steam turbine","oil",0.0146387429736338
+2002,"steam turbine","oil",0.0136886299348201
+2003,"steam turbine","oil",0.016830382167967
+2004,"steam turbine","oil",0.0166870670655765
+2005,"steam turbine","oil",0.0241317531864551
+2006,"steam turbine","oil",0.0271306352070461
+2007,"steam turbine","oil",0.0292821369152448
+2008,"steam turbine","oil",0.0486585990096443
+2009,"steam turbine","oil",0.0320512085351726
+2010,"steam turbine","oil",0.0418731125439625
+2011,"steam turbine","oil",0.0607053893330869
+2012,"steam turbine","oil",0.0645775567980285
+2013,"steam turbine","oil",0.0604744826118759
+2014,"steam turbine","oil",0.0550914936876111

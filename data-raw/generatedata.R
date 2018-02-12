@@ -6,6 +6,7 @@ library(lubridate)
 library(stringr)
 library(readxl)
 library(rebus)
+csv <- TRUE
 
 # Generator Capacity ------------------------------------------------------
 # data: https://www.eia.gov/electricity/data/eia860/
@@ -27,12 +28,18 @@ capacity.unmapped <- rbind(capacity.90to00, capacity.01to16) %>%
   summarise(nameplate=sum(nameplate)) %>%
   ungroup()
 devtools::use_data(capacity.unmapped, overwrite=TRUE)
+if (csv) {
+  write.csv(capacity.unmapped, "CSV/capacity.unmapped.csv", row.names=FALSE)
+}
 
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
 mapping <- prep.mapping('data-raw/generators/fuels.csv', 'data-raw/generators/overnightcategories.csv')
 devtools::use_data(mapping, overwrite=TRUE)
+if(csv) {
+  write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
+}
 
 # Generation & Consumption ------------------------------------------------
 source('data-raw/generation/1990to2000_utilities.R')
@@ -54,7 +61,9 @@ generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
             consumption=sum(consumption)) %>%
   ungroup()
 devtools::use_data(generation.unmapped, overwrite=TRUE)
-
+if (csv) {
+  write.csv(generation.unmapped, "CSV/generation.unmapped.csv", row.names=FALSE)
+}
 # Capacity Factors ---------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 # data: form860 generator capacities & forms759/906/920/923 plant generation output
@@ -74,7 +83,9 @@ capacity <- swapids(capacity.unmapped, mapping) %>%
   summarise(nameplate = sum(nameplate) ) %>%
   ungroup()
 devtools::use_data(capacity, overwrite=TRUE)
-
+if (csv) {
+  write.csv(capacity, "CSV/capacity.csv", row.names=FALSE)
+}
 # mapping to oc-fg creates duplicate rows bc reported (plant x primemover x fuel)
 # sum 'em up!
 generation <- swapids(generation.unmapped, mapping) %>%
@@ -83,19 +94,34 @@ generation <- swapids(generation.unmapped, mapping) %>%
             consumption=sum(consumption)) %>%
   ungroup()
 devtools::use_data(generation, overwrite=TRUE)
-
-# calculate and save capacityfactors
+if (csv) {
+  write.csv(generation, "CSV/generation.csv", row.names=FALSE)
+}
+# calculate capacityfactors
 cf <- calc.capacityfactors(capacity, generation)
+
+# grab capacityfactors as calculated
 capacityfactors <- cf$cf
-capacityfactors.clamp <- cf$cf.clamp
 devtools::use_data(capacityfactors, overwrite=TRUE)
+if (csv) {
+  write.csv(capacityfactors, "CSV/capacityfactors.csv", row.names=FALSE)
+}
+
+# grab capacityfactors clamped to 1
+capacityfactors.clamp <- cf$cf.clamp
 devtools::use_data(capacityfactors.clamp, overwrite=TRUE)
+if (csv) {
+  write.csv(capacityfactors.clamp, "CSV/capacityfactors.clamp.csv", row.names=FALSE)
+}
 
 # Inflation Adjustment ----------------------------------------------------
 source('data-raw/costs/gdpdeflator.R')
 # data: https://fred.stlouisfed.org/series/GDPDEF
 gdpdeflator <- calc.gdpdeflator("data-raw/costs/GDPDEF.csv", "2010") # reference year
-
+devtools::use_data(gdpdeflator, overwrite=TRUE)
+if (csv) {
+  write.csv(gdpdeflator, "CSV/gdpdeflator.csv", row.names=FALSE)
+}
 
 # Fuel Prices -------------------------------------------------------------
 source('data-raw/costs/fuelprices.R')
@@ -108,7 +134,9 @@ fuelprices <- prep.fuelprices("data-raw/costs/fuel/energy.prices.tsv",
                               "data-raw/costs/fuel/uranium.prices.tsv",
                               gdpdeflator)
 devtools::use_data(fuelprices, overwrite=TRUE)
-
+if (csv) {
+  write.csv(fuelprices, "CSV/fuelprices.csv", row.names=FALSE)
+}
 
 # Marginal Costs ----------------------------------------------------------
 source('data-raw/costs/marginalcosts.R')
@@ -135,7 +163,9 @@ marginalcosts <- heatrates %>%
   select(yr, overnightcategory, fuel.general, marginal.cost)
 
 devtools::use_data(marginalcosts, overwrite=TRUE)
-
+if (csv) {
+  write.csv(marginalcosts, "CSV/marginalcosts.csv", row.names=FALSE)
+}
 
 # Capital Costs -----------------------------------------------------------
 ## Should use projected online year (1996-2022) instead of year of report (1997-2015)
@@ -148,7 +178,9 @@ capitalcosts <- prep.capitalcosts("data-raw/costs/AEO/assumptions.final.csv",
                                   "data-raw/costs/AEO/tech-oc.csv",
                                   gdpdeflator)
 devtools::use_data(capitalcosts, overwrite=TRUE)
-
+if (csv) {
+  write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
+}
 
 
 # Levelized Capital Costs -------------------------------------------------
@@ -158,7 +190,9 @@ source('data-raw/costs/levelize.R')
 # units: overnight.lev, om.fixed.lev, om.var ~ $/MWh
 levelizedcosts <- calc.levelizedcosts(capacityfactors.clamp, capitalcosts, mapping, 0.13)
 devtools::use_data(levelizedcosts, overwrite=TRUE)
-
+if (csv) {
+  write.csv(levelizedcosts, "CSV/levelizedcosts.csv", row.names=FALSE)
+}
 
 
 # Full Cost ---------------------------------------------------------------
@@ -170,6 +204,9 @@ master <- levelizedcosts %>%
   left_join(generation, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
   left_join(capacity, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general"))
 devtools::use_data(master, overwrite=TRUE)
+if (csv) {
+  write.csv(master, "CSV/master.csv", row.names=FALSE)
+}
 
 cost.comp <- fullcosts %>%
   mutate(om = om.fixed.lev + om.var) %>%
