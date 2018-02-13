@@ -1,10 +1,7 @@
 library(dplyr)
 library(magrittr)
 library(ggplot2)
-
-data(generators, generators.cf)
-
-
+library(tidyr)
 # Functions ---------------------------------------------------------------
 
 # display & save stacked bar plot
@@ -68,43 +65,11 @@ source("figs/multiplot.R")
 # 2 4
 
 
-# cf Dataset ------------------------------------------------------------
-
-# new additions
-cf.new <- generators.cf %>%
-  dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  filter(yr == vintage) %>%
-  mutate(yr = as.factor(yr))
-
-cf.new.fuel <- plot.agg(cf.new, "CF Additions",  "fuel")
-cf.new.oc <- plot.agg(cf.new, "CF Additions", "overnight")
-
-# full fleet
-cf <- generators.cf %>%
-  dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  mutate(yr = as.factor(yr))
-
-cf.fuel <- plot.agg(cf, "CF Fleet", "fuel")
-cf.oc <- plot.agg(cf, "CF Fleet", "overnight")
 
 # Original Dataset --------------------------------------------------------
-# new additions
-orig.new <- generators %>%
-  dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  mutate(yr = as.factor(yr)) %>%
-  filter(yr == vintage)
-
-orig.new.fuel <- plot.agg(orig.new, "ORIG Additions",  "fuel")
-orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
-
+data(capacity)
 # full fleet
-orig <- generators %>%
+orig <- capacity %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = overnightcategory) %>%
   mutate(overnight = gsub("conventional ", "", overnight)) %>%
@@ -113,63 +78,19 @@ orig <- generators %>%
 orig.fuel <- plot.agg(orig, "ORIG Fleet", "fuel")
 orig.oc <- plot.agg(orig, "ORIG Fleet", "overnight")
 
+# new additions
+orig.new <- orig %>%
+  filter(yr == vintage)
 
-# XOR (Original, cf) ----------------------------------------------------
-
-# refactor and drop vintage
-gen <- generators %>%
-  dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  mutate(yr = as.factor(yr)) %>%
-  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
-  summarise(nameplate=sum(nameplate)) %>%
-  ungroup()
-test <- out %>%
-  group_by(plntcode, overnight, fuel) %>%
-  summarise(UTIL = paste0(unique(utilcode), collapse = ", "),
-            n = length(unique(utilcode))) %>%
-  ungroup()
-
-View(filter(test, n>1))
-
-gen.cf <- generators.cf %>%
-  dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  mutate(yr = as.factor(yr)) %>%
-  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
-  summarise(nameplate=sum(nameplate)) %>%
-  ungroup()
-
-# CAPACITY IN ORIG BUT NOT IN CF
-xor.cf <- anti_join(gen, gen.cf, by=c("yr", "utilcode", "plntcode", "overnight", "fuel"))
-xor.cf.fuel <- plot.agg(xor.cf, "XOR.CF Fleet", "fuel")
-
-# CAPACITY IN ORIG BUT NOT IN GENERATION
-data(generation)
-out <- generation %>%
-  dplyr::rename(fuel = fuel.general,
-                               overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  mutate(yr = as.factor(yr))
-
-xor.out <- anti_join(gen, out, by=c("yr", "utilcode", "plntcode", "overnight", "fuel"))
-xor.out.fuel <- plot.agg(xor.out, "XOR.OUT Fleet", "fuel")
-
-xor.out2 <- anti_join(out, gen, by=c("yr", "utilcode", "plntcode", "overnight", "fuel")) %>%
-  mutate(nameplate = generation/8760)
-xor.out.fuel2 <- plot.agg(xor.out2, "XOR.OUT2 Fleet", "fuel")
-
-and.out <- inner_join(gen, out, by=c("yr", "utilcode", "plntcode", "overnight", "fuel")) %>%
-  filter(generation>0)
-and.out.fuel <- plot.agg(and.out, "AND.OUT Fleet", "fuel")
+orig.new.fuel <- plot.agg(orig.new, "ORIG Additions",  "fuel")
+orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
 
 
-# merged cap data ---------------------------------------------------------
+
+# Wonjun's 'merged' Dataset ---------------------------------------------------------
 data(mapping)
-merged <- read.delim("C:/Users/guti220/Downloads/merged.tsv")
-merged.map <- merged %>%
+merged.tsv <- read.delim("C:/Users/guti220/Desktop/merged.tsv")
+mer1 <- merged.tsv %>%
   left_join(mapping, by=c("primemover", "fuel")) %>%
   select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
@@ -182,31 +103,165 @@ merged.map <- merged %>%
   summarise(nameplate = sum(nameplate)) %>%
   ungroup()
 
-# new additions
-mer.new <- merged.map %>%
-  filter(yr == vintage)
 
-mer.new.fuel <- plot.agg(mer.new, "MERGED Additions",  "fuel")
-mer.new.oc <- plot.agg(mer.new, "MERGED Additions", "overnight")
-
-# full fleet
-mer <- merged.map %>% # aggregate over vintage
+# aggregate over vintage for full fleet
+mer1.full <- mer1 %>% 
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
-  ungroup() #%>%
-  # filter(! yr %in% c(1998, 1999, 2000))
-mer.fuel <- plot.agg(mer, "MERGED Fleet", "fuel")
-mer.oc <- plot.agg(mer, "MERGED Fleet", "overnight")
+  ungroup() 
+
+# filter for new additions only
+mer1.new <- mer1 %>%
+  filter(yr == vintage)
+
+mer1.fuel <- plot.agg(mer1.full, "MER1 Fleet", "fuel")
+mer1.new.fuel <- plot.agg(mer1.new, "MER1 Additions",  "fuel")
+mer1.oc <- plot.agg(mer1.full, "MER1 Fleet", "overnight")
+mer1.new.oc <- plot.agg(mer1.new, "MER1 Additions", "overnight")
 
 
+# yr.utilcode.plntcode.oc.fg ----------------------------------------------
+data(capacity, generation)
+
+mer2 <- inner_join( capacity, generation,
+                      by = c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general") ) %>% 
+  rename(overnight = overnightcategory,
+         fuel = fuel.general) 
+
+# aggregate over vintage for full fleet
+mer2.full <- mer2 %>% 
+  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
+  summarise(nameplate = sum(nameplate)) %>%
+  ungroup() 
+
+# filter for new additions only
+mer2.new <- mer2 %>%
+  filter(yr == vintage)
+
+mer2.fuel <- plot.agg(mer2.full, "MER2 Fleet", "fuel")
+mer2.new.fuel <- plot.agg(mer2.new, "MER2 Additions",  "fuel")
+mer2.oc <- plot.agg(mer2.full, "MER2 Fleet", "overnight")
+mer2.new.oc <- plot.agg(mer2.new, "MER2 Additions", "overnight")
+
+
+
+# yr.utilcode.plntcode.pm.f -----------------------------------------------
+data(capacity.unmapped, generation.unmapped, mapping)
+
+# merge
+mer3 <- inner_join( capacity.unmapped, generation.unmapped, # join unmapped datasets
+                            by = c("yr", "utilcode", "plntcode", "primemover", "fuel") ) %>% 
+  left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+  select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+  group_by(yr, utilcode, plntcode, vintage, overnightcategory, fuel.general) %>%
+  summarise(nameplate = sum(nameplate) ) %>%
+  ungroup() %>% 
+  rename(overnight = overnightcategory, # rename for plotting functions
+         fuel = fuel.general) 
+
+# aggregate over vintage for full fleet
+mer3.full <- mer3 %>% 
+  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
+  summarise(nameplate = sum(nameplate)) %>%
+  ungroup() 
+
+# filter for new additions only
+mer3.new <- mer3 %>%
+  filter(yr == vintage)
+
+mer3.fuel <- plot.agg(mer3.full, "MER3 Fleet", "fuel")
+mer3.new.fuel <- plot.agg(mer3.new, "mer3 Additions",  "fuel")
+mer3.oc <- plot.agg(mer3.full, "mer3 Fleet", "overnight")
+mer3.new.oc <- plot.agg(mer3.new, "mer3 Additions", "overnight")
+
+
+# yr.plntcode.pm.f --------------------------------------------------------
+data(capacity.unmapped, generation.unmapped, mapping)
+
+# merge
+mer4 <- inner_join( capacity.unmapped, generation.unmapped, # join unmapped datasets
+                    by = c("yr", "plntcode", "primemover", "fuel") ) %>% 
+  left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+  select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+  group_by(yr, plntcode, vintage, overnightcategory, fuel.general) %>% # no longer grouping by utilcode b/c two versions (.x, .y)
+  summarise(nameplate = sum(nameplate) ) %>%
+  ungroup() %>% 
+  rename(overnight = overnightcategory, # rename for plotting functions
+         fuel = fuel.general) 
+
+
+# aggregate over vintage for full fleet
+mer4.full <- mer4 %>% 
+  group_by(yr, plntcode, overnight, fuel) %>%
+  summarise(nameplate = sum(nameplate)) %>%
+  ungroup() 
+
+# filter for new additions only
+mer4.new <- mer4 %>%
+  filter(yr == vintage)
+
+mer4.fuel <- plot.agg(mer4.full, "MER4 Fleet", "fuel")
+mer4.new.fuel <- plot.agg(mer4.new, "MER4 Additions",  "fuel")
+mer4.oc <- plot.agg(mer4.full, "MER4 Fleet", "overnight")
+mer4.new.oc <- plot.agg(mer4.new, "MER4 Additions", "overnight")
+
+
+
+
+# figs/outfile.txt --------------------------------------------------------
+
+sink("figs/outfile.txt") # log
+
+cat("Mapped Capacity Dataset : orig \n")
+cat("DF size: ", dim(orig), "\n")
+cat(names(orig), "\n")
+cat("\n\n")
+
+cat("Wonjun's Merged Dataset: mer1", "\n")
+cat("Merged df size: ", dim(mer1), "\n")
+cat("Retention: unsure \n")
+cat("\n\n")
+
+fulljoin <- full_join(capacity, generation,
+                          by = c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>% 
+  select(yr, utilcode, plntcode, overnightcategory, fuel.general) %>% 
+  distinct()
+cat("Merge on yr.utilcode.plntcode.oc.fg: mer2 \n")
+cat("Merged df size (agg over vintage): ",dim(mer2.full), "\n")
+cat("Retention: ", 100 * nrow(mer2.full)/ nrow(fulljoin), "% \n" )
+cat("\n\n")
+
+fulljoin.unmapped <- full_join(capacity.unmapped, generation.unmapped,
+                               by = c("yr", "utilcode", "plntcode", "primemover", "fuel")) %>% 
+  select(yr, utilcode, plntcode, primemover, fuel ) %>% 
+  distinct()
+cat("Merge on yr.utilcode.plntcode.pm.f: mer3 \n")
+cat("Merged df size (agg over vintage): ",dim(mer3.full), "\n")
+cat("Retention: ", 100 * nrow(mer3.full)/ nrow(fulljoin.unmapped), "% \n" )
+cat("\n\n")
+
+cat("Merge on yr.plntcode.pm.f: mer4 \n")
+cat("Merged df size (agg over vintage): ",dim(mer4.full), "\n")
+cat("Retention: ", 100 * nrow(mer4.full)/ nrow(fulljoin.unmapped), "% \n" )
+cat("\n\n")
+
+cat("Mapped Generation Dataset \n")
+cat("DF size: ", dim(generation), "\n")
+cat(names(generation), "\n")
+cat("\n")
+
+cat("Unmapped Capacity Dataset \n")
+cat("DF size: ", dim(capacity.unmapped), "\n")
+cat(names(capacity.unmapped), "\n")
+cat("\n")
+
+cat("Unmapped Generation Dataset \n")
+cat("DF size: ", dim(generation.unmapped), "\n")
+cat(names(generation.unmapped), "\n")
+cat("\n")
+
+sink() # end logging
 # PLOTS -------------------------------------------------------------------
-
-## SAVE cf PLOT
-fn <- "figs/cf.png"
-print(paste0("saving ", fn))
-png(fn, width=11, height=8.5, units="in", res=250)
-multiplot(cf.new.fuel,cf.fuel, cf.new.oc,cf.oc, cols=2)
-dev.off()
 
 ## SAVE ORIG PLOT
 fn <- "figs/ORIG.png"
@@ -218,25 +273,13 @@ dev.off()
 ## SAVE FUEL PLOT
 fn <- "figs/Capacity by fuel.png"
 print(paste0("saving ", fn))
-png(fn, width=11, height=8.5, units="in", res=250)
-grid_arrange_shared_legend(cf.new.fuel, cf.fuel, orig.new.fuel, orig.fuel,
-                           position="right", ncol=2, nrow=2)
+png(fn, width=11, height=17, units="in", res=250)
+grid_arrange_shared_legend(orig.fuel, orig.new.fuel,
+                           mer1.fuel, mer1.new.fuel,
+                           mer2.fuel, mer2.new.fuel,
+                           mer3.fuel, mer3.new.fuel,
+                           mer4.fuel, mer4.new.fuel,
+                           position="right", ncol=2, nrow=5)
 dev.off()
-
-## SAVE OVERNIGHT PLOT
-fn <- "figs/Capacity by overnight.png"
-print(paste0("saving ", fn))
-png(fn, width=11, height=8.5, units="in", res=250)
-grid_arrange_shared_legend(cf.new.oc, cf.oc, orig.new.oc, orig.oc,
-                           position="right", ncol=2, nrow=2)
-dev.off()
-
-## SAVE XOR PLOT
-fn <- "figs/xor by fuel.png"
-print(paste0("Saving ", fn))
-png(fn, width=11, height=8.5, units="in", res=250)
-print(xor.fuel)
-dev.off()
-
 
 

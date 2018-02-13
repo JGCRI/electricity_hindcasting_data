@@ -1,0 +1,35 @@
+Mapped Capacity Dataset : orig 
+DF size:  239483 7 
+yr utilcode plntcode vintage overnight fuel nameplate 
+
+
+Wonjun's Merged Dataset: mer1 
+Merged df size:  211856 7 
+Retention: unsure 
+
+
+Merge on yr.utilcode.plntcode.oc.fg: mer2 
+Merged df size (agg over vintage):  109061 6 
+Retention:  49.635 % 
+
+
+Merge on yr.utilcode.plntcode.pm.f: mer3 
+Merged df size (agg over vintage):  105096 6 
+Retention:  41.93357 % 
+
+
+Merge on yr.plntcode.pm.f: mer4 
+Merged df size (agg over vintage):  116703 5 
+Retention:  46.56479 % 
+
+
+Mapped Generation Dataset 
+DF size:  183802 7 
+yr utilcode plntcode overnightcategory fuel.general generation consumption 
+
+Unmapped Capacity DatasetDF size:  245936 7 
+yr utilcode plntcode primemover fuel vintage nameplate 
+
+Unmapped Generation DatasetDF size:  208679 7 
+yr utilcode plntcode primemover fuel generation consumption 
+
