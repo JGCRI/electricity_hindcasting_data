@@ -2,8 +2,6 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 
-data(generation, generators)
-
 # functions ---------------------------------------------------------------
 
 # display & save stacked bar plot
@@ -53,6 +51,7 @@ source("figs/multiplot.R")
 # 2 4
 
 # Generation Data ---------------------------------------------------------
+data(generation)
 
 output <- generation %>%
   dplyr::rename(fuel = fuel.general,
@@ -67,8 +66,20 @@ output.fuel <- plot.agg(output, "Output", "fuel")
 output.oc <- plot.agg(output, "Output", "overnight")
 
 
-# ORIG Potential Generatin Data -------------------------------------------
-potential.orig <- generators %>%
+# Unmapped Generation Data ------------------------------------------------
+data(generation.unmapped)
+
+output.unmapped <- generation.unmapped %>% 
+  group_by(yr, primemover, fuel) %>% 
+  summarise(generation=sum(generation)) %>% 
+  ungroup() %>% 
+  mutate(yr=as.factor(yr)) 
+  
+output.unmapped.fuel <- plot.agg(output.unmapped, "Unmapped Output", "fuel")
+
+# ORIG Potential Generation Data -------------------------------------------
+data(capacity)
+potential.orig <- capacity %>%
   dplyr::rename(fuel=fuel.general,
                 overnight=overnightcategory) %>%
   mutate(overnight = gsub("conventional ", "", overnight)) %>%
@@ -81,26 +92,10 @@ potential.orig <- generators %>%
 potential.orig.fuel <- plot.agg(potential.orig, "ORIG Potential Output", "fuel")
 potential.orig.oc <- plot.agg(potential.orig, "ORIG Potential Output", "overnight")
 
-# CFL1 Potential Generation Data -----------------------------------------------
-potential.cfl1 <- generators.cfl1 %>%
-  dplyr::rename(fuel=fuel.general,
-                overnight=overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  group_by(yr, overnight, fuel) %>%
-  summarise(nameplate=sum(nameplate)) %>%
-  ungroup() %>%
-  mutate(generation = 8760*nameplate,
-         yr=as.factor(yr))
-
-potential.cfl1.fuel <- plot.agg(potential.cfl1, "CFL1 Potential Output", "fuel")
-potential.cfl1.oc <- plot.agg(potential.cfl1, "CFL1 Potential Output", "overnight")
-
-
-
 # merged output data ------------------------------------------------------
-merged <- read.delim("C:/Users/guti220/Downloads/merged.tsv")
-merged.map <- merged %>%
-  left_join(mapping, by=c("primemover", "fuel")) %>%
+data(mapping)
+merged <- read.delim("C:/Users/guti220/Desktop/merged.tsv") %>% 
+  left_join(mapping, by=c("primemover", "fuel")) %>% 
   select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = overnightcategory,
@@ -112,16 +107,16 @@ merged.map <- merged %>%
   summarise(generation = sum(generation)) %>%
   ungroup()
 
-merged.fuel <- plot.agg(merged.map, "MERGED", "fuel")
+merged.fuel <- plot.agg(merged, "MERGED", "fuel")
 # PLOT --------------------------------------------------------------------
 
 # png("figs/Output.png", width=11, height=5, units="in", res=250)
 # multiplot(output.fuel, output.oc, cols=2)
 # dev.off()
 
-fn <- "figs/Output.png"
+fn <- "figs/Output by fuel.png"
 print(paste0("Saving ", fn))
 png(fn, width=8.5, height=11, units="in", res=250)
-grid_arrange_shared_legend(potential.orig.fuel, output.fuel, potential.cfl1.fuel,
+grid_arrange_shared_legend(potential.orig.fuel, output.fuel, merged.fuel,
                            position="right", ncol=1, nrow=3)
 dev.off()
