@@ -1,0 +1,37 @@
+Mapped Capacity Dataset : orig.fleet 
+DF size (agg'd over vintage):  144985 6  
+Cols:  yr utilcode plntcode vintage overnight fuel nameplate 
+
+Mapped Generation Dataset 
+DF size:  183802 7 
+Cols:  yr utilcode plntcode overnightcategory fuel.general generation consumption 
+
+Mapped fulljoin 
+DF size (agg'd over vintage):  219726 5 
+Cols:  yr utilcode plntcode overnightcategory fuel.general 
+
+Merge on yr.utilcode.plntcode.oc.fg: mer1.fleet 
+Merged DF size (agg'd over vintage):  109061 6 
+Retention (fulljoin):  49.635 % 
+Retention (orig.fleet):  75.22226 % 
+
+
+
+NEXT TWO OPTIONS MERGE *THEN* MAP, SO RETENTION IS COMPARED TO SAME 'FULLJOIN' AND 'ORIG.FLEET' DF'S AS ABOVE
+
+Merge on yr.utilcode.plntcode.pm.f: mer2.fleet 
+Merged DF size (agg over vintage):  105096 6 
+Retention (fulljoin):  47.83048 % 
+Retention (orig.fleet):  72.4875 % 
+
+Merge on yr.plntcode.pm.f: mer3 
+Merged df size (agg over vintage):  116703 5 
+Retention (fulljoin):  53.11297 % 
+Retention (orig.fleet):  80.49315 % 
+
+
+Wonjun's Merged Dataset: mer4.fleet 
+Merged DF size (agg'd over vintage):  129362 6 
+Retention: unsure 
+
+

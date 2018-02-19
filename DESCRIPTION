@@ -3,7 +3,7 @@ Title: What the Package Does (one line, title case)
 Version: 0.0.0.9000
 Authors@R: person("Xavier", "Gutierrez", email = "xavier.gutierrez@pnnl.gov", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
-Depends: R (>= 3.4.1)
+Depends: R (>= 3.3.3)
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
