@@ -25,9 +25,9 @@ Retention (fulljoin):  47.83048 %
 Retention (orig.fleet):  72.4875 % 
 
 Merge on yr.plntcode.pm.f: mer3 
-Merged df size (agg over vintage):  116703 5 
-Retention (fulljoin):  53.11297 % 
-Retention (orig.fleet):  80.49315 % 
+Merged df size (agg over vintage):  127044 5 
+Retention (fulljoin):  57.81928 % 
+Retention (orig.fleet):  87.62562 % 
 
 
 Wonjun's Merged Dataset: mer4.fleet 

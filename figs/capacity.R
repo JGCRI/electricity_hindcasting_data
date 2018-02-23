@@ -1,9 +1,25 @@
+library(energy.markets)
 library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(tidyr)
 # Functions ---------------------------------------------------------------
-
+elec_tech_colors <- c( "coal" = "#a0237c",
+                       "b Coal w/CCS" = "#dab4c7",
+                       "natural gas" = "#25a9e0",
+                       "d Gas w/CCS" = "#84e7f9",
+                       "oil" = "#d01c2a",
+                       "f Oil w/CCS" = "#f7988f",
+                       "biomass" = "#00931d",
+                       "h Biomass w/CCS" = "#88c892",
+                       "uranium" = "#ef8e27",
+                       "geothermal" = "#ad440c",
+                       "water" = "#fdfa28",
+                       "wind" = "#3d86f9",
+                       "solar" = "#fdd67b",
+                       "n CHP" = "#507fab",
+                       "o Battery" = "#92a75d",
+                       "energy reduction" = "grey")
 # display & save stacked bar plot
 plot <- function(df, ptitle) {
 
@@ -11,7 +27,9 @@ plot <- function(df, ptitle) {
     ggtitle(ptitle) +
     theme(axis.text.x = element_text(angle = 45, hjust=1)) +
     ylab("MW") +
-    scale_y_continuous(labels = scales::scientific)
+    scale_y_continuous(labels = scales::scientific) +
+    scale_fill_manual(values=elec_tech_colors)
+
 
   # geom_bar()
   if (grepl("fuel", ptitle)) {
@@ -21,10 +39,6 @@ plot <- function(df, ptitle) {
     p <- p +
       geom_bar(aes(fill=overnight), stat="identity")
   }
-
-  # save
-  # fn <- paste0("figs/", ptitle, ".png")
-  # ggsave(filename=fn, plot=p, device="png", width=11, height=8, units="in")
 
   return(p)
 }
@@ -76,9 +90,9 @@ orig <- capacity %>%
   mutate(yr = as.factor(yr))
 
 # aggregate over vintage for full fleet
-orig.fleet <- orig %>% 
-  group_by(yr, utilcode, plntcode, overnight, fuel) %>% 
-  summarise(nameplate=sum(nameplate)) %>% 
+orig.fleet <- orig %>%
+  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
+  summarise(nameplate=sum(nameplate)) %>%
   ungroup()
 
 # filter for new additions only
@@ -97,15 +111,15 @@ orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
 data(capacity, generation)
 
 mer1 <- inner_join( capacity, generation,
-                      by = c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general") ) %>% 
+                      by = c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general") ) %>%
   rename(overnight = overnightcategory,
-         fuel = fuel.general) 
+         fuel = fuel.general)
 
 # aggregate over vintage for full fleet
-mer1.fleet <- mer1 %>% 
+mer1.fleet <- mer1 %>%
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
-  ungroup() 
+  ungroup()
 
 # filter for new additions only
 mer1.new <- mer1 %>%
@@ -124,20 +138,20 @@ data(capacity.unmapped, generation.unmapped, mapping)
 
 # merge
 mer2 <- inner_join( capacity.unmapped, generation.unmapped, # join unmapped datasets
-                            by = c("yr", "utilcode", "plntcode", "primemover", "fuel") ) %>% 
+                            by = c("yr", "utilcode", "plntcode", "primemover", "fuel") ) %>%
   left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
   select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
   group_by(yr, utilcode, plntcode, vintage, overnightcategory, fuel.general) %>%
   summarise(nameplate = sum(nameplate) ) %>%
-  ungroup() %>% 
+  ungroup() %>%
   rename(overnight = overnightcategory, # rename for plotting functions
-         fuel = fuel.general) 
+         fuel = fuel.general)
 
 # aggregate over vintage for full fleet
-mer2.fleet <- mer2 %>% 
+mer2.fleet <- mer2 %>%
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
-  ungroup() 
+  ungroup()
 
 # filter for new additions only
 mer2.new <- mer2 %>%
@@ -152,23 +166,50 @@ mer2.new.oc <- plot.agg(mer2.new, "MER2 Additions", "overnight")
 # yr.plntcode.pm.f --------------------------------------------------------
 data(capacity.unmapped, generation.unmapped, mapping)
 
-# merge
-mer3 <- inner_join( capacity.unmapped, generation.unmapped, # join unmapped datasets
-                    by = c("yr", "plntcode", "primemover", "fuel") ) %>% 
+# # merge
+# mer3 <- inner_join( capacity.unmapped, generation.unmapped, # join unmapped datasets
+#                     by = c("yr", "plntcode", "primemover", "fuel") ) %>%
+#   left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+#   select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+#   group_by(yr, plntcode, vintage, overnightcategory, fuel.general) %>% # no longer grouping by utilcode b/c two versions (.x, .y)
+#   summarise(nameplate = sum(nameplate) ) %>%
+#   ungroup() %>%
+#   rename(overnight = overnightcategory, # rename for plotting functions
+#          fuel = fuel.general)
+
+# merge for ! yr %in% c(2001, 2002)
+# join includes primemover
+mer3.rest <- generation.unmapped %>%
+  filter(! yr %in% c(2001, 2002)) %>%
+  inner_join( capacity.unmapped, ., # join unmapped datasets W/O UTILCODE
+              by = c("yr", "plntcode", "primemover", "fuel") )
+
+# merge for yr %in% c(2001, 2002)
+# join excludes primemover, so we opt to use CAP primemover column in later aggregation
+mer3.012 <- generation.unmapped %>%
+  filter( yr %in% c(2001, 2002)) %>%
+  inner_join( capacity.unmapped, ., # join unmapped datasets by DROPPING PRIMEMOVER
+              by = c("yr", "plntcode", "fuel") ) %>%
+  dplyr::rename(primemover = primemover.x) %>%  #use CAP pm column
+  select(-primemover.y) # drop GEN pm column
+
+
+mer3 <- rbind(mer3.rest, mer3.012) %>%
   left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
   select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
   group_by(yr, plntcode, vintage, overnightcategory, fuel.general) %>% # no longer grouping by utilcode b/c two versions (.x, .y)
-  summarise(nameplate = sum(nameplate) ) %>%
-  ungroup() %>% 
+  summarise(nameplate = sum(nameplate),
+            generation = sum(generation)) %>%
+  ungroup() %>%
   rename(overnight = overnightcategory, # rename for plotting functions
-         fuel = fuel.general) 
+         fuel = fuel.general)
 
 
 # aggregate over vintage for full fleet
-mer3.fleet <- mer3 %>% 
+mer3.fleet <- mer3 %>%
   group_by(yr, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
-  ungroup() 
+  ungroup()
 
 # filter for new additions only
 mer3.new <- mer3 %>%
@@ -198,10 +239,10 @@ mer4 <- read.delim("C:/Users/guti220/Desktop/merged.tsv") %>%
 
 
 # aggregate over vintage for full fleet
-mer4.fleet <- mer4 %>% 
+mer4.fleet <- mer4 %>%
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate = sum(nameplate)) %>%
-  ungroup() 
+  ungroup()
 
 # filter for new additions only
 mer4.new <- mer4 %>%
@@ -227,8 +268,8 @@ cat("Cols: ", names(generation), "\n")
 cat("\n")
 
 fulljoin <- full_join(capacity, generation,
-                      by = c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>% 
-  select(yr, utilcode, plntcode, overnightcategory, fuel.general) %>% 
+                      by = c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
+  select(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
   distinct()
 cat("Mapped fulljoin \n")
 cat("DF size (agg'd over vintage): ", dim(fulljoin), "\n")
@@ -241,22 +282,22 @@ cat("Retention (fulljoin): ", 100 * nrow(mer1.fleet)/ nrow(fulljoin), "% \n" )
 cat("Retention (orig.fleet): ", 100 * nrow(mer1.fleet)/ nrow(orig.fleet), "% \n" )
 cat("\n\n\n")
 
-# orig.unmapped.fleet <- capacity.unmapped %>% 
-#   select(yr, utilcode, plntcode, primemover, fuel) %>% 
+# orig.unmapped.fleet <- capacity.unmapped %>%
+#   select(yr, utilcode, plntcode, primemover, fuel) %>%
 #   distinct()
 # cat("Unmapped Capacity Dataset \n")
 # cat("DF size (agg'd over vintage): ", dim(orig.unmapped.fleet), "\n")
 # cat(names(orig.unmapped.fleet), "\n")
 # cat("\n")
-# 
+#
 # cat("Unmapped Generation Dataset \n")
 # cat("DF size: ", dim(generation.unmapped), "\n")
 # cat(names(generation.unmapped), "\n")
 # cat("\n")
-# 
+#
 # fulljoin.unmapped <- full_join(capacity.unmapped, generation.unmapped,
-#                                by = c("yr", "utilcode", "plntcode", "primemover", "fuel")) %>% 
-#   select(yr, utilcode, plntcode, primemover, fuel ) %>% 
+#                                by = c("yr", "utilcode", "plntcode", "primemover", "fuel")) %>%
+#   select(yr, utilcode, plntcode, primemover, fuel ) %>%
 #   distinct()
 # cat("Unmapped fulljoin")
 # cat("DF size (agg'd over vintage): ", dim(fulljoin.unmapped), "\n")
