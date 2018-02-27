@@ -1,21 +1,10 @@
-calc.capacityfactors <- function(generators, plantgeneration)
+calc.capacityfactors <- function(cap.gen.joined)
 {
-  plantcapacity <- generators %>%
-    select(yr, nameplate, utilcode, plntcode, overnightcategory, fuel.general) %>%
-    rename(capacity = nameplate) %>%
-    group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
-    summarise(capacity=sum(capacity)) %>%
-    ungroup()
-
-  plantgeneration <- plantgeneration %>%
-    select(yr, generation, utilcode, plntcode, overnightcategory, fuel.general) %>%
-    filter(generation > 0) # drop generators that used more energy than they produced
-
-  cf <- plantcapacity %>%
-    inner_join(plantgeneration, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general") ) %>%
-    mutate(potentialgeneration = capacity * 8760) %>%
+  cf <- cap.gen.joined %>%
+    filter(generation > 0) %>% # drop generators that used more energy than they produced
+    mutate(potentialgeneration = nameplate * 8760) %>%
     mutate(capacityfactor = generation/potentialgeneration) %>%
-    select(yr, utilcode, plntcode, overnightcategory, fuel.general, capacityfactor)
+    select(yr, plntcode, overnightcategory, fuel.general, capacityfactor)
 
   cf.clamp <- cf %>%
     mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor))
@@ -23,7 +12,7 @@ calc.capacityfactors <- function(generators, plantgeneration)
 
   data <- list(cf, cf.clamp)
   names(data) <- c("cf", "cf.clamp")
-  # cf used in later calculations
+  # cf.clamp used in later calculations
 
   data
 }
