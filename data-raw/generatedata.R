@@ -73,36 +73,15 @@ source('data-raw/costs/capacityfactors.R')
 # data: form860 generator capacities & forms759/906/920/923 plant generation output
 # carries original capacity and generation as well (for weighting capital costs)
 
-# map to oc-fg instead of pm-f
-# filter empty oc | fg
-swapids <- function(df, mapping) {
-  df.swap <- df %>%
-    left_join(mapping, by=c("primemover", "fuel")) %>%
-    select(-primemover, -fuel)
+# join capacity.unmapped and generation.unmapped
+cap.gen.joined <- join.cap.gen(capacity.unmapped, generation.unmapped)
+devtools::use_data(cap.gen.joined, overwrite=TRUE)
+if (csv) {
+  write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)
 }
 
-# map to fuel.general, overnight IDs, then aggregate over redundant mappings
-capacity <- swapids(capacity.unmapped, mapping) %>%
-  group_by(yr, utilcode, plntcode, vintage, overnightcategory, fuel.general) %>%
-  summarise(nameplate = sum(nameplate) ) %>%
-  ungroup()
-devtools::use_data(capacity, overwrite=TRUE)
-if (csv) {
-  write.csv(capacity, "CSV/capacity.csv", row.names=FALSE)
-}
-# mapping to oc-fg creates duplicate rows bc reported (plant x primemover x fuel)
-# sum 'em up!
-generation <- swapids(generation.unmapped, mapping) %>%
-  group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
-  summarise(generation=sum(generation),
-            consumption=sum(consumption)) %>%
-  ungroup()
-devtools::use_data(generation, overwrite=TRUE)
-if (csv) {
-  write.csv(generation, "CSV/generation.csv", row.names=FALSE)
-}
 # calculate capacityfactors
-cf <- calc.capacityfactors(capacity, generation)
+cf <- calc.capacityfactors(cap.gen.joined)
 
 # grab capacityfactors as calculated
 capacityfactors <- cf$cf
