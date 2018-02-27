@@ -1,3 +1,40 @@
+join.cap.gen <- function(cap.vintage, gen)
+{
+  # aggregate over vintage (unique to capacity dataset)
+  cap <- cap.vintage %>%
+    group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+    summarise(nameplate = sum(nameplate)) %>%
+    ungroup()
+
+  # merge for ! yr %in% c(2001, 2002)
+  # join includes primemover
+  join.rest <- gen %>%
+    filter(! yr %in% c(2001, 2002)) %>%
+    inner_join( cap, ., # join unmapped datasets W/O UTILCODE
+                by = c("yr", "plntcode", "primemover", "fuel") )
+
+  # merge for yr %in% c(2001, 2002)
+  # join excludes primemover, so we opt to use CAP pm column in later aggregation
+  join.01.02 <- gen %>%
+    filter( yr %in% c(2001, 2002)) %>%
+    inner_join( cap, ., # join unmapped datasets by DROPPING PRIMEMOVER
+                by = c("yr", "plntcode", "fuel") ) %>%
+    dplyr::rename(primemover = primemover.x) %>%  #use CAP pm column
+    select(-primemover.y) # drop GEN pm column
+
+  # bind joined data sets together, map to oc-fg, and aggregate
+  join <- rbind(join.rest, join.01.02) %>%
+    left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+    select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+    # no longer grouping by utilcode b/c two versions (.x, .y)
+    group_by(yr, plntcode, overnightcategory, fuel.general) %>%
+    summarise(nameplate = sum(nameplate),
+              generation = sum(generation)) %>%
+    ungroup()
+
+  join
+}
+
 calc.capacityfactors <- function(cap.gen.joined)
 {
   cf <- cap.gen.joined %>%
