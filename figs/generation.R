@@ -51,79 +51,65 @@ source("figs/multiplot.R")
 # 1 3
 # 2 4
 
-# Generation Data ---------------------------------------------------------
-data(generation)
 
-output <- generation %>%
+# Original GEN Dataset ----------------------------------------------------
+
+data(generation.unmapped, mapping)
+
+# full fleet
+gen <- generation.unmapped %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  group_by(yr, fuel.general, overnightcategory) %>%
+  summarise(generation=sum(generation)) %>%
+  ungroup() %>%
   dplyr::rename(fuel = fuel.general,
                 overnight = overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  group_by(yr, overnight, fuel) %>%
-  summarise(generation=sum(generation)) %>%
-  ungroup() %>%
-  mutate(yr=as.factor(yr))
+  mutate(yr = as.factor(yr))
 
-output.fuel <- plot.agg(output, "GEN Output", "fuel")
-output.oc <- plot.agg(output, "GEN Output", "overnight")
+# get plots
+gen.fuel <- plot.agg(gen, "GEN", "fuel")
 
 
-# Unmapped Generation Data ------------------------------------------------
-data(generation.unmapped)
+# CAP Potential Generation Data -------------------------------------------
+data(capacity.unmapped, mapping)
 
-output.unmapped <- generation.unmapped %>%
-  group_by(yr, primemover, fuel) %>%
-  summarise(generation=sum(generation)) %>%
-  ungroup() %>%
-  mutate(yr=as.factor(yr))
-
-output.unmapped.fuel <- plot.agg(output.unmapped, "Unmapped Output", "fuel")
-
-# ORIG Potential Generation Data -------------------------------------------
-data(capacity)
-potential.orig <- capacity %>%
-  dplyr::rename(fuel=fuel.general,
-                overnight=overnightcategory) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
-  group_by(yr, overnight, fuel) %>%
+# full fleet
+potential.cap <- capacity.unmapped %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  group_by(yr, fuel.general, overnightcategory) %>%
   summarise(nameplate=sum(nameplate)) %>%
   ungroup() %>%
-  mutate(generation = 8760*nameplate,
-         yr=as.factor(yr))
-
-potential.orig.fuel <- plot.agg(potential.orig, "ORIG Potential Output", "fuel")
-potential.orig.oc <- plot.agg(potential.orig, "ORIG Potential Output", "overnight")
-
-# merged output data ------------------------------------------------------
-data(mapping)
-
-merged <- read.delim("C:/Users/guti220/Desktop/merged.tsv") %>%
-  left_join(mapping, by=c("primemover", "fuel")) %>%
-  select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
-                overnight = tech,
-                vintage = startyr) %>%
-  mutate(yr = as.factor(yr)) %>%
-  filter(!is.na(generation)) %>%
-  group_by(yr, utilcode, plntcode, overnight, fuel, vintage) %>%
+                overnight = overnightcategory) %>%
+  mutate(yr = as.factor(yr),
+         generation = 8760*nameplate) %>%
+  select(-nameplate)
+
+potential.cap.fuel <- plot.agg(potential.cap, "CAP Potential Output", "fuel")
+
+
+# joined dataset ----------------------------------------------------------
+data(cap.gen.joined)
+
+# full fleet
+join <- cap.gen.joined %>%
+  group_by(yr, fuel.general, overnightcategory) %>%
   summarise(generation = sum(generation)) %>%
-  ungroup()
+  ungroup() %>%
+  dplyr::rename(fuel = fuel.general,
+                overnight = overnightcategory) %>%
+  mutate(yr = as.factor(yr))
 
-merged.fuel <- plot.agg(merged, "MERGED", "fuel")
+
+# get plots
+join.fuel <- plot.agg(join, "JOIN", "fuel")
+
 # PLOT --------------------------------------------------------------------
-
-# png("figs/Output.png", width=11, height=5, units="in", res=250)
-# multiplot(output.fuel, output.oc, cols=2)
-# dev.off()
 
 fn <- "figs/Output by fuel.png"
 print(paste0("Saving ", fn))
 png(fn, width=8.5, height=11, units="in", res=250)
-grid_arrange_shared_legend(potential.orig.fuel, output.fuel, merged.fuel,
+grid_arrange_shared_legend(potential.cap.fuel, gen.fuel, join.fuel,
                            position="right", ncol=1, nrow=3)
 dev.off()
 
-fn <- "output.png"
-print(paste0("Saving ", fn))
-png(fn, width=8.5, height=11, units="in", res=250)
-grid_arrange_shared_legend(potential.orig.fuel, output.fuel, merged.fuel,
-                           ncol=3, nrow=1)
