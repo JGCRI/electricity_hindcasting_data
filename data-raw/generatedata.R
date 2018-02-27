@@ -180,8 +180,7 @@ if (csv) {
 master <- levelizedcosts %>%
   left_join(marginalcosts, by=c("yr", "overnightcategory", "fuel.general")) %>%
   mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) %>%  # renewables aren't assigned marginalcost
-  left_join(generation, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general")) %>%
-  left_join(capacity, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general"))
+  left_join(cap.gen.joined, by=c("yr", "plntcode", "overnightcategory", "fuel.general"))
 devtools::use_data(master, overwrite=TRUE)
 if (csv) {
   write.csv(master, "CSV/master.csv", row.names=FALSE)
