@@ -147,15 +147,12 @@ if (csv) {
 }
 
 # Capital Costs -----------------------------------------------------------
-## Should use projected online year (1996-2022) instead of year of report (1997-2015)
-source('data-raw/costs/capitalcosts.R')
-# data:  https://www.eia.gov/outlooks/aeo/archive.php -- 'Assumptions'
-# table: 'Cost and Performance Characteristics of New Central Station Electricity Generating Technologies'
-# overnight, om.fixed ~ $/kW
-# om.var ~ $/MWh (native units)
-capitalcosts <- prep.capitalcosts("data-raw/costs/AEO/assumptions.final.csv",
-                                  "data-raw/costs/AEO/tech-oc.csv",
-                                  gdpdeflator)
+capitalcosts <- read_excel("data-raw/costs/aeo_capital_costs.xlsx",
+                           sheet = "Data4GCAM",
+                           skip = 3)
+names(capitalcosts) <- c("yr", "reference.yr", "overnightcategory",
+                         "overnight", "om.fixed", "om.var", "heatrate")
+capitalcosts$yr <- as.numeric(capitalcosts$yr)
 devtools::use_data(capitalcosts, overwrite=TRUE)
 if (csv) {
   write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
