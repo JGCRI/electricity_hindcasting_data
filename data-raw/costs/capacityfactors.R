@@ -1,21 +1,47 @@
-calc.capacityfactors <- function(generators, plantgeneration)
+join.cap.gen <- function(cap.vintage, gen)
 {
-  plantcapacity <- generators %>%
-    select(yr, nameplate, utilcode, plntcode, overnightcategory, fuel.general) %>%
-    rename(capacity = nameplate) %>%
-    group_by(yr, utilcode, plntcode, overnightcategory, fuel.general) %>%
-    summarise(capacity=sum(capacity)) %>%
+  # aggregate over vintage (unique to capacity dataset)
+  cap <- cap.vintage %>%
+    group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+    summarise(nameplate = sum(nameplate)) %>%
     ungroup()
 
-  plantgeneration <- plantgeneration %>%
-    select(yr, generation, utilcode, plntcode, overnightcategory, fuel.general) %>%
-    filter(generation > 0) # drop generators that used more energy than they produced
+  # merge for ! yr %in% c(2001, 2002)
+  # join includes primemover
+  join.rest <- gen %>%
+    filter(! yr %in% c(2001, 2002)) %>%
+    inner_join( cap, ., # join unmapped datasets W/O UTILCODE
+                by = c("yr", "plntcode", "primemover", "fuel") )
 
-  cf <- plantcapacity %>%
-    inner_join(plantgeneration, by=c("yr", "utilcode", "plntcode", "overnightcategory", "fuel.general") ) %>%
-    mutate(potentialgeneration = capacity * 8760) %>%
+  # merge for yr %in% c(2001, 2002)
+  # join excludes primemover, so we opt to use CAP pm column in later aggregation
+  join.01.02 <- gen %>%
+    filter( yr %in% c(2001, 2002)) %>%
+    inner_join( cap, ., # join unmapped datasets by DROPPING PRIMEMOVER
+                by = c("yr", "plntcode", "fuel") ) %>%
+    dplyr::rename(primemover = primemover.x) %>%  #use CAP pm column
+    select(-primemover.y) # drop GEN pm column
+
+  # bind joined data sets together, map to oc-fg, and aggregate
+  join <- rbind(join.rest, join.01.02) %>%
+    left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+    select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+    # no longer grouping by utilcode b/c two versions (.x, .y)
+    group_by(yr, plntcode, overnightcategory, fuel.general) %>%
+    summarise(nameplate = sum(nameplate),
+              generation = sum(generation)) %>%
+    ungroup()
+
+  join
+}
+
+calc.capacityfactors <- function(cap.gen.joined)
+{
+  cf <- cap.gen.joined %>%
+    filter(generation > 0) %>% # drop generators that used more energy than they produced
+    mutate(potentialgeneration = nameplate * 8760) %>%
     mutate(capacityfactor = generation/potentialgeneration) %>%
-    select(yr, utilcode, plntcode, overnightcategory, fuel.general, capacityfactor)
+    select(yr, plntcode, overnightcategory, fuel.general, capacityfactor)
 
   cf.clamp <- cf %>%
     mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor))
@@ -23,7 +49,7 @@ calc.capacityfactors <- function(generators, plantgeneration)
 
   data <- list(cf, cf.clamp)
   names(data) <- c("cf", "cf.clamp")
-  # cf used in later calculations
+  # cf.clamp used in later calculations
 
   data
 }
