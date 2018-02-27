@@ -23,27 +23,33 @@
 #' @name energy.markets
 NULL
 
-#' Electrical Capacity
+#' Joined Electrical Capacity and Generation Output
 #'
-#' U.S. electrical capacity compiled from EIA form 860 for 1990-2016, using constructed
-#' fuel and technology categorical variables to provide a broader description of the data.
+#' This is the dataset the reports capacity and generation using the constructed fuel and technological
+#' categorical variables in order to provide a borader description of the data.
 #'
-#' See data-raw/generators/1990to2000_utilities.R and 2001to2016_utilities.R for functions which
-#' produced the unmapped data set from the raw original data files provided by the EIA.
+#' These two datasets are joined by two methods. First, in 2001-2002, we join by yr, plntcode, and fuel. We
+#' do this because the Generation dataset reports primemovers exclusively as NA for these years. In all other years,
+#' we join by yr, plntcode, primemove, and fuel. Neither method uses utilcode, as there are significant
+#' inconsistencies within both the Generation and Capacity datasets, which prevent adequate joining between
+#' the two datasets.
+#'
+#' We take the inner_join() between these datasets using the keys indicated above. Finally, that join is mapped
+#' to the overnightcategory and fuel variables contained in our mapping file. Mapping to these new keys
+#' requires aggregation, as multiple pm-f codes map to the same overnightcategory and fuel pair. The resulting
+#' dataset is used in the calculation of capacity factor.
 #'
 #' \describe {
 #' \item{yr}{Year of reported data}
-#' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
-#' \item{vintage}{First year capacity is available}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
 #' \item{nameplate}{Reported nameplate capacity, MW}
+#' \item{generation}{Reported net electrical output, MWh}
 #' }
-#' @name capacity
-#' @usage data(capacity)
-#' @format A data framewith 239483 and 7 variables
-#' @source \url{https://www.eia.gov/electricity/data/eia860/}
+#' @name cap.gen.joined
+#' @usage data(cap.gen.joined)
+#' @format A data framewith 127044 and 6 variables
 NULL
 
 
@@ -164,34 +170,6 @@ NULL
 #' @format A data framewith 94 and 3 variables
 #' @source \url{https://www.eia.gov/electricity/monthly/backissues.html}
 NULL
-
-
-#' Electricity Generation Net Output
-#'
-#' U.S. electrical generation net output compiled from EIA forms 906, 920, and 923 (depending on year), using
-#' constructed fuel and technology categorical variables to provide a broader description of the data.
-#'
-#' See data-raw/generation/1990to2000_utilities.R and 2001to2016_utilities.R for functions which
-#' produced the unmapped data set from the raw original data files provided by the EIA.
-#'
-#' Generation is negative where generator consumed more electricity than it produced. These rows are filtered out
-#' when calculating capacity factors.
-#'
-#' \describe {
-#' \item{yr}{Year of reported data}
-#' \item{utilcode}{EIA-assigned utility code}
-#' \item{plntcode}{EIA-assigned plant code}
-#' \item{overnightcategory}{Technology category}
-#' \item{fuel.general}{Fuel category}
-#' \item{generation}{Reported net electrical output, MWh}
-#' \item{consumption}{}
-#' }
-#' @name generation
-#' @usage data(generation)
-#' @format A data framewith 183802 and 7 variables
-#' @source \url{https://www.eia.gov/electricity/data/eia923/}
-NULL
-
 
 #' Electricity Generation Net Output, Unmapped
 #'

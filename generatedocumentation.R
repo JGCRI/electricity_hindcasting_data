@@ -1,31 +1,29 @@
 setwd("C:/users/guti220/desktop/energy.markets")
-data(capacity, capacity.unmapped, capacityfactors, capacityfactors.clamp,
-     capitalcosts, fuelprices, generation, generation.unmapped,
+data(cap.gen.joined, capacity.unmapped, capacityfactors, capacityfactors.clamp,
+     capitalcosts, fuelprices, generation.unmapped,
      levelizedcosts, mapping, marginalcosts)
 
-df.list <- list(capacity, capacity.unmapped, capacityfactors, capacityfactors.clamp,
-                capitalcosts, fuelprices, generation, generation.unmapped,
+df.list <- list(cap.gen.joined, capacity.unmapped, capacityfactors, capacityfactors.clamp,
+                capitalcosts, fuelprices, generation.unmapped,
                 levelizedcosts, mapping, marginalcosts)
 
-datasets <- c("capacity",
+datasets <- c("cap.gen.joined",
               "capacity.unmapped",
               "capacityfactors",
               "capacityfactors.clamp",
               "capitalcosts",
-              "fuelprices", 
-              "generation",
+              "fuelprices",
               "generation.unmapped",
               "levelizedcosts",
               "mapping",
               "marginalcosts")
 
-titles <-  c("Electrical Capacity",
+titles <-  c("Joined Electrical Capacity and Generation Output",
           "Electrical Capacity, Unmapped",
           "Capacity Factors",
           "Capacity Factors, clamped to 1 from above",
           "Capital Costs",
           "Fuel Prices",
-          "Electricity Generation Net Output",
           "Electricity Generation Net Output, Unmapped",
           "Levelized Costs",
           "Mapping to GCAM Fuel-Tech Options",
@@ -41,13 +39,13 @@ cols <- c("Year of reported data",
          "Reported nameplate capacity, MW",
          "Reported net electrical output, MWh",
          "8760*capacity/generation, unitless")
-names(cols) <- c("yr", 
-                 "utilcode", 
-                 "plntcode", 
+names(cols) <- c("yr",
+                 "utilcode",
+                 "plntcode",
                  "vintage",
                  "primemover",
                  "fuel",
-                 "overnightcategory", 
+                 "overnightcategory",
                  "fuel.general",
                  "nameplate",
                  "generation",
@@ -58,7 +56,7 @@ cat("DATA DOCUMENTATION \n\n\n")
 for (i in 1:length(df.list)) {
   df <- df.list[[i]]
   cat("#'", titles[i], "\n")
-  cat("#' \n")  
+  cat("#' \n")
   cat("#' \\describe { \n")
   for (col in names(df)) {
     cat("#' \\item{", col, "}", sep="")
