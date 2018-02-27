@@ -35,11 +35,7 @@ if (csv) {
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
-mapping.full <- prep.mapping(generators, 'data-raw/generators/fuels.csv', 'data-raw/generators/movers.csv') %>%
-  mutate(tech = ifelse(fuel.general == "biomass", "biomass (conv)", tech),
-         tech = ifelse(fuel.general == "wind", "wind (wind)", tech))
-devtools::use_data(mapping.full, overwrite=TRUE)
-mapping <- filter(mapping.full, fuel.general != "")
+mapping <- prep.mapping("data-raw/mappingfiles/fuel_gen.csv", "data-raw/mappingfiles/overnight_c.csv")
 devtools::use_data(mapping, overwrite=TRUE)
 if(csv) {
   write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)

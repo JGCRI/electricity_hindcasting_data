@@ -1,23 +1,9 @@
 
-prep.mapping <- function(df.cap, fuelsfile, moversfile)
+prep.mapping <- function(fuelfile, techfile)
 {
-  ## combos that need mapping
-  combos <- df.cap %>%
-    select(primemover, fuel) %>%
-    distinct()
-
-  ## mapping files
-  fuels <- read.csv(fuelsfile, stringsAsFactors=F) %>%
-    select(fuel, fuel.general)
-
-  tech <- read.csv(moversfile, stringsAsFactors=F) %>%
-    select(primemover, tech)
-
-  ## COMBINE
-  mapping <- combos %>%
-    left_join(fuels, by="fuel") %>%
-    left_join(tech, by="primemover") %>%
-    mutate(tech = paste0(fuel.general, " (", tech, ")"))
+  fuel <- read.csv(fuelfile)
+  tech <- read.csv(techfile)
+  mapping <- full_join(fuel, tech, by=c("primemover", "fuel"))
   mapping
 
 }
