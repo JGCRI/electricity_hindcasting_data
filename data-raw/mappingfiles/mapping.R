@@ -1,20 +1,9 @@
 
-prep.mapping <- function(fuelsfile, categoriesfile)
+prep.mapping <- function(fuelfile, techfile)
 {
-  ## DATA
-  fuels <- read.csv(fuelsfile) %>%
-    select(fuel, fuel.general) %>%
-    mutate(fuel = as.character(fuel),
-           fuel.general = as.character(fuel.general) )
-
-  categories <- read.csv(categoriesfile) %>%
-    select(primemover, fuel, overnightcategory) %>%
-    mutate(primemover = as.character(primemover),
-           fuel = as.character(fuel),
-           overnightcategory = as.character(overnightcategory) )
-
-  ## COMBINE
-  mapping <- full_join(categories, fuels, by='fuel')
+  fuel <- read.csv(fuelfile)
+  tech <- read.csv(techfile)
+  mapping <- full_join(fuel, tech, by=c("primemover", "fuel"))
   mapping
 
 }

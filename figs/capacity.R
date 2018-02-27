@@ -3,6 +3,7 @@ library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(tidyr)
+
 # Functions ---------------------------------------------------------------
 elec_tech_colors <- c( "coal" = "#a0237c",
                        "b Coal w/CCS" = "#dab4c7",
@@ -94,18 +95,6 @@ orig.fleet <- orig %>%
   group_by(yr, utilcode, plntcode, overnight, fuel) %>%
   summarise(nameplate=sum(nameplate)) %>%
   ungroup()
-
-# filter for new additions only
-orig.new <- orig %>%
-  filter(yr == vintage)
-
-# get plots
-orig.fuel <- plot.agg(orig.fleet, "ORIG Fleet", "fuel")
-orig.new.fuel <- plot.agg(orig.new, "ORIG Additions",  "fuel")
-orig.oc <- plot.agg(orig.fleet, "ORIG Fleet", "overnight")
-orig.new.oc <- plot.agg(orig.new, "ORIG Additions", "overnight")
-
-
 
 # yr.utilcode.plntcode.oc.fg ----------------------------------------------
 data(capacity, generation)
@@ -220,23 +209,20 @@ mer3.new.fuel <- plot.agg(mer3.new, "MER3 Additions",  "fuel")
 mer3.oc <- plot.agg(mer3.fleet, "MER3 Fleet", "overnight")
 mer3.new.oc <- plot.agg(mer3.new, "MER3 Additions", "overnight")
 
-
-
 # Wonjun's 'merged' Dataset ---------------------------------------------------------
 data(mapping)
 mer4 <- read.delim("C:/Users/guti220/Desktop/merged.tsv") %>%
   left_join(mapping, by=c("primemover", "fuel")) %>% # (pm, f) -> (oc, fg)
   select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory,
+                overnight = tech,
                 vintage = startyr) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
+  filter(fuel != "") %>%
   mutate(yr = as.factor(yr)) %>%
   filter(!is.na(generation)) %>% # merged weird, includes NA generation
   group_by(yr, utilcode, plntcode, overnight, fuel, vintage) %>%
   summarise(nameplate = sum(nameplate)) %>%
   ungroup()
-
 
 # aggregate over vintage for full fleet
 mer4.fleet <- mer4 %>%
@@ -347,5 +333,16 @@ grid_arrange_shared_legend(orig.fuel, orig.new.fuel,
                            position="right", ncol=2, nrow=5)
 dev.off()
 
+## SAVE MERGED.FUEL PLOT
+fn <- "C:/Users/guti220/Desktop/2.9.18 mtg/merged.fuel.png"
+print(paste0("Saving ", fn))
+png(fn, width=11, height=8.5, units="in", res=250)
+grid_arrange_shared_legend(mer.fuel, mer.new.fuel, ncol=1, nrow=2)
+dev.off()
 
-
+## SAVE ORIG.FUEL PLOT
+fn <- "C:/Users/guti220/Desktop/2.9.18 mtg/orig.fuel.png"
+print(paste0("Saving ", fn))
+png(fn, width=11, height=8.5, units="in", res=250)
+grid_arrange_shared_legend(orig.fuel, orig.new.fuel, ncol=1, nrow=2)
+dev.off()

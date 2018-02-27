@@ -35,7 +35,8 @@ if (csv) {
 # Mapping file ------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
-mapping <- prep.mapping('data-raw/generators/fuels.csv', 'data-raw/generators/overnightcategories.csv')
+mapping <- prep.mapping("data-raw/mappingfiles/fuel_gen.csv", "data-raw/mappingfiles/overnight_c.csv") %>%
+  rename(overnightcategory = overnight_c)
 devtools::use_data(mapping, overwrite=TRUE)
 if(csv) {
   write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
@@ -111,7 +112,10 @@ source('data-raw/costs/fuelprices.R')
 # fuel.price ~ $/BTU
 fuelprices <- prep.fuelprices("data-raw/costs/fuel/energy.prices.tsv",
                               "data-raw/costs/fuel/uranium.prices.tsv",
-                              gdpdeflator)
+                              gdpdeflator) %>%
+  mutate(fuel.general = ifelse(fuel.general == "natural gas", "gas", fuel.general),
+         fuel.general = ifelse(fuel.general == "oil", "petroleum", fuel.general),
+         fuel.general = ifelse(fuel.general == "uranium", "nuclear", fuel.general))
 devtools::use_data(fuelprices, overwrite=TRUE)
 if (csv) {
   write.csv(fuelprices, "CSV/fuelprices.csv", row.names=FALSE)

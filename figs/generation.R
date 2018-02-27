@@ -1,6 +1,7 @@
 library(dplyr)
 library(magrittr)
 library(ggplot2)
+library(tidyr)
 
 # functions ---------------------------------------------------------------
 
@@ -62,19 +63,19 @@ output <- generation %>%
   ungroup() %>%
   mutate(yr=as.factor(yr))
 
-output.fuel <- plot.agg(output, "Output", "fuel")
-output.oc <- plot.agg(output, "Output", "overnight")
+output.fuel <- plot.agg(output, "GEN Output", "fuel")
+output.oc <- plot.agg(output, "GEN Output", "overnight")
 
 
 # Unmapped Generation Data ------------------------------------------------
 data(generation.unmapped)
 
-output.unmapped <- generation.unmapped %>% 
-  group_by(yr, primemover, fuel) %>% 
-  summarise(generation=sum(generation)) %>% 
-  ungroup() %>% 
-  mutate(yr=as.factor(yr)) 
-  
+output.unmapped <- generation.unmapped %>%
+  group_by(yr, primemover, fuel) %>%
+  summarise(generation=sum(generation)) %>%
+  ungroup() %>%
+  mutate(yr=as.factor(yr))
+
 output.unmapped.fuel <- plot.agg(output.unmapped, "Unmapped Output", "fuel")
 
 # ORIG Potential Generation Data -------------------------------------------
@@ -94,16 +95,16 @@ potential.orig.oc <- plot.agg(potential.orig, "ORIG Potential Output", "overnigh
 
 # merged output data ------------------------------------------------------
 data(mapping)
-merged <- read.delim("C:/Users/guti220/Desktop/merged.tsv") %>% 
-  left_join(mapping, by=c("primemover", "fuel")) %>% 
+
+merged <- read.delim("C:/Users/guti220/Desktop/merged.tsv") %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
   select(-primemover, -fuel) %>%
   dplyr::rename(fuel = fuel.general,
-                overnight = overnightcategory,
+                overnight = tech,
                 vintage = startyr) %>%
-  mutate(overnight = gsub("conventional ", "", overnight)) %>%
   mutate(yr = as.factor(yr)) %>%
   filter(!is.na(generation)) %>%
-  group_by(yr, utilcode, plntcode, overnight, fuel) %>%
+  group_by(yr, utilcode, plntcode, overnight, fuel, vintage) %>%
   summarise(generation = sum(generation)) %>%
   ungroup()
 
@@ -120,3 +121,9 @@ png(fn, width=8.5, height=11, units="in", res=250)
 grid_arrange_shared_legend(potential.orig.fuel, output.fuel, merged.fuel,
                            position="right", ncol=1, nrow=3)
 dev.off()
+
+fn <- "output.png"
+print(paste0("Saving ", fn))
+png(fn, width=8.5, height=11, units="in", res=250)
+grid_arrange_shared_legend(potential.orig.fuel, output.fuel, merged.fuel,
+                           ncol=3, nrow=1)

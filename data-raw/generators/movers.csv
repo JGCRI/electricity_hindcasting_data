@@ -1,0 +1,32 @@
+primemover,text,tech
+AB,Atmospheric Fluidized Bed,ct
+BA,Battery energy storage,storage
+BT,turbines used in a binary cycle,binary
+CA,Combined Cycle Steam Turbine with Supplemental Firing,cc
+CC,Combine Cycle - Total Unit,cc
+CE,Compressed Air Energy Storage,storage
+CG,not defined,undef
+CH,Steam Turbine,steam
+CP,Concentrated solar power energy storage,storage
+CS,Combined Cycle Single Shaft (gas turbine and steam turbine share a single generator),cc
+CT,Combined Cycle Combustion Turbine Part,cc
+CW,Combined Cycle Steam Turbine Part (Waste Heat Boiler Only),cc
+FC,Fuel Cell (electrochemical),storage
+FW,Flywheel energy storage,storage
+GE,Steam Turbine (geothermal),steam
+GT,Combustion (gas) Turbine,ct
+HC,Hydraulic Turbine (conventional),hydro
+HL,Hydraulic Turbine (pipeline),hydro
+HR,Hydraulic Turbine (reversible),hydro
+HY,Hydraulic Turbine (conventional),hydro
+IC,Internal Combustion,ct
+IG,Integrated Coal Gasification Combined Cycle,igcc
+JE,Jet Engine,ct
+NB,Steam Turbine (Boiling Water Nuclear Reactor),steam
+NP,Steam Turbine (Pressurized Water Nuclear Reactor),steam
+OT,Other (Explained in Notes),other
+PS,Hydraulic Turbine Reversible (pumped storage),hydro
+PV,Photovoltaic,PV
+SP,Photovoltaic,PV
+ST,Steam Turbine (Boiler),steam
+WT,Wind Turbine,wind
