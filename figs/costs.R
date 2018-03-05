@@ -16,19 +16,22 @@ cptlcsts.melt <- capitalcosts %>%
   select(yr, overnightcategory, overnight, om.fixed, om.var) %>%
   gather(key="cost", value="value", -yr, -overnightcategory)
 
-cost.base.var.tech <- cptlcsts.melt %>%
-  filter(cost == "om.var") %>%
+
+cost.base.fixed.tech <- cptlcsts.melt %>%
+  filter(cost == "om.fixed") %>%
   ggplot(aes(x=yr, y=value, color=overnightcategory)) +
-  ylab("$/thous. kW") +
+  ggtitle("om.fixed") +
+  ylab("$/kW") +
   theme(axis.text.x = element_text(angle = 45, hjust=1)) +
   geom_line()+
   geom_point() +
   facet_grid(.~overnightcategory, scale="free")
 
-cost.base.fixed.tech <- cptlcsts.melt %>%
-  filter(cost == "om.fixed") %>%
+cost.base.var.tech <- cptlcsts.melt %>%
+  filter(cost == "om.var") %>%
   ggplot(aes(x=yr, y=value, color=overnightcategory)) +
-  ylab("$/kW") +
+  ggtitle("om.var") +
+  ylab("$/thous. kW") +
   theme(axis.text.x = element_text(angle = 45, hjust=1)) +
   geom_line()+
   geom_point() +
@@ -37,6 +40,7 @@ cost.base.fixed.tech <- cptlcsts.melt %>%
 cost.base.over.tech <- cptlcsts.melt %>%
   filter(cost == "overnight") %>%
   ggplot(aes(x=yr, y=value, color=overnightcategory)) +
+  ggtitle("overnight") +
   ylab("$/kW") +
   theme(axis.text.x = element_text(angle = 45, hjust=1)) +
   geom_line()+
@@ -62,8 +66,6 @@ cost.lev.fuel <- levcsts.melt %>%
   geom_point() +
   facet_grid(cost~fuel.general, scale="free")
 
-
-
 # fuel prices -------------------------------------------------------------
 data(fuelprices)
 price.fuel <- fuelprices %>%
@@ -81,7 +83,7 @@ price.fuel <- fuelprices %>%
 fn <- "figs/Costs.base by tech.png"
 print(paste0("saving ", fn))
 png(fn, width=11, height=17, units="in", res=250)
-grid_arrange_shared_legend(cost.base.var.tech, cost.base.over.tech, cost.base.fixed.tech,
+grid_arrange_shared_legend(cost.base.fixed.tech, cost.base.var.tech, cost.base.over.tech,
                            position="right", ncol=1, nrow=3)
 dev.off()
 
@@ -98,3 +100,21 @@ print(paste0("saving ", fn))
 png(fn, width=11, height=17, units="in", res=250)
 price.fuel
 dev.off()
+
+
+# boilerplate -------------------------------------------------------------
+
+# scatter plot of plants' costs (by fuel)
+filter(levcsts.melt, cost == "om.fixed.lev") %>%
+  levcsts.melt %>%
+  ggplot(aes(x=yr, y=value, color=fuel.general)) +
+  ylab("$/MWh") +
+  geom_point() +
+  facet_grid(cost~fuel.general, scale="free")
+
+# histogram of plants' costs (by fuel)
+levcsts.melt %>%
+  filter(fuel.general == "nuclear") %>%
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_grid(cost~fuel.general, scale="free")
