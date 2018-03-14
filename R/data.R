@@ -127,10 +127,12 @@ NULL
 #'
 #' Tables from each report appear under the name 'Cost and Performance Characteristics of New
 #' Central Station Electricity Generating Technologies' and were manually compiled into one table.
-#' This file is an input into the processiong function stored in data-raw/costs/AEO/capitalcosts.R, which
-#' uses a gdpdeflator series to get costs in USD$2010. The reported overnight categories are also
-#' mapped to our technology categories. Original reports, manually-compiled datafile, and technology mapping
-#' included in data-raw/costs/AEO/.
+#'
+#' The processing for this data is contained in an Excel workbook within the data-raw/costs/ directory. The manually
+#' compiled data is contained in the sheet named "AEOData". As this data is based on expectations of construction costs,
+#' there are some spikes in these numbers; "AEOData_$2010_Smoothed" contains the data with these spikes smoothed out and
+#' converted into USD$2010. "Data4GCAM" is the final capital costs dataset reported in this package, with the native AEO
+#' technology categories mapped to our own set of technologies.
 #'
 #'
 #' \describe {
