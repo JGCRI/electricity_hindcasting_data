@@ -5,7 +5,7 @@
 #' @param type "Fuel" market (top-level) or "tech" market (nested)
 #' @param additions Logical indicating whether to calculate share of capacity additions for each year
 #'
-#' @return
+#' @return data.frame with market shares
 #' @export
 marketshares <- function(generators, mapping, type, additions=FALSE)
 {
@@ -70,7 +70,6 @@ marketshares <- function(generators, mapping, type, additions=FALSE)
       geom_col( aes(fill=overnightcategory) ) +
       facet_wrap(~fuel.general)
       title <- "Tech shares given choice of fuel"
-
   }
 
   if (additions) {
