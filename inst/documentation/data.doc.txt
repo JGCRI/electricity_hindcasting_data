@@ -1,0 +1,178 @@
+DATA DOCUMENTATION 
+
+
+#' Joined Electrical Capacity and Generation Output 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{nameplate}{Reported nameplate capacity, MW}
+#' \item{generation}{Reported net electrical output, MWh}
+#' }
+#' @name cap.gen.joined
+#' @usage data(cap.gen.joined)
+#' @format A data framewith 126832 and 6 variables
+NULL
+
+
+#' Electrical Capacity, Unmapped 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{utilcode}{EIA-assigned utility code}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{primemover}{Native EIA prime mover code}
+#' \item{fuel}{Native EIA fuel code}
+#' \item{vintage}{First year capacity is available}
+#' \item{nameplate}{Reported nameplate capacity, MW}
+#' }
+#' @name capacity.unmapped
+#' @usage data(capacity.unmapped)
+#' @format A data framewith 245936 and 7 variables
+NULL
+
+
+#' Capacity Factors 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{capacityfactor}{8760*capacity/generation, unitless}
+#' }
+#' @name capacityfactors
+#' @usage data(capacityfactors)
+#' @format A data framewith 117677 and 5 variables
+NULL
+
+
+#' Capacity Factors, clamped to 1 from above 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{capacityfactor}{8760*capacity/generation, unitless}
+#' }
+#' @name capacityfactors.clamp
+#' @usage data(capacityfactors.clamp)
+#' @format A data framewith 117677 and 5 variables
+NULL
+
+
+#' Capital Costs 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{reference.yr}{}
+#' \item{overnightcategory}{Technology category}
+#' \item{overnight}{}
+#' \item{om.fixed}{}
+#' \item{om.var}{}
+#' \item{heatrate}{}
+#' }
+#' @name capitalcosts
+#' @usage data(capitalcosts)
+#' @format A data framewith 272 and 7 variables
+NULL
+
+
+#' Fuel Prices 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{fuel.general}{Fuel category}
+#' \item{fuel.price}{}
+#' }
+#' @name fuelprices
+#' @usage data(fuelprices)
+#' @format A data framewith 94 and 3 variables
+NULL
+
+
+#' Electricity Generation Net Output, Unmapped 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{utilcode}{EIA-assigned utility code}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{primemover}{Native EIA prime mover code}
+#' \item{fuel}{Native EIA fuel code}
+#' \item{generation}{Reported net electrical output, MWh}
+#' \item{consumption}{}
+#' }
+#' @name generation.unmapped
+#' @usage data(generation.unmapped)
+#' @format A data framewith 208679 and 7 variables
+NULL
+
+
+#' Levelized Costs 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{overnight.lev}{}
+#' \item{om.fixed.lev}{}
+#' \item{om.var}{}
+#' }
+#' @name levelizedcosts
+#' @usage data(levelizedcosts)
+#' @format A data framewith 106468 and 7 variables
+NULL
+
+
+#' Mapping to GCAM Fuel-Tech Options 
+#' 
+#' \describe { 
+#' \item{fuel.general}{Fuel category}
+#' \item{primemover}{Native EIA prime mover code}
+#' \item{fuel}{Native EIA fuel code}
+#' \item{overnightcategory}{Technology category}
+#' }
+#' @name mapping
+#' @usage data(mapping)
+#' @format A data framewith 175 and 4 variables
+NULL
+
+
+#' Marginal Costs 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{marginal.cost}{}
+#' }
+#' @name marginalcosts
+#' @usage data(marginalcosts)
+#' @format A data framewith 190 and 4 variables
+NULL
+
+
+#' Master Dataset 
+#' 
+#' \describe { 
+#' \item{yr}{Year of reported data}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{overnight.lev}{}
+#' \item{om.fixed.lev}{}
+#' \item{om.var}{}
+#' \item{marginal.cost}{}
+#' \item{nameplate}{Reported nameplate capacity, MW}
+#' \item{generation}{Reported net electrical output, MWh}
+#' }
+#' @name master
+#' @usage data(master)
+#' @format A data framewith 106468 and 10 variables
+NULL
+
+

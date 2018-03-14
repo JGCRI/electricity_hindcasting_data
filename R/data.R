@@ -25,8 +25,8 @@ NULL
 
 #' Joined Electrical Capacity and Generation Output
 #'
-#' This is the dataset the reports capacity and generation using the constructed fuel and technological
-#' categorical variables in order to provide a borader description of the data.
+#' This is the dataset that reports capacity and generation using the constructed fuel and technological
+#' categorical variables, which describe the data more broadly than the native fuel and primemover codes.
 #'
 #' These two datasets are joined by two methods. First, in 2001-2002, we join by yr, plntcode, and fuel. We
 #' do this because the Generation dataset reports primemovers exclusively as NA for these years. In all other years,
@@ -263,5 +263,28 @@ NULL
 #' @usage data(marginalcosts)
 #' @format A data framewith 190 and 4 variables
 NULL
+
+#' Master Dataset
+#'
+#' This dataset joins levelizedcosts, marginalcosts, and cap.gen.joined, so that it contains all the
+#' necessary columns for JGCRI's electricity hindcasting project.
+#'
+#' \describe {
+#' \item{yr}{Year of reported data}
+#' \item{plntcode}{EIA-assigned plant code}
+#' \item{overnightcategory}{Technology category}
+#' \item{fuel.general}{Fuel category}
+#' \item{overnight.lev}{Levelized overnight cost, in $/MWh}
+#' \item{om.fixed.lev}{Levelized fixed O&M, in $/MWh}
+#' \item{om.var}{Variable O&m, in $/MWh}
+#' \item{marginal.cost}{Marginal cost of producing electricity using specified technology and fuel, in $/MWh}
+#' \item{nameplate}{Reported nameplate capacity, MW}
+#' \item{generation}{Reported net electrical output, MWh}
+#' }
+#' @name master
+#' @usage data(master)
+#' @format A data framewith 106468 and 10 variables
+NULL
+
 
 
