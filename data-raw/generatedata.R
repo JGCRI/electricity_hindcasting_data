@@ -128,10 +128,13 @@ source('data-raw/costs/marginalcosts.R')
 # marginalcosts <- prep.marginalcosts(mapping, form860processed, fuelprices)
 # can include maximumheatrates by adding as argument
 heatrates <- read.csv("data-raw/costs/fuel/avghr.csv") %>%
-  mutate(oc = gsub("_", " ", oc)) %>%
-  mutate(oc = ifelse(oc == "combined cycle", "conventional combined cycle", oc)) %>%
-  mutate(oc = ifelse(oc == "combustion turbine", "conventional combustion turbine", oc)) %>%
-  mutate(fuel = gsub("_", " ", fuel)) %>%
+  mutate(oc = ifelse(oc == "combined_cycle", "CC", oc)) %>%
+  mutate(oc = ifelse(oc == "combustion_turbine", "CT", oc)) %>%
+  mutate(fuel = ifelse(fuel == "oil", "petroleum", fuel)) %>%
+  mutate(fuel = ifelse(fuel == "natural_gas", "gas", fuel)) %>%
+  mutate(fuel = ifelse(fuel == "steam_turbine", "ST", fuel)) %>%
+  mutate(fuel = ifelse(fuel == "uranium", "nuclear", fuel)) %>%
+  mutate(fuel = ifelse(fuel == "photovoltaic", "PV", fuel)) %>%
   rename(overnightcategory = oc,
          fuel.general = fuel,
          yr = t,
