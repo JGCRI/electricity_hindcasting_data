@@ -15,7 +15,9 @@ csv <- TRUE
 
 source('data-raw/generators/1990to2000_utilities.R') # generator-level
 capacity.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/")
-
+heatrates.90to95 <- capacity.90to00 %>%
+  filter(!is.na(heatrate))
+devtools::use_data(heatrates.90to95, overwrite=TRUE)
 source('data-raw/generators/2001to2016_utilities.R') # generator-level
 capacity.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 
@@ -184,7 +186,8 @@ if (csv) {
 master <- levelizedcosts %>%
   left_join(marginalcosts, by=c("yr", "overnightcategory", "fuel.general")) %>%
   mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) %>%  # renewables aren't assigned marginalcost
-  left_join(cap.gen.joined, by=c("yr", "plntcode", "overnightcategory", "fuel.general"))
+  left_join(cap.gen.joined, by=c("yr", "plntcode", "overnightcategory", "fuel.general")) %>%
+  rename(capacity = nameplate)
 devtools::use_data(master, overwrite=TRUE)
 if (csv) {
   write.csv(master, "CSV/master.csv", row.names=FALSE)
