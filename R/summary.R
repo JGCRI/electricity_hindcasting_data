@@ -16,7 +16,7 @@ summaryCalc <- function(master, column, weights=NULL) {
   # if weighted, use plant-capacity to weight (oc, fg, yr)-avg
   summary.avg.yr <- master %>%
     group_by(yr, overnightcategory, fuel.general) %>%
-    summarise(column.avg.yr = ifelse(quo_name != "lcoe",
+    summarise(column.avg.yr = ifelse(quo_name(column) != "lcoe",
                                      stats::weighted.mean((!!column), rep(1, n())),
                                      stats::weighted.mean((!!column), capacity))) %>%
     ungroup()
