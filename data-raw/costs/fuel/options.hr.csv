@@ -1,0 +1,15 @@
+oc,fuel,,oc,fuel,,
+biomass,biomass,,biomass,biomass,.,other
+CC,gas,,CC,petroleum,FC,gas
+CC,petroleum,,CC,gas,IGCC,coal
+coal,coal,,coal,coal,IGCC,gas
+CT,gas,,CT,petroleum,MSW,MSW
+CT,petroleum,,CT,gas,OTH,gas
+geothermal,geothermal,,geothermal,geothermal,OTH,petroleum
+hydro,water,,hydro,water,,
+nuclear,nuclear,,nuclear,nuclear,,
+PV,solar,,PV,solar,,
+solar thermal,solar,,solar_thermal,solar,,
+ST,gas,,ST,gas,,
+ST,petroleum,,ST,petroleum,,
+wind,wind,,wind,wind,,
