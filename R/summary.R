@@ -50,3 +50,22 @@ summaryCalc <- function(master, column, weights=NULL) {
     rename(!!quo_name(column) := column.avg.yr) # report average values under colname indicated as input
 }
 
+#' Plot the summary time-series for variable of interest
+#'
+#' @param df data.frame, summary data produced by summaryCalc()
+#' @param column unquoted column name
+#' @param units string, Units of variable
+#' @return time-series plot faceted by oc & fg
+#' @export
+summaryPlot <- function(df, column, units) {
+
+  column <- enquo(column)
+
+  # barchart (w/ points on period average for missing data)
+  ggplot(df, aes(x=yr)) + ylab(units) + ggtitle(paste0("average plant ", quo_name(column))) +
+    geom_line(aes_string(y = quo_text(column))) +
+    geom_point(aes(y = missing)) +
+    facet_wrap(~fuel.general + overnightcategory, scales="free") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+

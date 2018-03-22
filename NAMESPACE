@@ -2,3 +2,4 @@
 
 export(marketshares)
 export(summaryCalc)
+export(summaryPlot)
