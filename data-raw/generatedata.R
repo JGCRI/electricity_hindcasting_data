@@ -8,7 +8,8 @@ library(readxl)
 library(rebus)
 csv <- TRUE
 
-# Generator Capacity ------------------------------------------------------
+
+# ORIG CAP ----------------------------------------------------------------
 # data: https://www.eia.gov/electricity/data/eia860/
 # nameplate, summer, winter ~ MW
 # heatrate ~ BTU/ kWh
@@ -24,7 +25,15 @@ capacity.unmapped <- rbind(capacity.90to00, capacity.01to16) %>%
   mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel), # fix code errors
          fuel = ifelse(fuel=="WOC", "WC", fuel) ) %>%
   dplyr::rename(vintage=startyr) %>% # use vintage instead of startyr
-  group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
+  group_by(yr, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
+
+  # NOTE:
+  # this dataset is at plant-level, but we are dropping utilcode as a useful key due to
+  # inconsistencies between capacity and generation datasets.
+  #
+  # these two datasets are joined using c("yr", "plntcode", "primemover", "fuel"),
+  # except for yr %in% c(2000, 2001), where we use c("yr", "plntcode", "fuel")
+
   summarise(capacity=sum(nameplate)) %>% # rename nameplate as capacity
   ungroup()
 devtools::use_data(capacity.unmapped, overwrite=TRUE)
@@ -32,7 +41,11 @@ if (csv) {
   write.csv(capacity.unmapped, "CSV/capacity.unmapped.csv", row.names=FALSE)
 }
 
-# Mapping file ------------------------------------------------------------
+
+# ORIG GEN ----------------------------------------------------------------
+
+# Mapping (save mapped CAP & GEN) -----------------------------------------
+
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
 mapping <- prep.mapping("data-raw/mappingfiles/fuel_gen.csv", "data-raw/mappingfiles/overnight_c.csv") %>%
@@ -42,33 +55,39 @@ if(csv) {
   write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
 }
 
-# Generation & Consumption ------------------------------------------------
-source('data-raw/generation/1990to2000_utilities.R')
-# data: https://www.eia.gov/electricity/data/eia923/eia906u.html
-# generation ~ MWh
-# consumption ~ physical quantity of fuel, specific to type of fuel
-generation.90to00 <- prep.generation.90to00("data-raw/generation/1990-2000/")
 
-source('data-raw/generation/2001to2016_utilities.R')
-# data: https://www.eia.gov/electricity/data/eia923/
-# generation ~ MWh
-# consumption ~ Btu
-generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
-  mutate(NAD="")
+# MAP CAP & GEN -----------------------------------------------------------
 
-generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
-  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
-  summarise(generation=sum(generation),
-            consumption=sum(consumption)) %>%
-  ungroup()
-devtools::use_data(generation.unmapped, overwrite=TRUE)
-if (csv) {
-  write.csv(generation.unmapped, "CSV/generation.unmapped.csv", row.names=FALSE)
+# takes dataset df and column of interest (capacity or generation)
+# maps df from native (yr-pm-f-plntcode) keys to (yr-oc-fg-plntcode) keys
+# after mapping, must aggregate b/c multiple (pm-f) map to same (oc-fg)
+map <- function(df, column) {
+  column <- enquo(column)
+
+  df <- df %>%
+    left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+    select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+    # no longer grouping by utilcode b/c two versions (.x, .y)
+    group_by(yr, plntcode, overnightcategory, fuel.general) %>%
+    summarise(!!quo_name(column) := sum(!!column)) %>%
+    ungroup()
 }
-# Capacity Factors ---------------------------------------------------------
+
+capacity <- map(capacity.unmapped, capacity)
+devtools::use_data(capacity, overwrite=TRUE)
+if(csv) {
+  write.csv(capacity, "CSV/capacity.csv", row.names=FALSE)
+}
+
+generation <- map(generation.unmapped, generation)
+devtools::use_data(generation, overwrite=TRUE)
+if (csv) {
+  write.csv(generation, "CSV/generation.csv", row.names=FALSE)
+}
+
+
+# JOIN.CAP.GEN ------------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
-# data: form860 generator capacities & forms759/906/920/923 plant generation output
-# carries original capacity and generation as well (for weighting capital costs)
 
 # join capacity.unmapped and generation.unmapped
 cap.gen.joined <- join.cap.gen(capacity.unmapped, generation.unmapped)
@@ -86,6 +105,11 @@ devtools::use_data(cap.gen.joined, overwrite=TRUE)
 if (csv) {
   write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)
 }
+
+# Capacity Factors ---------------------------------------------------------
+source('data-raw/costs/capacityfactors.R')
+# data: form860 generator capacities & forms759/906/920/923 plant generation output
+# carries original capacity and generation as well (for weighting capital costs)
 
 # calculate capacityfactors
 cf <- calc.capacityfactors(cap.gen.joined)
