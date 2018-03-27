@@ -15,9 +15,7 @@ csv <- TRUE
 
 source('data-raw/generators/1990to2000_utilities.R') # generator-level
 capacity.90to00 <- prep.generators.90to00("data-raw/generators/1990-2000/")
-heatrates.90to95 <- capacity.90to00 %>%
-  filter(!is.na(heatrate))
-devtools::use_data(heatrates.90to95, overwrite=TRUE)
+
 source('data-raw/generators/2001to2016_utilities.R') # generator-level
 capacity.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 
@@ -74,6 +72,16 @@ source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
 cap.gen.joined <- join.cap.gen(capacity.unmapped, generation.unmapped)
+
+# save cap.gen.joined.unmapped (native pm-f codes)
+cap.gen.joined.unmapped <- cap.gen.joined$unmapped
+devtools::use_data(cap.gen.joined.unmapped, overwrite=TRUE)
+if (csv) {
+  write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
+}
+
+# save cap.gen.joined (mapped to oc-fg keys)
+cap.gen.joined <- cap.gen.joined$mapped
 devtools::use_data(cap.gen.joined, overwrite=TRUE)
 if (csv) {
   write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)

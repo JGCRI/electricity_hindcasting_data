@@ -22,15 +22,22 @@ join.cap.gen <- function(cap.vintage, gen)
     dplyr::rename(primemover = primemover.x) %>%  #use CAP pm column
     select(-primemover.y) # drop GEN pm column
 
-  # bind joined data sets together, map to oc-fg, and aggregate
-  join <- rbind(join.rest, join.01.02) %>%
+  # bind joined data sets together
+  join.unmapped <- rbind(join.rest, join.01.02)
+
+  # map to oc-fg, and aggregate
+  join.mapped <- join.unmapped %>%
     left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
     select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
     # no longer grouping by utilcode b/c two versions (.x, .y)
     group_by(yr, plntcode, overnightcategory, fuel.general) %>%
-    summarise(nameplate = sum(nameplate),
+    summarise(capacity = sum(capacity),
               generation = sum(generation)) %>%
     ungroup()
+
+  join <- list(join.unmapped, join.mapped)
+  names(join) <- c("unmapped", "mapped")
+  # join.mapped used in later calculations
 
   join
 }
@@ -39,7 +46,7 @@ calc.capacityfactors <- function(cap.gen.joined)
 {
   cf <- cap.gen.joined %>%
     filter(generation > 0) %>% # drop generators that used more energy than they produced
-    mutate(potentialgeneration = nameplate * 8760) %>%
+    mutate(potentialgeneration = capacity * 8760) %>%
     mutate(capacityfactor = generation/potentialgeneration) %>%
     select(yr, plntcode, overnightcategory, fuel.general, capacityfactor)
 
