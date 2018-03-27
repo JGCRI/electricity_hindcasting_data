@@ -27,7 +27,7 @@ capacity.unmapped <- rbind(capacity.90to00, capacity.01to16) %>%
          fuel = ifelse(fuel=="WOC", "WC", fuel) ) %>%
   dplyr::rename(vintage=startyr) %>% # use vintage instead of startyr
   group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
-  summarise(nameplate=sum(nameplate)) %>%
+  summarise(capacity=sum(nameplate)) %>% # rename nameplate as capacity
   ungroup()
 devtools::use_data(capacity.unmapped, overwrite=TRUE)
 if (csv) {

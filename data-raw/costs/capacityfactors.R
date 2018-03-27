@@ -3,7 +3,7 @@ join.cap.gen <- function(cap.vintage, gen)
   # aggregate over vintage (unique to capacity dataset)
   cap <- cap.vintage %>%
     group_by(yr, utilcode, plntcode, primemover, fuel) %>%
-    summarise(nameplate = sum(nameplate)) %>%
+    summarise(capacity = sum(capacity)) %>%
     ungroup()
 
   # merge for ! yr %in% c(2001, 2002)
