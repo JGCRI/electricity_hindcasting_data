@@ -90,13 +90,13 @@ master.summary <- my_full_join(master.cap.summary, master.gen.summary) %>% selec
 # these fg-oc pairs are missing data just for 2001 & 2002
 orig.summary %>%
   group_by(fuel.general, overnightcategory) %>%
-  filter(unique(yr) == c(2001, 2002)) %>%
+  filter(any(unique(yr) %in% c(2000, 2001, 2002))) %>%
   View("ORIG")
 
 # the same pairs appear in the mapped version of ORIG
 map.summary %>%
   group_by(fuel.general, overnightcategory) %>%
-  filter(unique(yr) == c(2001, 2002)) %>%
+  filter(any(unique(yr) %in% c(2000, 2001, 2002))) %>%
   View("MAP")
 
 # JOIN dataset somehow finds missing 2001 GEN data (but not 2000...)
