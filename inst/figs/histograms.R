@@ -5,19 +5,19 @@ library(ggridges)
 library(magrittr)
 library(dplyr)
 library(rlang)
-data(master, mapping)
+data(master)
 
 
 
 # capacity ----------------------------------------------------------------
 
-ggplot(master, aes(x=nameplate)) + xlab("MW") +
+ggplot(master, aes(x=capacity)) + xlab("MW") +
   geom_histogram(aes(fill = ..count..)) +
   facet_wrap(~fuel.general + overnightcategory, scales="free")
 ggsave("inst/figs/capacity-hists/industry.png", device="png",
        width=8.5, height=8.5, units="in")
 
-ggplot(master, aes(x=log10(nameplate))) + xlab("log10(MW)") +
+ggplot(master, aes(x=log10(capacity))) + xlab("log10(MW)") +
   geom_histogram(aes(fill = ..count..)) +
   facet_wrap(~fuel.general + overnightcategory, scales="free")
 ggsave("inst/figs/capacity-hists/industry(logx).png",device="png",
