@@ -5,11 +5,11 @@ library(ggridges)
 library(magrittr)
 library(dplyr)
 library(rlang)
-data(master, mapping)
 
 
 
 # total sector capacity ---------------------------------------------------
+data(master)
 
 ggplot(master, aes(x=yr, y=capacity)) + ylab("MW") + ggtitle("total capacity") +
   geom_bar(stat="identity") +
@@ -30,7 +30,9 @@ ggsave("inst/figs/capacity.stacked.png", device="png",
 
 
 
-# average summary time-series ---------------------------------------------
+
+# master summary time-series ----------------------------------------------
+data(master)
 
 capacity.summary <- summaryCalc(master, capacity)
 summaryPlot(capacity.summary, capacity, "MW")
@@ -49,9 +51,10 @@ ggsave("inst/figs/lcoe.avg.png", device="png",
 
 
 
-# unmapped CAP/GEN --------------------------------------------------------
 
+# ORIG CAP/GEN summary time-series ----------------------------------------
 data(generation.unmapped, capacity.unmapped, mapping)
+
 map <- function(df, column) {
   column <- enquo(column)
 
@@ -64,29 +67,23 @@ map <- function(df, column) {
     ungroup()
 }
 
-gen <- map(generation.unmapped, generation)
-gen.summary <- summaryCalc(gen, generation)
-summaryPlot(gen.summary, generation, "MWh")
-ggsave("inst/figs/GEN.avg.png", device="png",
-       width = 8.5, height = 8.5, units = "in")
-
-cap <- capacity.unmapped %>%
-  rename(capacity = nameplate) %>%
-  map(., capacity)
-cap.summary <- summaryCalc(cap, capacity)
+cap.summary <- capacity.unmapped %>%
+  map(capacity) %>%
+  summaryCalc(capacity)
 summaryPlot(cap.summary, capacity, "MW")
 ggsave("inst/figs/CAP.avg.png", device="png",
        width = 8.5, height = 8.5, units = "in")
 
-# 00-01 missing data ------------------------------------------------------
+gen.summary <- generation.unmapped %>%
+  map(generation) %>%
+  summaryCalc(generation)
+summaryPlot(gen.summary, generation, "MWh")
+ggsave("inst/figs/GEN.avg.png", device="png",
+       width = 8.5, height = 8.5, units = "in")
 
-master.missing <- full_join(capacity.summary, generation.summary,
-                            by = c("overnightcategory", "fuel.general", "yr"))
 
-# master dataset is only missing data for yr = 2000
-master.missing %>% filter(yr %in% c(2000, 2001)) %>% View("Master (00-01")
 
-orig.missing <- full_join(cap.summary, gen.summary,
-                          by = c("overnightcategory", "fuel.general", "yr"))
 
-orig.missing %>% filter(yr %in% c(2000, 2001)) %>% View("ORIG (00-01)")
+
+
+
