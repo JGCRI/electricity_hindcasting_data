@@ -7,7 +7,8 @@ library(dplyr)
 library(rlang)
 data(master)
 
-# ridgeline plots (faceted by year) (by fuel) -----------------------------
+
+# spread by fuel (1996-2016) ----------------------------------------------
 
 ggplot(master, aes(x=capacity, y=fuel.general, fill=fuel.general)) + xlab("MW") +
   geom_density_ridges() +
@@ -37,8 +38,8 @@ spread_by_year <- function(fuel, df) { # 1 fuel, 1 plot: faceted by year
     geom_density_ridges() +
     theme_ridges() +
     ggtitle(fuel)
-  fn <- paste0("inst/figs/capacity-ridges/by year (logx)/", fuel, ".png")
-  ggsave(fn, plot=p, device="png")
+  fn <- paste0("inst/figs/capacity-ridges/by year (logx)/", fuel, " (logx).png")
+  ggsave(fn, plot=p.log, device="png")
 }
 fuels <- unique(master$fuel.general)
 lapply(fuels, spread_by_year, master)
