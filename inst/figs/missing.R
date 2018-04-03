@@ -5,16 +5,15 @@
 # the data pipeline goes:
 # ORIG CAP/GEN (f-pm) -> JOIN.CAP.GEN (f-pm) -> JOIN.CAP.GEN (fg-oc) -> FINAL (fg-oc)
 #
-# the first missing data originally appears in generation.unmapped 2000-2001
-# see summary time-series @ inst/figs/ORIG.GEN.avg.png. The 01-02 appear missing because
-# the ORIG GEN is missing the native pm codes (check raw data files).
+# the first missing data originally appears in ORIG GEN 2001-02, due to missing native pm codes.
+# see summary time-series @ inst/figs/ORIG.GEN.avg.png.
 #
 # JOIN.CAP.GEN (f-pm) does two types of joins. For 01-02, the join uses
 # by = c("yr", "plntcode", "fuel"), which excludes the pm codes. ORIG CAP pm codes are
-# used b/c they are left out of ORIG GEN. For all other years, the join uses
+# used for all matching rows. For all other years, the join uses
 # by = c("yr", "plntcode", "primemover", "fuel").
 #
-# the second missing data was identified in JOIN.CAP.GEN (fg-oc). b/c this is a join, the
+# the second 'missing' data was identified in JOIN.CAP.GEN (fg-oc). b/c this is a join, the
 # missing data appears for plots of both CAP and GEN plots. See inst/figs/JOINED.XX.avg.png
 # for discontinuous time-series plots for fuels biomass and petrolum.
 #
@@ -36,6 +35,10 @@ data(capacity.unmapped, generation.unmapped, mapping,
      cap.gen.joined.unmapped,
      cap.gen.joined,
      master)
+capacity.unmapped <- capacity.unmapped %>%
+  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+  summarise(capacity = sum(capacity)) %>%
+  ungroup()
 
 map_and_aggregate <- function(df, column) {
   column <- enquo(column)
@@ -113,16 +116,6 @@ anti_join(cap.2000, gen.2000) %>% View("ANTIJOIN 2000")
 
 # inspect join(ORIG CAP, ORIG GEN) using fewer keys -----------------------
 
-# fg = c(biomass, petroleum) have consistent time-series except for yr=2000, and
-# don't appear in the above anti_join, meaning there is a mismatch in either the
-# plant code or native fuel code
-
-# join by yr-pcode-pm-f
-# no bio/oil
-
-# join by yr-pcode-f (current package implementation)
-# no bio/oil
-
 # join by yr-pcode-pm
 join.00.pm <- generation.unmapped %>%
   filter( yr == 2000) %>%
@@ -154,17 +147,19 @@ join.00.pm %>%
   select(-plntcode) %>%
   distinct() %>%
   # replace (f,pm).x with (fg,oc).x
-  left_join(mapping, by=c("fuel.x"="fuel", "primemover.x"="primemover")) %>%
-  select(-fuel.x, -primemover.x) %>%
+  left_join(mapping, by=c("fuel.x"="fuel", "primemover")) %>%
   rename(fg.x = fuel.general,
          oc.x = overnightcategory) %>%
   # replace (f,pm).y with (fg,oc).y
-  left_join(mapping, by=c("fuel.y"="fuel", "primemover.y"="primemover")) %>%
-  select(-fuel.y, -primemover.y) %>%
+  left_join(mapping, by=c("fuel.y"="fuel", "primemover")) %>%
   rename(fg.y = fuel.general,
          oc.y = overnightcategory) %>%
   distinct() %>%
-  filter(fg.x != fg.y | oc.x != oc.y)
+  filter(fg.x != fg.y) %>%
+  # filter(fg.x != fg.y | oc.x != oc.y) %>%
+  select(yr, primemover, fuel.x, fg.x, oc.x, fuel.y, fg.y, oc.y) %>%
+  arrange(yr, primemover, fg.x, fg.y) %>%
+  View("Disambiguation (2000)")
 
 
 # get summary time-series  ------------------------------------------------
