@@ -9,14 +9,14 @@ join.cap.gen <- function(cap.vintage, gen)
   # merge for ! yr %in% c(2001, 2002)
   # join includes primemover
   join.rest <- gen %>%
-    filter(! yr %in% c(2000, 2001, 2002)) %>%
+    filter(! yr %in% c(2001, 2002)) %>%
     inner_join( cap, ., # join unmapped datasets W/O UTILCODE
                 by = c("yr", "plntcode", "primemover", "fuel") )
 
   # merge for yr %in% c(2001, 2002)
   # join excludes primemover, so we opt to use CAP pm column in later aggregation
   join.01.02 <- gen %>%
-    filter( yr %in% c(2000, 2001, 2002)) %>%
+    filter( yr %in% c(2001, 2002)) %>%
     inner_join( cap, ., # join unmapped datasets by DROPPING PRIMEMOVER
                 by = c("yr", "plntcode", "fuel") ) %>%
     dplyr::rename(primemover = primemover.x) %>%  #use CAP pm column
