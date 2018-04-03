@@ -1,23 +1,26 @@
-##### track missing 00-01 data in ORIG GEN data #####
+##### track missing data #####
 
-# the missing data originally appears in generation.unmapped 2000-2001
-# see summary time-series @ inst/figs/GEN.avg.png
-# this missing data isn't reflected in capacity.unmapped.
-# See summary time-series @ inst/figs/CAP.avg.png
+# there are two types of "missing' data
 #
-# Because capacity factor calculation requires capacity & generation data at the
-#   yr-plant-mover-fuel level, data missing in either source (ORIG CAP, ORIG GEN) should appear
-#   downstream
+# the data pipeline goes:
+# ORIG CAP/GEN (f-pm) -> JOIN.CAP.GEN (f-pm) -> JOIN.CAP.GEN (fg-oc) -> FINAL (fg-oc)
 #
-# After ORIG, I save MAP CAP & MAP GEN, which should independently retain their unique profiles
-#   of existing/missing data.
+# the first missing data originally appears in ORIG GEN 2001-02, due to missing native pm codes.
+# see summary time-series @ inst/figs/ORIG.GEN.avg.png.
 #
-# After MAP, I save JOIN.CAP.GEN. Its summary time-series should have missing data reflecting the
-#   union of missing data in ORIG CAP & ORIG GEN (also MAP CAP & MAP GEN, because those two sets of
-#   datasets should have the same missing data)
+# JOIN.CAP.GEN (f-pm) does two types of joins. For 01-02, the join uses
+# by = c("yr", "plntcode", "fuel"), which excludes the pm codes. ORIG CAP pm codes are
+# used for all matching rows. For all other years, the join uses
+# by = c("yr", "plntcode", "primemover", "fuel").
 #
-# After JOIN, I calculate CF and attach relevant price data. This means that the master (final)
-#   dataset should contain the same missing data as JOIN.
+# the second 'missing' data was identified in JOIN.CAP.GEN (fg-oc). b/c this is a join, the
+# missing data appears for plots of both CAP and GEN plots. See inst/figs/JOINED.XX.avg.png
+# for discontinuous time-series plots for fuels biomass and petrolum.
+#
+# The discontinuity occurs for the year 2000. It appears that this year should be joined
+# using by = c("yr", "plntcode", "primemover").
+#
+# Which dataset's fuel code should we use, ORIG CAP or ORIG GEN?
 
 library(ElectricityHindcastingData)
 library(tidyr)
@@ -29,10 +32,15 @@ library(rlang)
 
 data(capacity.unmapped, generation.unmapped, mapping,
      capacity, generation,
+     cap.gen.joined.unmapped,
      cap.gen.joined,
      master)
+capacity.unmapped <- capacity.unmapped %>%
+  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+  summarise(capacity = sum(capacity)) %>%
+  ungroup()
 
-map <- function(df, column) {
+map_and_aggregate <- function(df, column) {
   column <- enquo(column)
 
   df <- df %>%
@@ -42,6 +50,12 @@ map <- function(df, column) {
     group_by(yr, plntcode, overnightcategory, fuel.general) %>%
     summarise(!!quo_name(column) := sum(!!column)) %>%
     ungroup()
+}
+
+map_and_attach <- function(df) {
+
+  df <- df %>%
+    left_join(mapping, by=c("primemover", "fuel"))
 }
 
 my_full_join <- function(df1, df2) {
@@ -55,13 +69,106 @@ select_missing <- function(df) {
     arrange(fuel.general, overnightcategory, yr)
 }
 
+
+# inspect unmapped JOIN.CAP.GEN -------------------------------------------
+
+
+join.unmapped <- cap.gen.joined.unmapped %>% map_and_attach(capacity)
+
+join.unmapped %>%
+  filter(yr == 2000) %>%
+  select(primemover, fuel, fuel.general, overnightcategory) %>%
+  distinct() %>%
+  arrange(fuel.general, overnightcategory) %>%
+  View("JOIN 2000")
+
+# biomass & petroleum only fuels that have continuous data for all years except 2000
+join.unmapped %>%
+  filter(fuel.general %in% c("biomass", "petroleum")) %>%
+  select(yr, primemover, fuel, fuel.general, overnightcategory) %>%
+  distinct() %>%
+  arrange(fuel.general, overnightcategory, yr) %>%
+  View("JOIN Bio/Oil Permutations")
+
+
+# inspect mapped ORIG CAP/GEN  --------------------------------------------
+
+# anti_join between cap.2000 and gen.2000 is what's dropped on the basis of
+# mismatched keys. But this only shows fg-oc keys that already have sparse time-series
+
+cap.2000 <- capacity %>%
+  filter(yr == 2000) %>%
+  select(fuel.general, overnightcategory) %>%
+  distinct() %>%
+  arrange(fuel.general, overnightcategory)
+
+cap.2000 %>% View("ORIG CAP 2000")
+
+gen.2000 <- generation %>%
+  filter(yr == 2000) %>%
+  select(fuel.general, overnightcategory) %>%
+  distinct() %>%
+  arrange(fuel.general, overnightcategory)
+
+gen.2000 %>% View("ORIG GEN 2000")
+
+anti_join(cap.2000, gen.2000) %>% View("ANTIJOIN 2000")
+
+# inspect join(ORIG CAP, ORIG GEN) using fewer keys -----------------------
+
+# join by yr-pcode-pm
+join.00.pm <- generation.unmapped %>%
+  filter( yr == 2000) %>%
+  inner_join( capacity.unmapped, ., # join unmapped datasets
+              by = c("yr", "plntcode", "primemover") ) %>%
+  select(-starts_with("utilcode"), -vintage, -capacity, -generation, -consumption)
+
+# we struck oil!!!
+
+# attach (fg-oc) using common pm codes, ORIG CAP fuel codes
+join.00.pm %>%
+  left_join(mapping, by = c("fuel.x"="fuel", "primemover")) %>%
+  select(yr, plntcode, fuel.general, overnightcategory) %>%
+  distinct() %>%
+  # filter(fuel.general %in% c("biomass", "petroleum")) %>%
+  View("Using ORIG CAP fuel codes")
+
+# attch (fg-oc) using common pm codes, ORIG GEN fuel codes
+join.00.pm %>%
+  left_join(mapping, by = c("fuel.y"="fuel", "primemover")) %>%
+  select(yr, plntcode, fuel.general, overnightcategory) %>%
+  distinct() %>%
+  # filter(fuel.general %in% c("biomass", "petroleum")) %>%
+  View("Using ORIG GEN fuel codes")
+
+# CAP and GEN map to different things?
+join.00.pm %>%
+  #select(-vintage, -capacity, -generation, -consumption) %>%
+  select(-plntcode) %>%
+  distinct() %>%
+  # replace (f,pm).x with (fg,oc).x
+  left_join(mapping, by=c("fuel.x"="fuel", "primemover")) %>%
+  rename(fg.x = fuel.general,
+         oc.x = overnightcategory) %>%
+  # replace (f,pm).y with (fg,oc).y
+  left_join(mapping, by=c("fuel.y"="fuel", "primemover")) %>%
+  rename(fg.y = fuel.general,
+         oc.y = overnightcategory) %>%
+  distinct() %>%
+  filter(fg.x != fg.y) %>%
+  # filter(fg.x != fg.y | oc.x != oc.y) %>%
+  select(yr, primemover, fuel.x, fg.x, oc.x, fuel.y, fg.y, oc.y) %>%
+  arrange(yr, primemover, fg.x, fg.y) %>%
+  View("Disambiguation (2000)")
+
+
 # get summary time-series  ------------------------------------------------
 
 # get capacity & generation summary time-series for each data source
 # sources: ORIG CAP/GEN , MAP CAP/GEN, JOIN.CAP.MAP, MASTER
 
-orig.cap.summary <- capacity.unmapped %>% map(capacity) %>% summaryCalc(capacity)
-orig.gen.summary <- generation.unmapped %>% map(generation) %>% summaryCalc(generation)
+orig.cap.summary <- capacity.unmapped %>% map_and_aggregate(capacity) %>% summaryCalc(capacity)
+orig.gen.summary <- generation.unmapped %>% map_and_aggregate(generation) %>% summaryCalc(generation)
 
 map.cap.summary <- capacity %>% summaryCalc(capacity)
 map.gen.summary <- generation %>% summaryCalc(generation)
