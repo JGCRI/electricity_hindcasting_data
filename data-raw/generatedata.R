@@ -55,12 +55,36 @@ source('data-raw/generation/2001to2016_utilities.R')
 # consumption ~ Btu
 generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
   mutate(NAD="")
-
 generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
-  group_by(yr, plntcode, primemover, fuel) %>%
+  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
+# input data file
+gen.v2 <- rbind(generation.90to00, generation.01to16)
+
+# process, and interpolate between two utility code columns (utilcode & NAD)
+gen.v3 <- gen.v2 %>%
+  filter(! is.na(utilcode)) %>% # only 28
+  filter(generation >= 0) %>%
+  mutate(ind = ifelse(  utilcode=="" , 2,
+                       ifelse( NAD=="", 3, 1))) %>%
+  mutate(utilcode = ifelse(ind==2, NAD, utilcode)) %>%  # use NAD as utilcode when utilcode missing
+  # aggregate to get rid of NAD column, state set of uniqueyly-identifying cols
+  group_by(yr, plntcode, primemover, fuel) %>%
+  summarise(generation = sum(generation)) %>%
+  ungroup()
+
+# grab not NA case
+gen.v3.notna <- gen.v3 %>%
+  filter(!is.na(primemover))
+
+# grab NA case
+gen.v3.na <- gen.v3 %>%
+  filter(is.na(primemover))
+
+
+
 devtools::use_data(generation.unmapped, overwrite=TRUE)
 if (csv) {
   write.csv(generation.unmapped, "CSV/generation.unmapped.csv", row.names=FALSE)
@@ -112,6 +136,9 @@ source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
 cap.gen.joined <- join.cap.gen(capacity.unmapped, generation.unmapped)
+cap.gen.joined <- join.cap.gen(capacity.unmapped, gen.v3.na)
+cap.gen.joined <- join.cap.gen(capacity.unmapped, gen.v3.notna)
+
 
 # save cap.gen.joined.unmapped (native pm-f codes)
 cap.gen.joined.unmapped <- cap.gen.joined$unmapped
