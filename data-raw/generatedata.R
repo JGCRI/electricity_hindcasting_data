@@ -43,7 +43,28 @@ if (csv) {
 
 
 # ORIG GEN ----------------------------------------------------------------
+source('data-raw/generation/1990to2000_utilities.R')
+# data: https://www.eia.gov/electricity/data/eia923/eia906u.html
+# generation ~ MWh
+# consumption ~ physical quantity of fuel, specific to type of fuel
+generation.90to00 <- prep.generation.90to00("data-raw/generation/1990-2000/")
 
+source('data-raw/generation/2001to2016_utilities.R')
+# data: https://www.eia.gov/electricity/data/eia923/
+# generation ~ MWh
+# consumption ~ Btu
+generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
+  mutate(NAD="")
+
+generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
+  group_by(yr, plntcode, primemover, fuel) %>%
+  summarise(generation=sum(generation),
+            consumption=sum(consumption)) %>%
+  ungroup()
+devtools::use_data(generation.unmapped, overwrite=TRUE)
+if (csv) {
+  write.csv(generation.unmapped, "CSV/generation.unmapped.csv", row.names=FALSE)
+}
 # Mapping (save mapped CAP & GEN) -----------------------------------------
 
 source('data-raw/mappingfiles/mapping.R')
