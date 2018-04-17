@@ -21,11 +21,14 @@ source('data-raw/generators/2001to2016_utilities.R') # generator-level
 capacity.01to16 <- prep.generators.01to16("data-raw/generators/2001-2016/")
 
 # save unmapped data
-capacity.unmapped <- rbind(capacity.90to00, capacity.01to16) %>%
-  mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel), # fix code errors
-         fuel = ifelse(fuel=="WOC", "WC", fuel) ) %>%
+generators <- rbind(capacity.90to00, capacity.01to16) %>%
   dplyr::rename(vintage=startyr) %>% # use vintage instead of startyr
-  group_by(yr, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
+  mutate(fuel = ifelse(fuel=="BL", "BLQ", fuel), # fix code errors
+         fuel = ifelse(fuel=="WOC", "WC", fuel),
+         primemover = ifelse(primemover=="HC", "HY", primemover)) %>%
+  rename(capacity = nameplate)
+capacity.unmapped <- generators %>%
+  group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
 
   # NOTE:
   # this dataset is at plant-level, but we are dropping utilcode as a useful key due to
@@ -34,7 +37,7 @@ capacity.unmapped <- rbind(capacity.90to00, capacity.01to16) %>%
   # these two datasets are joined using c("yr", "plntcode", "primemover", "fuel"),
   # except for yr %in% c(2000, 2001), where we use c("yr", "plntcode", "fuel")
 
-  summarise(capacity=sum(nameplate)) %>% # rename nameplate as capacity
+  summarise(capacity=sum(capacity)) %>% # rename nameplate as capacity
   ungroup()
 devtools::use_data(capacity.unmapped, overwrite=TRUE)
 if (csv) {
@@ -56,34 +59,17 @@ source('data-raw/generation/2001to2016_utilities.R')
 generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>%
   mutate(NAD="")
 generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
-  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+  filter(! is.na(utilcode)) %>%
+  filter(generation >= 0) %>%
+  group_by(yr, plntcode, primemover, fuel) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
-# input data file
-gen.v2 <- rbind(generation.90to00, generation.01to16)
 
-# process, and interpolate between two utility code columns (utilcode & NAD)
-gen.v3 <- gen.v2 %>%
-  filter(! is.na(utilcode)) %>% # only 28
-  filter(generation >= 0) %>%
-  mutate(ind = ifelse(  utilcode=="" , 2,
-                       ifelse( NAD=="", 3, 1))) %>%
-  mutate(utilcode = ifelse(ind==2, NAD, utilcode)) %>%  # use NAD as utilcode when utilcode missing
-  # aggregate to get rid of NAD column, state set of uniqueyly-identifying cols
-  group_by(yr, plntcode, primemover, fuel) %>%
-  summarise(generation = sum(generation)) %>%
-  ungroup()
-
-# grab not NA case
-gen.v3.notna <- gen.v3 %>%
-  filter(!is.na(primemover))
-
-# grab NA case
-gen.v3.na <- gen.v3 %>%
-  filter(is.na(primemover))
-
-
+generation.unmapped.na <- generation.unmapped %>%
+  filter( is.na(primemover) )
+generation.unmapped.notna <- generation.unmapped %>%
+  filter( !is.na(primemover) )
 
 devtools::use_data(generation.unmapped, overwrite=TRUE)
 if (csv) {
@@ -135,20 +121,29 @@ if (csv) {
 source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
-cap.gen.joined <- join.cap.gen(capacity.unmapped, generation.unmapped)
-cap.gen.joined <- join.cap.gen(capacity.unmapped, gen.v3.na)
-cap.gen.joined <- join.cap.gen(capacity.unmapped, gen.v3.notna)
+join.na <- join.cap.gen(capacity.unmapped, generation.unmapped.na, na.case=TRUE)
+join.na.unmapped <- join.na[[1]]
+join.na <- join.na[[2]]
 
+join.notna <- join.cap.gen(capacity.unmapped, generation.unmapped.notna, na.case=FALSE)
+join.notna.unmapped <- join.notna[[1]]
+join.notna <- join.notna[[2]]
 
 # save cap.gen.joined.unmapped (native pm-f codes)
-cap.gen.joined.unmapped <- cap.gen.joined$unmapped
+cap.gen.joined.unmapped <- rbind(join.na.unmapped, join.notna.unmapped)
 devtools::use_data(cap.gen.joined.unmapped, overwrite=TRUE)
 if (csv) {
   write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
 }
+# "master" dataset
+v1 <- join.unmapped %>%
+  inner_join(generators, by=c("yr", "plntcode", "primemover", "fuel"))
+if (csv) {
+  write.csv(v1, "CSV/master_v1.csv", row.names=FALSE)
+}
 
 # save cap.gen.joined (mapped to oc-fg keys)
-cap.gen.joined <- cap.gen.joined$mapped
+cap.gen.joined <-  rbind(join.na, join.notna)
 devtools::use_data(cap.gen.joined, overwrite=TRUE)
 if (csv) {
   write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)
