@@ -1,30 +1,30 @@
-join.cap.gen <- function(cap.vintage, gen)
+
+
+join.cap.gen <- function(cap.vintage, gen, na.case)
 {
   # aggregate over vintage (unique to capacity dataset)
   cap <- cap.vintage %>%
-    group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+    group_by(yr, plntcode, primemover, fuel) %>%
     summarise(capacity = sum(capacity)) %>%
     ungroup()
 
-  # merge for ! yr %in% c(2001, 2002)
-  # join includes primemover
-  join.rest <- gen %>%
-    filter(! yr %in% c(2001, 2002)) %>%
-    inner_join( cap, ., # join unmapped datasets W/O UTILCODE
-                by = c("yr", "plntcode", "primemover", "fuel") ) %>%
-    select(-starts_with("utilcode"), -consumption) # drop ORIG CAP/GEN utilcodes, & consumption
+  if (na.case) {
+    # merge for yr %in% c(2001, 2002)
+    # join excludes primemover, so we opt to use CAP pm column in later aggregation
+    join.unmapped <- gen %>%
+      inner_join( cap, ., # join unmapped datasets by DROPPING PRIMEMOVER
+                  by = c("yr", "plntcode", "fuel") ) %>%
+      dplyr::rename(primemover = primemover.x) %>%  #use ORIG CAP pm column
+      select(-primemover.y, -starts_with("utilcode"), -consumption) # drop ORIG GEN pm column & consumption, ORIG CAP/GEN utilcodes
 
-  # merge for yr %in% c(2001, 2002)
-  # join excludes primemover, so we opt to use CAP pm column in later aggregation
-  join.01.02 <- gen %>%
-    filter( yr %in% c(2001, 2002)) %>%
-    inner_join( cap, ., # join unmapped datasets by DROPPING PRIMEMOVER
-                by = c("yr", "plntcode", "fuel") ) %>%
-    dplyr::rename(primemover = primemover.x) %>%  #use ORIG CAP pm column
-    select(-primemover.y, -starts_with("utilcode"), -consumption) # drop ORIG GEN pm column & consumption, ORIG CAP/GEN utilcodes
-
-  # bind joined data sets together
-  join.unmapped <- rbind(join.rest, join.01.02)
+  } else {
+    # merge for ! yr %in% c(2001, 2002)
+    # join includes primemover
+    join.unmapped <- gen %>%
+      inner_join( cap, ., # join unmapped datasets W/O UTILCODE
+                  by = c("yr", "plntcode", "primemover", "fuel") ) %>%
+      select(-starts_with("utilcode"), -consumption) # drop ORIG CAP/GEN utilcodes, & consumption
+  }
 
   # map to oc-fg, and aggregate
   join.mapped <- join.unmapped %>%
