@@ -27,6 +27,11 @@ generators <- rbind(capacity.90to00, capacity.01to16) %>%
          fuel = ifelse(fuel=="WOC", "WC", fuel),
          primemover = ifelse(primemover=="HC", "HY", primemover)) %>%
   rename(capacity = nameplate)
+devtools::use_data(generators, overwrite=TRUE)
+if (csv) {
+  write.csv(generators, "CSV/generators.csv", row.names=FALSE)
+}
+
 capacity.unmapped <- generators %>%
   group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
 
@@ -61,7 +66,7 @@ generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>
 generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
   filter(! is.na(utilcode)) %>%
   filter(generation >= 0) %>%
-  group_by(yr, plntcode, primemover, fuel) %>%
+  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
@@ -79,8 +84,8 @@ if (csv) {
 
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
-mapping <- prep.mapping("data-raw/mappingfiles/fuel_gen.csv", "data-raw/mappingfiles/overnight_c.csv") %>%
-  rename(overnightcategory = overnight_c)
+mapping <- prep.mapping("data-raw/mappingfiles/mapping_final.csv") %>%
+  rename(fuel.general = fuel_general)
 devtools::use_data(mapping, overwrite=TRUE)
 if(csv) {
   write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
@@ -121,13 +126,9 @@ if (csv) {
 source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
-join.na <- join.cap.gen(capacity.unmapped, generation.unmapped.na, na.case=TRUE)
-join.na.unmapped <- join.na[[1]]
-join.na <- join.na[[2]]
+join.na.unmapped <- join.cap.gen(capacity.unmapped, generation.unmapped.na, na.case=TRUE)
 
-join.notna <- join.cap.gen(capacity.unmapped, generation.unmapped.notna, na.case=FALSE)
-join.notna.unmapped <- join.notna[[1]]
-join.notna <- join.notna[[2]]
+join.notna.unmapped <- join.cap.gen(capacity.unmapped, generation.unmapped.notna, na.case=FALSE)
 
 # save cap.gen.joined.unmapped (native pm-f codes)
 cap.gen.joined.unmapped <- rbind(join.na.unmapped, join.notna.unmapped)
@@ -135,19 +136,35 @@ devtools::use_data(cap.gen.joined.unmapped, overwrite=TRUE)
 if (csv) {
   write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
 }
-# "master" dataset
-v1 <- join.unmapped %>%
-  inner_join(generators, by=c("yr", "plntcode", "primemover", "fuel"))
-if (csv) {
-  write.csv(v1, "CSV/master_v1.csv", row.names=FALSE)
-}
 
-# save cap.gen.joined (mapped to oc-fg keys)
-cap.gen.joined <-  rbind(join.na, join.notna)
-devtools::use_data(cap.gen.joined, overwrite=TRUE)
-if (csv) {
-  write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)
-}
+v1 <- cap.gen.joined.unmapped %>%
+  inner_join(generators, by=c("yr", "plntcode", "primemover", "fuel")) %>%
+  select(-capacity.y) %>%
+  rename(capacity = capacity.x) %>%
+  filter(!is.na(vintage))
+v2 <- v1 %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  filter(overnight_c != "OTH") %>%
+  filter(overnight_d != ".") %>%
+  filter(primemover != "WS") %>%
+  select(-matches("status"), -winter, -summer, -multigen)
+
+
+
+  select(-primemover, -fuel) %>%
+  group_by(yr, utilcode, plntcode, gencode, vintage, fuel.general, overnightcategory) %>%
+  summarise(capacity = sum(capacity),
+            generatin = sum(generation)) %>%
+  ungroup()
+
+
+
+  select(-status1, -summer, -winter)
+
+# can't use cap.gen.joined as mapped version b/c missing pm-f from 'generators'
+v2 <- v1 %>%
+  select(-primemover, -fuel) %>%
+  group_by(yr, utilcode, plntcode, gencode, )
 
 # Capacity Factors ---------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
