@@ -4,7 +4,7 @@ join.cap.gen <- function(cap.vintage, gen, na.case)
 {
   # aggregate over vintage (unique to capacity dataset)
   cap <- cap.vintage %>%
-    group_by(yr, plntcode, primemover, fuel) %>%
+    group_by(yr, utilcode, plntcode, primemover, fuel) %>%
     summarise(capacity = sum(capacity)) %>%
     ungroup()
 
@@ -26,21 +26,21 @@ join.cap.gen <- function(cap.vintage, gen, na.case)
       select(-starts_with("utilcode"), -consumption) # drop ORIG CAP/GEN utilcodes, & consumption
   }
 
-  # map to oc-fg, and aggregate
-  join.mapped <- join.unmapped %>%
-    left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
-    select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
-    # no longer grouping by utilcode b/c two versions (.x, .y)
-    group_by(yr, plntcode, overnightcategory, fuel.general) %>%
-    summarise(capacity = sum(capacity),
-              generation = sum(generation)) %>%
-    ungroup()
+  # # map to oc-fg, and aggregate
+  # join.mapped <- join.unmapped %>%
+  #   left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
+  #   select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
+  #   # no longer grouping by utilcode b/c two versions (.x, .y)
+  #   group_by(yr, plntcode, matches("overnight"), fuel.general) %>%
+  #   summarise(capacity = sum(capacity),
+  #             generation = sum(generation)) %>%
+  #   ungroup()
+  #
+  # join <- list(join.unmapped, join.mapped)
+  # names(join) <- c("unmapped", "mapped")
+  # # join.mapped used in later calculations
 
-  join <- list(join.unmapped, join.mapped)
-  names(join) <- c("unmapped", "mapped")
-  # join.mapped used in later calculations
-
-  join
+  join.unmapped
 }
 
 calc.capacityfactors <- function(cap.gen.joined)
