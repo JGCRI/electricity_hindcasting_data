@@ -1,9 +1,11 @@
 
-prep.mapping <- function(fuelfile, techfile)
+prep.mapping <- function(mappingFile)
 {
-  fuel <- read.csv(fuelfile)
-  tech <- read.csv(techfile)
-  mapping <- full_join(fuel, tech, by=c("primemover", "fuel"))
+  mapping <- mappingFile %>%
+    read.csv()
+  mapping <- mapping %>%
+    select(primemover, fuel, fuel_general, matches("overnight"))
+
   mapping
 
 }
