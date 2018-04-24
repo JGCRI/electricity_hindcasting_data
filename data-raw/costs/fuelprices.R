@@ -7,13 +7,12 @@ prep.fuelprices <- function(energyprices, uraniumprices, gdpdeflator)
     select(year, fuel.price=weighted.avg.price.nominal) %>%
     mutate(fuel.general='uranium')
 
-  ## COMBINE, ADJUST VALUE 
+  ## COMBINE, ADJUST VALUE
   fuelprices <- rbind(energy.prices, uranium.prices) %>%
     rename(cost.yr=year) %>% # assumed that prices are reported in nominal $
-    mutate(fuel.general = as.character(fuel.general)) %>% 
+    mutate(fuel.general = as.character(fuel.general)) %>%
     inner_join(gdpdeflator, by="cost.yr") %>%
-    mutate(fuel.price = deflator * fuel.price) %>%
-    mutate(fuel.price = fuel.price/1e6) %>% # $/1e6Btu -> $/Btu
+    mutate(fuel.price = deflator * fuel.price) %>% # $/Btu
     select( -deflator) %>%
     rename(yr=cost.yr)
 }
