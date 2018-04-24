@@ -65,23 +65,18 @@ generation.01to16 <- prep.generation.01to16("data-raw/generation/2001-2016/") %>
   mutate(NAD="")
 generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
   filter(! is.na(utilcode)) %>%
-  filter(generation >= 0) %>%
+  filter(generation > 0) %>%
   group_by(yr, utilcode, plntcode, primemover, fuel) %>%
   summarise(generation=sum(generation),
             consumption=sum(consumption)) %>%
   ungroup()
-
-generation.unmapped.na <- generation.unmapped %>%
-  filter( is.na(primemover) )
-generation.unmapped.notna <- generation.unmapped %>%
-  filter( !is.na(primemover) )
-
 devtools::use_data(generation.unmapped, overwrite=TRUE)
 if (csv) {
   write.csv(generation.unmapped, "CSV/generation.unmapped.csv", row.names=FALSE)
 }
-# Mapping (save mapped CAP & GEN) -----------------------------------------
 
+
+# OC-FG Mapping -----------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
 mapping <- prep.mapping("data-raw/mappingfiles/mapping_final.csv") %>%
@@ -126,6 +121,12 @@ if (csv) {
 source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
+
+generation.unmapped.na <- generation.unmapped %>%
+  filter( is.na(primemover) )
+generation.unmapped.notna <- generation.unmapped %>%
+  filter( !is.na(primemover) )
+
 join.na.unmapped <- join.cap.gen(capacity.unmapped, generation.unmapped.na, na.case=TRUE)
 
 join.notna.unmapped <- join.cap.gen(capacity.unmapped, generation.unmapped.notna, na.case=FALSE)
@@ -137,55 +138,77 @@ if (csv) {
   write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
 }
 
+
+# master set --------------------------------------------------------------
 v1 <- cap.gen.joined.unmapped %>%
+  # aggregate over vintage
+  group_by(yr, plntcode, primemover, fuel) %>%
+  summarise(capacity = sum(capacity),
+            generation = sum(generation)) %>%
+  ungroup() %>%
   inner_join(generators, by=c("yr", "plntcode", "primemover", "fuel")) %>%
-  select(-capacity.y) %>%
-  rename(capacity = capacity.x) %>%
+  select(-capacity.y) %>% # drop GEN capacity #'s
+  rename(capacity = capacity.x) %>% # use JOIN capacity #'s (plant-level)
   filter(!is.na(vintage))
+
 v2 <- v1 %>%
   left_join(mapping, by=c("primemover", "fuel")) %>%
   filter(overnight_c != "OTH") %>%
   filter(overnight_d != ".") %>%
   filter(primemover != "WS") %>%
-  select(-matches("status"), -winter, -summer, -multigen)
+  select(-matches("status"), -winter, -summer, -multigen) %>%
+  select(yr, utilcode, plntcode, gencode, vintage, endyr, fuel, primemover, fuel.general, overnight_c, overnight_d, capacity, generation, heatrate)
 
 
 
-  select(-primemover, -fuel) %>%
-  group_by(yr, utilcode, plntcode, gencode, vintage, fuel.general, overnightcategory) %>%
-  summarise(capacity = sum(capacity),
-            generatin = sum(generation)) %>%
-  ungroup()
-
-
-
-  select(-status1, -summer, -winter)
-
-# can't use cap.gen.joined as mapped version b/c missing pm-f from 'generators'
-v2 <- v1 %>%
-  select(-primemover, -fuel) %>%
-  group_by(yr, utilcode, plntcode, gencode, )
-
-# Capacity Factors ---------------------------------------------------------
+# Capacity Factors --------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 # data: form860 generator capacities & forms759/906/920/923 plant generation output
 # carries original capacity and generation as well (for weighting capital costs)
 
 # calculate capacityfactors
-cf <- calc.capacityfactors(cap.gen.joined)
 
-# grab capacityfactors as calculated
-capacityfactors <- cf$cf
-devtools::use_data(capacityfactors, overwrite=TRUE)
+merged <- cap.gen.joined.unmapped %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  filter(overnight_c != "OTH") %>%
+  filter(overnight_d != ".") %>%
+  filter(primemover != "WS") %>%
+  select(-overnight_d) %>%
+  rename(overnightcategory = overnight_c)
+
+capacityfactors <- calc.capacityfactors(merged, "data-raw/costs/epm2017.csv")
+capacityfactors.data <- capacityfactors$data
+devtools::use_data(capacityfactors.data, overwrite=TRUE)
 if (csv) {
-  write.csv(capacityfactors, "CSV/capacityfactors.csv", row.names=FALSE)
+  write.csv(capacityfactors.data, "CSV/capacityfactors.data.csv", row.names=FALSE)
 }
 
-# grab capacityfactors clamped to 1
-capacityfactors.clamp <- cf$cf.clamp
-devtools::use_data(capacityfactors.clamp, overwrite=TRUE)
+capacityfactors.sup <- capacityfactors$epm
+devtools::use_data(capacityfactors.sup, overwrite=TRUE)
 if (csv) {
-  write.csv(capacityfactors.clamp, "CSV/capacityfactors.clamp.csv", row.names=FALSE)
+  write.csv(capacityfactors.sup, "CSV/capacityfactors.sup.csv", row.names=FALSE)
+}
+
+
+# AEO Capital Costs -------------------------------------------------------
+capitalcosts <- read_excel("data-raw/costs/aeo_capital_costs.xlsx",
+                            sheet = "Fill_in_Missing_Tech_category",
+                            skip = 2)
+names(capitalcosts) <- c("yr", "reference.yr", "technology", "yr.available",
+                          "size", "overnight.foak", "overnight", "om.fixed", "om.var",
+                          "heatrate.foak", "heatrate", "construction")
+capitalcosts <- capitalcosts %>%
+  filter(! technology %in% c("Distributed Generation (base)",
+                           "Distributed Generation (peak)",
+                           "IGCC w/CCS",
+                           "Advanced CC",
+                           "Advanced CC w/CCS",
+                           "Advanced Coal (IGCC") ) %>%
+  select(yr, technology, overnight, om.fixed, om.var, heatrate)
+
+devtools::use_data(capitalcosts, overwrite=TRUE)
+if (csv) {
+  write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
 }
 
 # Inflation Adjustment ----------------------------------------------------
@@ -215,82 +238,15 @@ if (csv) {
   write.csv(fuelprices, "CSV/fuelprices.csv", row.names=FALSE)
 }
 
-# Marginal Costs ----------------------------------------------------------
-source('data-raw/costs/marginalcosts.R')
-# data: heatrate [Btu/kwH] * fuelprice [$/BTU]
-# marginal.cost ~ $/MWh (converted internally)
-# marginalcosts <- prep.marginalcosts(mapping, form860processed, fuelprices)
-# can include maximumheatrates by adding as argument
-heatrates <- read.csv("data-raw/costs/fuel/avghr.csv") %>%
-  mutate(oc = ifelse(oc == "combined_cycle", "CC", oc)) %>%
-  mutate(oc = ifelse(oc == "combustion_turbine", "CT", oc)) %>%
-  mutate(fuel = ifelse(fuel == "oil", "petroleum", fuel)) %>%
-  mutate(fuel = ifelse(fuel == "natural_gas", "gas", fuel)) %>%
-  mutate(fuel = ifelse(fuel == "steam_turbine", "ST", fuel)) %>%
-  mutate(fuel = ifelse(fuel == "uranium", "nuclear", fuel)) %>%
-  mutate(fuel = ifelse(fuel == "photovoltaic", "PV", fuel)) %>%
-  rename(overnightcategory = oc,
-         fuel.general = fuel,
-         yr = t,
-         heatrate = Val)
 
-marginalcosts <- heatrates %>%
-  mutate(efficiency = 3412/heatrate) %>%
-  left_join(fuelprices, by=c("yr", "fuel.general")) %>%
-  mutate(marginal.cost = fuel.price/efficiency) %>% # $/Btu * Btu/Kwh = $/Kwh
-  mutate(marginal.cost = marginal.cost*1e3) %>% # $/MWh
-  filter(! is.na(marginal.cost)) %>%
-  select(yr, overnightcategory, fuel.general, marginal.cost)
-
-devtools::use_data(marginalcosts, overwrite=TRUE)
-if (csv) {
-  write.csv(marginalcosts, "CSV/marginalcosts.csv", row.names=FALSE)
-}
-
-# Capital Costs -----------------------------------------------------------
-capitalcosts <- read_excel("data-raw/costs/aeo_capital_costs.xlsx",
-                           sheet = "Data4GCAM",
-                           skip = 3)
-names(capitalcosts) <- c("yr", "reference.yr", "overnightcategory",
-                         "overnight", "om.fixed", "om.var", "heatrate")
-capitalcosts$yr <- as.numeric(capitalcosts$yr)
-devtools::use_data(capitalcosts, overwrite=TRUE)
-if (csv) {
-  write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
-}
-
-
-# Levelized Capital Costs -------------------------------------------------
+# LCOE --------------------------------------------------------------------
 source('data-raw/costs/levelize.R')
 # equation: See data-raw/costs/gcam/Electricity Generation Assumptions.pdf for equation
 # constant fixed charge rate of 0.13 from GCAM
 # units: overnight.lev, om.fixed.lev, om.var ~ $/MWh
-levelizedcosts <- calc.levelizedcosts(capacityfactors.clamp, capitalcosts, mapping, 0.13)
+techmap <- read.csv("data-raw/costs/aeo-tech.csv")
+levelizedcosts <- calc.levelizedcosts(capitalcosts, capacityfactors.data, 0.13, fuelprices, techmap)
 devtools::use_data(levelizedcosts, overwrite=TRUE)
 if (csv) {
   write.csv(levelizedcosts, "CSV/levelizedcosts.csv", row.names=FALSE)
 }
-
-
-# Full Cost ---------------------------------------------------------------
-# source('data-raw/costs/full.R')
-# data: marginalcosts (endogenous to GCAM) + levelizedcosts + generation
-master <- levelizedcosts %>%
-  left_join(marginalcosts, by=c("yr", "overnightcategory", "fuel.general")) %>%
-  mutate(marginal.cost = ifelse(is.na(marginal.cost), 0, marginal.cost)) %>%  # renewables aren't assigned marginalcost
-  left_join(cap.gen.joined, by=c("yr", "plntcode", "overnightcategory", "fuel.general")) %>%
-  rename(capacity = nameplate)
-devtools::use_data(master, overwrite=TRUE)
-if (csv) {
-  write.csv(master, "CSV/master.csv", row.names=FALSE)
-}
-
-cost.comp <- fullcosts %>%
-  mutate(om = om.fixed.lev + om.var) %>%
-  select(-om.fixed.lev, -om.var) %>%
-  group_by(yr, fuel.general, overnightcategory) %>%
-  summarise(marginal.cost = mean(marginal.cost)/1000,
-            overnight.lev = mean(overnight.lev)/1000,
-            om = mean(om)/1000) %>%
-  ungroup()
-write.csv(cost.comp, "data-raw/costs/gcam/comp.csv", row.names=F)
