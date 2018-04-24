@@ -14,6 +14,8 @@ calc.levelizedcosts <- function(capcosts, cf.data, fcr, fuelprices, techmap) {
 
   levcst.fuel <- levcst %>%
     left_join(fuelprices, by=c("yr", "fuel.general")) %>%
-    mutate(LCOE_Fuel = fuel.price / (3412 / heatrate) ) %>%  # adjust fuel.price to fuel efficiency = 3412 / heatrate
+    mutate(LCOE_Fuel = fuel.price / (3412 / heatrate),
+           LCOE = LCOE_wo_Fuel + LCOE_Fuel) %>%  # adjust fuel.price to fuel efficiency = 3412 / heatrate
     select(-fuel.price, -heatrate)
+
 }
