@@ -1,12 +1,7 @@
 
 
-join.cap.gen <- function(cap.vintage, gen, na.case)
-{
-  # aggregate over vintage (unique to capacity dataset)
-  cap <- cap.vintage %>%
-    group_by(yr, utilcode, plntcode, primemover, fuel) %>%
-    summarise(capacity = sum(capacity)) %>%
-    ungroup()
+join.cap.gen <- function(cap, gen, na.case) {
+
 
   if (na.case) {
     # merge for yr %in% c(2001, 2002)
@@ -26,38 +21,24 @@ join.cap.gen <- function(cap.vintage, gen, na.case)
       select(-starts_with("utilcode"), -consumption) # drop ORIG CAP/GEN utilcodes, & consumption
   }
 
-  # # map to oc-fg, and aggregate
-  # join.mapped <- join.unmapped %>%
-  #   left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
-  #   select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
-  #   # no longer grouping by utilcode b/c two versions (.x, .y)
-  #   group_by(yr, plntcode, matches("overnight"), fuel.general) %>%
-  #   summarise(capacity = sum(capacity),
-  #             generation = sum(generation)) %>%
-  #   ungroup()
-  #
-  # join <- list(join.unmapped, join.mapped)
-  # names(join) <- c("unmapped", "mapped")
-  # # join.mapped used in later calculations
-
   join.unmapped
 }
 
-calc.capacityfactors <- function(cap.gen.joined)
-{
-  cf <- cap.gen.joined %>%
-    filter(generation > 0) %>% # drop generators that used more energy than they produced
-    mutate(potentialgeneration = capacity * 8760) %>%
-    mutate(capacityfactor = generation/potentialgeneration) %>%
+calc.capacityfactors <- function(merged, supFile) {
+  data <- merged %>%
+    group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+    summarise(capacity=sum(capacity)) %>%
+    ungroup() %>%
+    mutate(capacityfactor = generation / (capacity * 8760) ) %>%
+    # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
+    mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor)) %>%
     select(yr, plntcode, overnightcategory, fuel.general, capacityfactor)
 
-  cf.clamp <- cf %>%
-    mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor))
-  # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
 
-  data <- list(cf, cf.clamp)
-  names(data) <- c("cf", "cf.clamp")
-  # cf.clamp used in later calculations
+  epm <- read.csv(supFile) %>%
+    select(overnightcategory, capacityfactor)
 
-  data
+  out <- list(data, epm)
+  names(out) <- c("data", "epm")
+  return(out)
 }
