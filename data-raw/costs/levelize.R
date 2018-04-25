@@ -1,11 +1,13 @@
 calc.levelizedcosts <- function(capcosts, cf.data, fcr, fuelprices, techmap) {
-  # levelize capital costs
 
-  # take capital costs data
-  levcst <- capcosts %>%
-    full_join(techmap, by="technology") %>% # attach overnightcategory & fuel.general
-    select(-technology) %>%
-    inner_join(cf.data, by=c("yr", "overnightcategory", "fuel.general")) %>% # attach $$$ data to plant-level capacity factor data
+  # map capital costs technology labels to overnightcategory
+  capcosts.oc <- capcosts %>%
+    inner_join(techmap, by="technology") %>%  # attach overnightcategory & fuel.general
+    select(-technology)
+
+  # take plant-level capacity factor data
+  levcst <- cf.data %>%
+    inner_join(capcosts.oc, by=c("yr", "overnightcategory", "fuel.general")) %>% # attach $$$ data to plant-level capacity factor data
     mutate(LCOE_Capital = fcr * (1000 * overnight) / (8760 * capacityfactor), # $/MWh
            LCOE_FOM = (1000 * om.fixed) / (8760 * capacityfactor),
            LCOE_VOM = om.var,
