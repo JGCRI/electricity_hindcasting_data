@@ -1,18 +1,18 @@
 technology,fuel.general,overnightcategory
-Advanced Nuclear,uranium,
-Biomass,,biomass
-Combustion Turbine,gas,CT
-Combustion Turbine,oil,CT
-Conventional Combined Cycle (oil/gas),gas,CC
-Conventional Combined Cycle (oil/gas),oil,CC
-Fuel Cell,,FC
-Geothermal,,geothermal
-Hydropower,,hydro
-MSW,gas,MSW
-Oil/Gas Steam,oil,ST
+Biomass,biomass,biomass
 Oil/Gas Steam,coal,ST
-Pulverized Coal (scrubbed),,coal
-Solar PV,,PV
-Solar Thermal,,solar_thermal
-Wind,,wind
+Pulverized Coal (scrubbed),coal,coal
+Combustion Turbine,gas,CT
+Conventional Combined Cycle (oil/gas),gas,CC
+Fuel Cell,gas,FC
+MSW,gas,MSW
+Geothermal,geothermal,geothermal
+Advanced Nuclear,nuclear,nuclear
+Combustion Turbine,petroleum,CT
+Conventional Combined Cycle (oil/gas),petroleum,CC
+Oil/Gas Steam,petroleum,ST
+Solar PV,solar,PV
+Solar Thermal,solar,solar_thermal
+Hydropower,water,hydro
+Wind,wind,wind
 Wind Offshore,,

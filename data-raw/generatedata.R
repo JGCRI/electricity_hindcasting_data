@@ -273,7 +273,7 @@ source('data-raw/costs/levelize.R')
 # equation: See data-raw/costs/gcam/Electricity Generation Assumptions.pdf for equation
 # constant fixed charge rate of 0.13 from GCAM
 # units: overnight.lev, om.fixed.lev, om.var ~ $/MWh
-techmap <- read.csv("data-raw/costs/aeo-tech.csv")
+techmap <- read.csv("data-raw/costs/aeo-tech.csv", stringsAsFactors=F)
 levelizedcosts <- calc.levelizedcosts(capitalcosts, capacityfactors.data, 0.13, fuelprices, techmap)
 devtools::use_data(levelizedcosts, overwrite=TRUE)
 if (csv) {
