@@ -138,7 +138,42 @@ if (csv) {
   write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
 }
 
+cap.gen.joined <- cap.gen.joined.unmapped %>%
+  left_join(mapping, by=c("primemover", "fuel")) %>%
+  filter(overnight_c != "OTH") %>%
+  filter(overnight_d != ".") %>%
+  filter(primemover != "WS") %>%
+  select(-overnight_d) %>%
+  rename(overnightcategory = overnight_c) %>%
+  # aggregate over redundant pm-f mappings
+  group_by(yr, vintage, plntcode, fuel.general, overnightcategory) %>%
+  summarise(capacity=sum(capacity),
+            generation=sum(capacity)) %>%
+  ungroup()
 
+weights <- cap.gen.joined %>%
+  # aggregate over vintage to get total capacity by {yr, plnt, fg, oc}
+  group_by(yr, plntcode, fuel.general, overnightcategory) %>%
+  summarise(cap.total = sum(capacity) ) %>%
+  ungroup() %>%
+  # calculate start year's share of total capacity (w/in plant)
+  right_join(merged, by = c("yr", "plntcode", "fuel.general", "overnightcategory")) %>%
+  mutate(wt=capacity/cap.total) %>%
+  select(yr, plntcode, fuel.general, overnightcategory, vintage, wt)
+
+# weighted average of vintage
+cap.gen.joined <- cap.gen.joined %>%
+  left_join(weights, by = c("yr", "vintage", "plntcode", "fuel.general", "overnightcategory")) %>%
+  group_by(yr, plntcode, fuel.general, overnightcategory) %>%
+  summarise(capacity=sum(capacity),
+            generation=sum(generation),
+            startyr=stats::weighted.mean(vintage, wt) %>% round() ) %>%
+  ungroup()
+
+devtools::use_data(cap.gen.joined, overwrite=TRUE)
+if (csv) {
+  write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)
+}
 # master set --------------------------------------------------------------
 v1 <- cap.gen.joined.unmapped %>%
   # aggregate over vintage
@@ -167,47 +202,16 @@ source('data-raw/costs/capacityfactors.R')
 # carries original capacity and generation as well (for weighting capital costs)
 
 # calculate capacityfactors
-
-merged <- cap.gen.joined.unmapped %>%
-  left_join(mapping, by=c("primemover", "fuel")) %>%
-  filter(overnight_c != "OTH") %>%
-  filter(overnight_d != ".") %>%
-  filter(primemover != "WS") %>%
-  select(-overnight_d) %>%
-  rename(overnightcategory = overnight_c) %>%
-  # aggregate over redundant pm-f mappings
-  group_by(yr, vintage, plntcode, fuel.general, overnightcategory) %>%
-  summarise(capacity=sum(capacity),
-            generation=sum(capacity)) %>%
-  ungroup()
-
-
-weights <- merged %>%
-  # aggregate over vintage to get total capacity by {yr, plnt, fg, oc}
-  group_by(yr, plntcode, fuel.general, overnightcategory) %>%
-  summarise(cap.total = sum(capacity) ) %>%
-  ungroup() %>%
-  # calculate start year's share of total capacity (w/in plant)
-  right_join(merged, by = c("yr", "plntcode", "fuel.general", "overnightcategory")) %>%
-  mutate(wt=capacity/cap.total) %>%
-  select(yr, plntcode, fuel.general, overnightcategory, vintage, wt)
-
-# weighted average of vintage
-merged.vntg.wt <- merged %>%
-  left_join(weights, by = c("yr", "vintage", "plntcode", "fuel.general", "overnightcategory")) %>%
-  group_by(yr, plntcode, fuel.general, overnightcategory) %>%
-  summarise(capacity=sum(capacity),
-            generation=sum(generation),
-            startyr=stats::weighted.mean(vintage, wt) %>% round() ) %>%
-  ungroup()
-
 capacityfactors <- calc.capacityfactors(merged.vntg.wt, "data-raw/costs/epm2017.csv")
+
+# CF as calculated from form data
 capacityfactors.data <- capacityfactors$data
 devtools::use_data(capacityfactors.data, overwrite=TRUE)
 if (csv) {
   write.csv(capacityfactors.data, "CSV/capacityfactors.data.csv", row.names=FALSE)
 }
 
+# supplemental CF for missing data (from electrical power monthly)
 capacityfactors.sup <- capacityfactors$epm
 devtools::use_data(capacityfactors.sup, overwrite=TRUE)
 if (csv) {
