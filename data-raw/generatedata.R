@@ -201,7 +201,7 @@ merged.vntg.wt <- merged %>%
             startyr=stats::weighted.mean(vintage, wt) %>% round() ) %>%
   ungroup()
 
-capacityfactors <- calc.capacityfactors(merged, "data-raw/costs/epm2017.csv")
+capacityfactors <- calc.capacityfactors(merged.vntg.wt, "data-raw/costs/epm2017.csv")
 capacityfactors.data <- capacityfactors$data
 devtools::use_data(capacityfactors.data, overwrite=TRUE)
 if (csv) {
