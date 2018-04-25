@@ -24,11 +24,6 @@ join.cap.gen <- function(cap, gen, na.case) {
 
 calc.capacityfactors <- function(merged, supFile) {
   data <- merged %>%
-    # aggregate over vintage to get plant-level CF
-    group_by(yr, plntcode, overnightcategory, fuel.general) %>%
-    summarise(capacity=sum(capacity),
-              generation=sum(generation)) %>%
-    ungroup() %>%
     mutate(capacityfactor = generation / (capacity * 8760) ) %>%
     # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
     mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor)) %>%
