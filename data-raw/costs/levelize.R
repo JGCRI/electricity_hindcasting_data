@@ -12,7 +12,7 @@ calc.levelizedcosts <- function(capcosts, cf.data, fcr, fuelprices, techmap) {
            LCOE_FOM = (1000 * om.fixed) / (8760 * capacityfactor),
            LCOE_VOM = om.var,
            LCOE_wo_Fuel = LCOE_Capital + LCOE_FOM + LCOE_VOM) %>%  # $/MWh
-    select(-overnight, -capacityfactor, -om.fixed, -om.var)
+    select(-overnight, -om.fixed, -om.var)
 
   levcst.fuel <- levcst %>%
     left_join(fuelprices, by=c("yr", "fuel.general")) %>%
