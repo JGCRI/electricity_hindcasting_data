@@ -1,8 +1,7 @@
 
 prep.mapping <- function(mappingFile)
 {
-  mapping <- mappingFile %>%
-    read.csv()
+  mapping <-  read.csv(mappingFile, stringsAsFactors=F)
   mapping <- mapping %>%
     select(primemover, fuel, fuel_general, matches("overnight"))
 
