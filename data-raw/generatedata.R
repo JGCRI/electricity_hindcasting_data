@@ -117,7 +117,9 @@ if (csv) {
 }
 
 
-# JOIN.CAP.GEN ------------------------------------------------------------
+
+# JOIN.CAP.GEN.UNMAPPED ---------------------------------------------------
+
 source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
@@ -138,42 +140,55 @@ if (csv) {
   write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
 }
 
-cap.gen.joined <- cap.gen.joined.unmapped %>%
+# CAP.GEN.JOINED ----------------------------------------------------------
+
+# attach oc-fg clumns
+# to make oc-fg unique ID's we need to do an aggregation, but after assigning vintage yr
+cap.gen.joined.mapped <- cap.gen.joined.unmapped %>%
+  filter(yr != 2000) %>%
+  filter(!is.na(vintage)) %>%
   left_join(mapping, by=c("primemover", "fuel")) %>%
   filter(overnight_c != "OTH") %>%
   filter(overnight_d != ".") %>%
   filter(primemover != "WS") %>%
   select(-overnight_d) %>%
-  rename(overnightcategory = overnight_c) %>%
-  # aggregate over redundant pm-f mappings
-  group_by(yr, vintage, plntcode, fuel.general, overnightcategory) %>%
-  summarise(capacity=sum(capacity),
-            generation=sum(capacity)) %>%
-  ungroup()
+  rename(overnightcategory = overnight_c)
 
-weights <- cap.gen.joined %>%
+weights <- cap.gen.joined.mapped %>%
   # aggregate over vintage to get total capacity by {yr, plnt, fg, oc}
-  group_by(yr, plntcode, fuel.general, overnightcategory) %>%
+  group_by(plntcode, overnightcategory, fuel.general) %>%
   summarise(cap.total = sum(capacity) ) %>%
   ungroup() %>%
   # calculate start year's share of total capacity (w/in plant)
-  right_join(merged, by = c("yr", "plntcode", "fuel.general", "overnightcategory")) %>%
+  right_join(cap.gen.joined.mapped, by = c("plntcode", "overnightcategory", "fuel.general")) %>%
   mutate(wt=capacity/cap.total) %>%
-  select(yr, plntcode, fuel.general, overnightcategory, vintage, wt)
+  # cap.total is degenerate under yr
+  select(yr, plntcode, overnightcategory, fuel.general, wt)
 
-# weighted average of vintage
-cap.gen.joined <- cap.gen.joined %>%
-  left_join(weights, by = c("yr", "vintage", "plntcode", "fuel.general", "overnightcategory")) %>%
-  group_by(yr, plntcode, fuel.general, overnightcategory) %>%
-  summarise(capacity=sum(capacity),
-            generation=sum(generation),
-            startyr=stats::weighted.mean(vintage, wt) %>% round() ) %>%
+# calculate startyr for a given {plant, oc, fg}
+cap.gen.joined.mapped.weighted <- cap.gen.joined.mapped %>%
+  left_join(weights, by=c("yr", "plntcode", "overnightcategory", "fuel.general")) %>%
+  group_by(plntcode, overnightcategory, fuel.general) %>%
+  summarise(startyr=stats::weighted.mean(vintage, wt) %>% round()) %>%
   ungroup()
 
+# aggregate over degenerate pm-f -> oc-fg mappings
+# pass on a pcode-oc-fg row's startyr to each yr in original joined data
+cap.gen.joined <- cap.gen.joined.mapped %>%
+  left_join(cap.gen.joined.mapped.weighted, by = c("plntcode", "fuel.general", "overnightcategory")) %>%
+  group_by(yr, startyr, plntcode, fuel.general, overnightcategory) %>%
+  summarise(capacity=sum(capacity), # sum over pre-mapped pm-f
+            generation=sum(generation)) %>%  # sum over pre-mapped pm-f
+  ungroup()
+
+# save cap.gen.joined (oc-fg codes)
 devtools::use_data(cap.gen.joined, overwrite=TRUE)
 if (csv) {
   write.csv(cap.gen.joined, "CSV/cap.gen.joined.csv", row.names=FALSE)
 }
+
+
+
 # master set --------------------------------------------------------------
 v1 <- cap.gen.joined.unmapped %>%
   # aggregate over vintage
@@ -202,7 +217,7 @@ source('data-raw/costs/capacityfactors.R')
 # carries original capacity and generation as well (for weighting capital costs)
 
 # calculate capacityfactors
-capacityfactors <- calc.capacityfactors(merged.vntg.wt, "data-raw/costs/epm2017.csv")
+capacityfactors <- calc.capacityfactors(cap.gen.joined, "data-raw/costs/epm2017.csv")
 
 # CF as calculated from form data
 capacityfactors.data <- capacityfactors$data
