@@ -87,37 +87,6 @@ if(csv) {
 }
 
 
-# MAP CAP & GEN -----------------------------------------------------------
-
-# takes dataset df and column of interest (capacity or generation)
-# maps df from native (yr-pm-f-plntcode) keys to (yr-oc-fg-plntcode) keys
-# after mapping, must aggregate b/c multiple (pm-f) map to same (oc-fg)
-map <- function(df, column) {
-  column <- enquo(column)
-
-  df <- df %>%
-    left_join(mapping, by=c("primemover", "fuel")) %>% # map datasets to oc-fg
-    select(-primemover, -fuel) %>% # aggregate redundant mappings (pm, f) -> (oc, fg)
-    # no longer grouping by utilcode b/c two versions (.x, .y)
-    group_by(yr, plntcode, overnightcategory, fuel.general) %>%
-    summarise(!!quo_name(column) := sum(!!column)) %>%
-    ungroup()
-}
-
-capacity <- map(capacity.unmapped, capacity)
-devtools::use_data(capacity, overwrite=TRUE)
-if(csv) {
-  write.csv(capacity, "CSV/capacity.csv", row.names=FALSE)
-}
-
-generation <- map(generation.unmapped, generation)
-devtools::use_data(generation, overwrite=TRUE)
-if (csv) {
-  write.csv(generation, "CSV/generation.csv", row.names=FALSE)
-}
-
-
-
 # JOIN.CAP.GEN.UNMAPPED ---------------------------------------------------
 
 source('data-raw/costs/capacityfactors.R')
