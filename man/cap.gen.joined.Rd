@@ -3,7 +3,7 @@
 \name{cap.gen.joined}
 \alias{cap.gen.joined}
 \title{Joined Electrical Capacity and Generation Output}
-\format{A data framewith 127044 and 6 variables}
+\format{A data framewith 121104 and 7 variables}
 \usage{
 data(cap.gen.joined)
 }
@@ -25,10 +25,11 @@ dataset is used in the calculation of capacity factor.
 
 \describe{
 \item{yr}{Year of reported data}
+\item{startyr}{Weighted average (by capacity) of reported start years}
 \item{plntcode}{EIA-assigned plant code}
 \item{overnightcategory}{Technology category}
 \item{fuel.general}{Fuel category}
-\item{nameplate}{Reported nameplate capacity, MW}
+\item{capacity}{Reported nameplate capacity, MW}
 \item{generation}{Reported net electrical output, MWh}
 }
 }

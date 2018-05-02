@@ -3,7 +3,7 @@
 \name{levelizedcosts}
 \alias{levelizedcosts}
 \title{Levelized Capital Costs}
-\format{A data framewith 82036 and 8 variables}
+\format{A data framewith 68506 and 11 variables}
 \usage{
 data(levelizedcosts)
 }
@@ -18,12 +18,14 @@ match GCAM calibration.
 
 \describe{
 \item{yr}{Year of reported data}
-\item{utilcode}{EIA-assigned utility code}
 \item{plntcode}{EIA-assigned plant code}
 \item{overnightcategory}{Technology category}
 \item{fuel.general}{Fuel category}
-\item{overnight.lev}{Levelized overnight cost, in $/MWh}
-\item{om.fixed.lev}{Levelized fixed O&M, in $/MWh}
-\item{om.var}{Variable O&m, in $/MWh}
+\item{LCOE_Capital}{Levelized overnight cost, in $/MWh}
+\item{LCOE_FOM}{Levelized fixed O&M, in $/MWh}
+\item{LCOE_VOM}{Variable O&m, in $/MWh}
+\item{LCOE_wo_Fuel}{Capital + FOM + VOM, in $/MWh}
+\item{LCOE_Fuel}{Fuel price adjusted to AEO-reported heatrate, in $/MWh}
+\item{LCOE}{LCOE_wo_Fuel + LCOE_Fuel, in $/MWh}
 }
 }

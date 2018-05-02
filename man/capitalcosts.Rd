@@ -3,7 +3,7 @@
 \name{capitalcosts}
 \alias{capitalcosts}
 \title{Capital Costs}
-\format{A data framewith 225 and 5 variables}
+\format{A data framewith 323 and 6 variables}
 \source{
 \url{https://www.eia.gov/outlooks/aeo/archive.php}
 }
@@ -26,9 +26,10 @@ technology categories mapped to our own set of technologies.
 
 \describe{
 \item{yr}{Year of reported data}
-\item{overnightcategory}{Technology category}
+\item{technology}{Technology label, native to EIA}
 \item{overnight}{Base overnight costs, in $/kW}
 \item{om.var}{Variable operations & management costs, in $/kW/yr}
 \item{om.fixed}{Fixed operations & management costs, in $/MWh}
+\item{heatrate}{Heatrate, BTU/kWh}
 }
 }

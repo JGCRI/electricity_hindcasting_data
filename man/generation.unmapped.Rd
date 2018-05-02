@@ -3,7 +3,7 @@
 \name{generation.unmapped}
 \alias{generation.unmapped}
 \title{Electricity Generation Net Output, Unmapped}
-\format{A data framewith 208679 and 7 variables}
+\format{A data framewith 175502 and 7 variables}
 \source{
 \url{https://www.eia.gov/electricity/data/eia923/}
 }
@@ -28,6 +28,5 @@ when calculating capacity factors.
 \item{primemover}{Native EIA prime mover code}
 \item{fuel}{Native EIA fuel code}
 \item{generation}{Reported net electrical output, MWh}
-\item{consumption}{}
 }
 }

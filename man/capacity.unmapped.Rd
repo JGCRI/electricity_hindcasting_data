@@ -25,6 +25,6 @@ produced the unmapped data set from the raw original data files provided by the 
 \item{primemover}{Native EIA prime mover code}
 \item{fuel}{Native EIA fuel code}
 \item{vintage}{First year capacity is available}
-\item{nameplate}{Reported nameplate capacity, MW}
+\item{capacity}{Reported nameplate capacity, MW}
 }
 }

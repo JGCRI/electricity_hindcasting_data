@@ -3,14 +3,14 @@
 \name{mapping}
 \alias{mapping}
 \title{Mapping to GCAM Fuel-Tech Options}
-\format{A data framewith 181 and 4 variables}
+\format{A data framewith 175 and 5 variables}
 \usage{
 data(mapping)
 }
 \description{
 Takes all unique observations of prime mover and fuel, and provides a technology category and
-fuel category to describe the data at a courser level than the EIA-native prime mover (33 observed) and fuel
-codes (61 observed).
+fuel category to describe the data at a courser level than the EIA-native prime mover (56 observed) and fuel
+codes (31 observed).
 }
 \details{
 \describe{

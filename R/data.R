@@ -41,15 +41,16 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
+#' \item{startyr}{Weighted average (by capacity) of reported start years}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
-#' \item{nameplate}{Reported nameplate capacity, MW}
+#' \item{capacity}{Reported nameplate capacity, MW}
 #' \item{generation}{Reported net electrical output, MWh}
 #' }
 #' @name cap.gen.joined
 #' @usage data(cap.gen.joined)
-#' @format A data framewith 127044 and 6 variables
+#' @format A data framewith 121104 and 7 variables
 NULL
 
 
@@ -68,7 +69,7 @@ NULL
 #' \item{primemover}{Native EIA prime mover code}
 #' \item{fuel}{Native EIA fuel code}
 #' \item{vintage}{First year capacity is available}
-#' \item{nameplate}{Reported nameplate capacity, MW}
+#' \item{capacity}{Reported nameplate capacity, MW}
 #' }
 #' @name capacity.unmapped
 #' @usage data(capacity.unmapped)
@@ -78,45 +79,39 @@ NULL
 NULL
 
 
-#' Capacity Factors
+#' Capacity Factors, Form Data
 #'
 #' Plant-specific capacity factors for specified fuel and technology choices.
 #'
 #' This calculation can be found in data-raw/costs/capacityfactors.R. Due to data errors,
-#' some capacity factors are greater than one.
+#' some capacity factors are greater than one. These are set to 1.
+#'
+#' Calculated capacity factors less than 0.1 are filtered out.
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
-#' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
 #' \item{capacityfactor}{8760*capacity/generation, unitless}
 #' }
-#' @name capacityfactors
-#' @usage data(capacityfactors)
-#' @format A data framewith 101437 and 6 variables
+#' @name capacityfactors.data
+#' @usage data(capacityfactors.data)
+#' @format A data framewith 84312 and 5 variables
 NULL
 
 
-#' Capacity Factors, clamped to 1 from above
+#' Capacity Factors, Supplemental
 #'
-#' Plant-specific capacity factors for specified fuel and technology choices.
-#'
-#' This calculation can be found in data-raw/costs/capacityfactors.R. Observations with a
-#' calculated capacity factor greater than one are set equal to one.
+#' Technology-specific capacity factors taken from the EIA Electricity Power Monthly.
 #'
 #' \describe{
-#' \item{yr}{Year of reported data}
-#' \item{utilcode}{EIA-assigned utility code}
-#' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
-#' \item{fuel.general}{Fuel category}
 #' \item{capacityfactor}{8760*capacity/generation, unitless}
 #' }
-#' @name capacityfactors.clamp
-#' @usage data(capacityfactors.clamp)
-#' @format A data framewith 101437 and 6 variables
+#' @name capacityfactors.sup
+#' @usage data(capacityfactors.sup)
+#' @format A data framewith 15 and 2 variables
 NULL
 
 
@@ -137,14 +132,15 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
-#' \item{overnightcategory}{Technology category}
+#' \item{technology}{Technology label, native to EIA}
 #' \item{overnight}{Base overnight costs, in $/kW}
 #' \item{om.var}{Variable operations & management costs, in $/kW/yr}
 #' \item{om.fixed}{Fixed operations & management costs, in $/MWh}
+#' \item{heatrate}{Heatrate, BTU/kWh}
 #' }
 #' @name capitalcosts
 #' @usage data(capitalcosts)
-#' @format A data framewith 225 and 5 variables
+#' @format A data framewith 323 and 6 variables
 #' @source \url{https://www.eia.gov/outlooks/aeo/archive.php}
 NULL
 
@@ -192,11 +188,10 @@ NULL
 #' \item{primemover}{Native EIA prime mover code}
 #' \item{fuel}{Native EIA fuel code}
 #' \item{generation}{Reported net electrical output, MWh}
-#' \item{consumption}{}
 #' }
 #' @name generation.unmapped
 #' @usage data(generation.unmapped)
-#' @format A data framewith 208679 and 7 variables
+#' @format A data framewith 175502 and 7 variables
 #' @source \url{https://www.eia.gov/electricity/data/eia923/}
 
 NULL
@@ -213,25 +208,27 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
-#' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
-#' \item{overnight.lev}{Levelized overnight cost, in $/MWh}
-#' \item{om.fixed.lev}{Levelized fixed O&M, in $/MWh}
-#' \item{om.var}{Variable O&m, in $/MWh}
+#' \item{LCOE_Capital}{Levelized overnight cost, in $/MWh}
+#' \item{LCOE_FOM}{Levelized fixed O&M, in $/MWh}
+#' \item{LCOE_VOM}{Variable O&m, in $/MWh}
+#' \item{LCOE_wo_Fuel}{Capital + FOM + VOM, in $/MWh}
+#' \item{LCOE_Fuel}{Fuel price adjusted to AEO-reported heatrate, in $/MWh}
+#' \item{LCOE}{LCOE_wo_Fuel + LCOE_Fuel, in $/MWh}
 #' }
 #' @name levelizedcosts
 #' @usage data(levelizedcosts)
-#' @format A data framewith 82036 and 8 variables
+#' @format A data framewith 68506 and 11 variables
 NULL
 
 
 #' Mapping to GCAM Fuel-Tech Options
 #'
 #' Takes all unique observations of prime mover and fuel, and provides a technology category and
-#' fuel category to describe the data at a courser level than the EIA-native prime mover (33 observed) and fuel
-#' codes (61 observed).
+#' fuel category to describe the data at a courser level than the EIA-native prime mover (56 observed) and fuel
+#' codes (31 observed).
 #'
 #' \describe{
 #' \item{primemover}{Native EIA prime mover code}
@@ -241,52 +238,5 @@ NULL
 #' }
 #' @name mapping
 #' @usage data(mapping)
-#' @format A data framewith 181 and 4 variables
+#' @format A data framewith 175 and 5 variables
 NULL
-
-
-#' Marginal Costs
-#'
-#' Fuel price scaled by fuel efficiency, which is calculated from average heatrates given for a specified
-#' technology and fuel in a given year.
-#'
-#' See 'Marginal Costs' section of data-raw/generatedata.R for this calculation. Heatrates included at
-#' data-raw/costs/fuel/avghr.csv.
-#'
-#' Source of avghr.csv??
-#'
-#' \describe{
-#' \item{yr}{Year of reported data}
-#' \item{overnightcategory}{Technology category}
-#' \item{fuel.general}{Fuel category}
-#' \item{marginal.cost}{Marginal cost of producing electricity using specified technology and fuel, in $/MWh}
-#' }
-#' @name marginalcosts
-#' @usage data(marginalcosts)
-#' @format A data framewith 190 and 4 variables
-NULL
-
-#' Master Dataset
-#'
-#' This dataset joins levelizedcosts, marginalcosts, and cap.gen.joined, so that it contains all the
-#' necessary columns for JGCRI's electricity hindcasting project.
-#'
-#' \describe{
-#' \item{yr}{Year of reported data}
-#' \item{plntcode}{EIA-assigned plant code}
-#' \item{overnightcategory}{Technology category}
-#' \item{fuel.general}{Fuel category}
-#' \item{overnight.lev}{Levelized overnight cost, in $/MWh}
-#' \item{om.fixed.lev}{Levelized fixed O&M, in $/MWh}
-#' \item{om.var}{Variable O&m, in $/MWh}
-#' \item{marginal.cost}{Marginal cost of producing electricity using specified technology and fuel, in $/MWh}
-#' \item{nameplate}{Reported nameplate capacity, MW}
-#' \item{generation}{Reported net electrical output, MWh}
-#' }
-#' @name master
-#' @usage data(master)
-#' @format A data framewith 106468 and 10 variables
-NULL
-
-
-
