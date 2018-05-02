@@ -1,0 +1,16 @@
+technology,capacityfactor,overnightcategory
+Pulverized Coal (scrubbed),0.55,coal
+Advanced Coal (IGCC),0.55,
+Oil/Gas Steam,0.15,ST
+Conventional Combined Cycle (oil/gas),0.6,CC
+Advanced CC,0.6,
+Combustion Turbine,0.05,CT
+Advanced CT,0.05,
+Fuel Cell,0.8,FC
+Hydropower,0.4,hydro
+Geothermal,0.7,geothermal
+Biomass,0.55,biomass
+MSW,0.7,MSW
+Solar Thermal,0.25,solar_thermal
+Wind,0.3,wind
+Solar PV,0.25,PV
