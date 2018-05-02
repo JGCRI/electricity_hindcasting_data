@@ -24,9 +24,11 @@ join.cap.gen <- function(cap, gen, na.case) {
 
 calc.capacityfactors <- function(merged, supFile) {
   data <- merged %>%
-    mutate(capacityfactor = generation / (capacity * 8760) ) %>%
+    mutate(potentialgeneration = capacity * 8760,
+           capacityfactor.raw = generation / potentialgeneration ) %>%
     # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
-    mutate(capacityfactor = ifelse(capacityfactor > 1, 1, capacityfactor)) %>%
+    mutate(capacityfactor = ifelse(capacityfactor.raw > 1, 1, capacityfactor.raw)) %>%
+    filter(capacityfactor >= 0.1) %>%
     select(yr, plntcode, overnightcategory, fuel.general, capacityfactor)
 
   epm <- read.csv(supFile) %>%
