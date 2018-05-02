@@ -16,7 +16,7 @@ capacity factors dataset and a fixed charge rate, which spreads the cost of the 
 expected lifetime of the capacity addition. The fixed charge rate is taken to be 0.13 in order to
 match GCAM calibration.
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{utilcode}{EIA-assigned utility code}
 \item{plntcode}{EIA-assigned plant code}

@@ -24,7 +24,7 @@ there are some spikes in these numbers; "AEOData_$2010_Smoothed" contains the da
 converted into USD$2010. "Data4GCAM" is the final capital costs dataset reported in this package, with the native AEO
 technology categories mapped to our own set of technologies.
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{overnightcategory}{Technology category}
 \item{overnight}{Base overnight costs, in $/kW}

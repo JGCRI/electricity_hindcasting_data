@@ -17,7 +17,7 @@ data-raw/costs/fuel/avghr.csv.
 
 Source of avghr.csv??
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{overnightcategory}{Technology category}
 \item{fuel.general}{Fuel category}

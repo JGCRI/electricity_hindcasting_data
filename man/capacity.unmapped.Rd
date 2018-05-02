@@ -18,7 +18,7 @@ primemover and fuel codes.
 See data-raw/generators/1990to2000_utilities.R and 2001to2016_utilities.R for functions which
 produced the unmapped data set from the raw original data files provided by the EIA.
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{utilcode}{EIA-assigned utility code}
 \item{plntcode}{EIA-assigned plant code}

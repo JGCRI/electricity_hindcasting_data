@@ -12,7 +12,7 @@ This dataset joins levelizedcosts, marginalcosts, and cap.gen.joined, so that it
 necessary columns for JGCRI's electricity hindcasting project.
 }
 \details{
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{plntcode}{EIA-assigned plant code}
 \item{overnightcategory}{Technology category}

@@ -13,7 +13,7 @@ fuel category to describe the data at a courser level than the EIA-native prime 
 codes (61 observed).
 }
 \details{
-\describe {
+\describe{
 \item{primemover}{Native EIA prime mover code}
 \item{fuel}{Native EIA fuel code}
 \item{overnightcategory}{Technology category}

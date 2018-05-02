@@ -39,7 +39,7 @@ NULL
 #' requires aggregation, as multiple pm-f codes map to the same overnightcategory and fuel pair. The resulting
 #' dataset is used in the calculation of capacity factor.
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
@@ -61,7 +61,7 @@ NULL
 #' See data-raw/generators/1990to2000_utilities.R and 2001to2016_utilities.R for functions which
 #' produced the unmapped data set from the raw original data files provided by the EIA.
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
@@ -85,7 +85,7 @@ NULL
 #' This calculation can be found in data-raw/costs/capacityfactors.R. Due to data errors,
 #' some capacity factors are greater than one.
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
@@ -106,7 +106,7 @@ NULL
 #' This calculation can be found in data-raw/costs/capacityfactors.R. Observations with a
 #' calculated capacity factor greater than one are set equal to one.
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
@@ -135,7 +135,7 @@ NULL
 #' technology categories mapped to our own set of technologies.
 #'
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{overnightcategory}{Technology category}
 #' \item{overnight}{Base overnight costs, in $/kW}
@@ -162,7 +162,7 @@ NULL
 #'
 #' Uranium source??
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{fuel.general}{Fuel category}
 #' \item{fuel.price}{Fuel price, in $/BTU}
@@ -185,7 +185,7 @@ NULL
 #' when calculating capacity factors.
 #'
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
@@ -211,7 +211,7 @@ NULL
 #' expected lifetime of the capacity addition. The fixed charge rate is taken to be 0.13 in order to
 #' match GCAM calibration.
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{utilcode}{EIA-assigned utility code}
 #' \item{plntcode}{EIA-assigned plant code}
@@ -233,7 +233,7 @@ NULL
 #' fuel category to describe the data at a courser level than the EIA-native prime mover (33 observed) and fuel
 #' codes (61 observed).
 #'
-#' \describe {
+#' \describe{
 #' \item{primemover}{Native EIA prime mover code}
 #' \item{fuel}{Native EIA fuel code}
 #' \item{overnightcategory}{Technology category}
@@ -255,7 +255,7 @@ NULL
 #'
 #' Source of avghr.csv??
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
@@ -271,7 +271,7 @@ NULL
 #' This dataset joins levelizedcosts, marginalcosts, and cap.gen.joined, so that it contains all the
 #' necessary columns for JGCRI's electricity hindcasting project.
 #'
-#' \describe {
+#' \describe{
 #' \item{yr}{Year of reported data}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}

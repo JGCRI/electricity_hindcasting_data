@@ -21,7 +21,7 @@ produced the unmapped data set from the raw original data files provided by the 
 Generation is negative where generator consumed more electricity than it produced. These rows are filtered out
 when calculating capacity factors.
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{utilcode}{EIA-assigned utility code}
 \item{plntcode}{EIA-assigned plant code}

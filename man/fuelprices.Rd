@@ -23,7 +23,7 @@ The original reports and compiled data file can be found in data-raw/costs/fuel/
 
 Uranium source??
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{fuel.general}{Fuel category}
 \item{fuel.price}{Fuel price, in $/BTU}

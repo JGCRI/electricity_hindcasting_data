@@ -14,7 +14,7 @@ Plant-specific capacity factors for specified fuel and technology choices.
 This calculation can be found in data-raw/costs/capacityfactors.R. Due to data errors,
 some capacity factors are greater than one.
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{utilcode}{EIA-assigned utility code}
 \item{plntcode}{EIA-assigned plant code}

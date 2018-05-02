@@ -23,7 +23,7 @@ to the overnightcategory and fuel variables contained in our mapping file. Mappi
 requires aggregation, as multiple pm-f codes map to the same overnightcategory and fuel pair. The resulting
 dataset is used in the calculation of capacity factor.
 
-\describe {
+\describe{
 \item{yr}{Year of reported data}
 \item{plntcode}{EIA-assigned plant code}
 \item{overnightcategory}{Technology category}
