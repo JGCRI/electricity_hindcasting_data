@@ -3,7 +3,7 @@
 \name{levelizedcosts}
 \alias{levelizedcosts}
 \title{Levelized Capital Costs}
-\format{A data framewith 68506 and 11 variables}
+\format{A data framewith 70084 and 11 variables}
 \usage{
 data(levelizedcosts)
 }
@@ -18,6 +18,7 @@ match GCAM calibration.
 
 \describe{
 \item{yr}{Year of reported data}
+\item{startyr}{Average of generation-level startyr, weighted by capacity}
 \item{plntcode}{EIA-assigned plant code}
 \item{overnightcategory}{Technology category}
 \item{fuel.general}{Fuel category}

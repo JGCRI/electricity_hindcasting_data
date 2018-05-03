@@ -3,7 +3,7 @@
 \name{capacityfactors.data}
 \alias{capacityfactors.data}
 \title{Capacity Factors, Form Data}
-\format{A data framewith 84312 and 5 variables}
+\format{A data framewith 85026 and 6 variables}
 \usage{
 data(capacityfactors.data)
 }
@@ -18,6 +18,7 @@ Calculated capacity factors less than 0.1 are filtered out.
 
 \describe{
 \item{yr}{Year of reported data}
+\item{startyr}{Average of generation-level startyr, weighted by capacity}
 \item{plntcode}{EIA-assigned plant code}
 \item{overnightcategory}{Technology category}
 \item{fuel.general}{Fuel category}

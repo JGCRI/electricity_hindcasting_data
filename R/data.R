@@ -37,12 +37,12 @@ NULL
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{primemover}{Native EIA prime mover code}
 #' \item{fuel}{Native EIA fuel code}
-#' \item{vintage}{First year capacity is available}
+#' \item{startyr}{Average of generation-level startyr, weighted by capacity}
 #' \item{capacity}{Reported nameplate capacity, MW}
 #' }
 #' @name capacity.unmapped
 #' @usage data(capacity.unmapped)
-#' @format A data framewith 245936 and 7 variables
+#' @format A data framewith 154185 and 7 variables
 #' @source \url{https://www.eia.gov/electricity/data/eia860/}
 
 NULL
@@ -93,16 +93,16 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
-#' \item{startyr}{Weighted average (by capacity) of reported start years}
+#' \item{startyr}{Average of generation-level startyr, weighted by capacity}
 #' \item{plntcode}{EIA-assigned plant code}
-#' \item{overnightcategory}{Technology category}
-#' \item{fuel.general}{Fuel category}
+#' \item{primemover}{Technology category}
+#' \item{fuel}{Fuel category}
 #' \item{capacity}{Reported nameplate capacity, MW}
 #' \item{generation}{Reported net electrical output, MWh}
 #' }
 #' @name cap.gen.joined.unmapped
 #' @usage data(cap.gen.joined.unmapped)
-#' @format A data framewith 121104 and 7 variables
+#' @format A data framewith 130730 and 7 variables
 NULL
 
 
@@ -141,7 +141,7 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
-#' \item{startyr}{Weighted average (by capacity) of reported start years}
+#' \item{startyr}{Average of generation-level startyr, weighted by capacity}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
@@ -150,7 +150,7 @@ NULL
 #' }
 #' @name cap.gen.joined
 #' @usage data(cap.gen.joined)
-#' @format A data framewith 121104 and 7 variables
+#' @format A data framewith 125603 and 7 variables
 NULL
 
 
@@ -165,6 +165,7 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
+#' \item{startyr}{Average of generation-level startyr, weighted by capacity}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
@@ -172,7 +173,7 @@ NULL
 #' }
 #' @name capacityfactors.data
 #' @usage data(capacityfactors.data)
-#' @format A data framewith 84312 and 5 variables
+#' @format A data framewith 85026 and 6 variables
 NULL
 
 
@@ -257,6 +258,7 @@ NULL
 #'
 #' \describe{
 #' \item{yr}{Year of reported data}
+#' \item{startyr}{Average of generation-level startyr, weighted by capacity}
 #' \item{plntcode}{EIA-assigned plant code}
 #' \item{overnightcategory}{Technology category}
 #' \item{fuel.general}{Fuel category}
@@ -269,5 +271,5 @@ NULL
 #' }
 #' @name levelizedcosts
 #' @usage data(levelizedcosts)
-#' @format A data framewith 68506 and 11 variables
+#' @format A data framewith 70084 and 11 variables
 NULL

@@ -3,7 +3,7 @@
 \name{capacity.unmapped}
 \alias{capacity.unmapped}
 \title{Electrical Capacity, Unmapped}
-\format{A data framewith 245936 and 7 variables}
+\format{A data framewith 154185 and 7 variables}
 \source{
 \url{https://www.eia.gov/electricity/data/eia860/}
 }
@@ -24,7 +24,7 @@ produced the unmapped data set from the raw original data files provided by the 
 \item{plntcode}{EIA-assigned plant code}
 \item{primemover}{Native EIA prime mover code}
 \item{fuel}{Native EIA fuel code}
-\item{vintage}{First year capacity is available}
+\item{startyr}{Average of generation-level startyr, weighted by capacity}
 \item{capacity}{Reported nameplate capacity, MW}
 }
 }
