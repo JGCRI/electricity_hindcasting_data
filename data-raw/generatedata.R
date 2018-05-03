@@ -113,7 +113,6 @@ if (csv) {
 # attach oc-fg clumns
 # to make oc-fg unique ID's we need to do an aggregation, but after assigning vintage yr
 cap.gen.joined.mapped <- cap.gen.joined.unmapped %>%
-  filter(yr != 2000) %>%
   filter(!is.na(vintage)) %>%
   left_join(mapping, by=c("primemover", "fuel")) %>%
   filter(overnight_c != "OTH") %>%
