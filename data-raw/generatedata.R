@@ -111,39 +111,16 @@ if (csv) {
 }
 
 
-# CAP.GEN.JOINED (map & startyr) ------------------------------------------
-# attach oc-fg clumns
-# to make oc-fg unique ID's we need to do an aggregation, but after assigning vintage yr
-cap.gen.joined.mapped <- cap.gen.joined.unmapped %>%
+# CAP.GEN.JOINED (map) ----------------------------------------------------
+cap.gen.joined <- cap.gen.joined.unmapped %>%
+  # attach oc-fg columns
   left_join(mapping, by=c("primemover", "fuel")) %>%
   filter(overnight_c != "OTH") %>%
   filter(overnight_d != ".") %>%
   filter(primemover != "WS") %>%
   select(-overnight_d) %>%
-  rename(overnightcategory = overnight_c)
-
-weights <- cap.gen.joined.mapped %>%
-  # aggregate over vintage to get total capacity by {yr, plnt, fg, oc}
-  group_by(plntcode, overnightcategory, fuel.general) %>%
-  summarise(cap.total = sum(capacity) ) %>%
-  ungroup() %>%
-  # calculate start year's share of total capacity (w/in plant)
-  right_join(cap.gen.joined.mapped, by = c("plntcode", "overnightcategory", "fuel.general")) %>%
-  mutate(wt=capacity/cap.total) %>%
-  # cap.total is degenerate under yr
-  select(yr, plntcode, overnightcategory, fuel.general, wt)
-
-# calculate startyr for a given {plant, oc, fg}
-cap.gen.joined.mapped.weighted <- cap.gen.joined.mapped %>%
-  left_join(weights, by=c("yr", "plntcode", "overnightcategory", "fuel.general")) %>%
-  group_by(plntcode, overnightcategory, fuel.general) %>%
-  summarise(startyr=stats::weighted.mean(vintage, wt) %>% round()) %>%
-  ungroup()
-
-# aggregate over degenerate pm-f -> oc-fg mappings
-# pass on a pcode-oc-fg row's startyr to each yr in original joined data
-cap.gen.joined <- cap.gen.joined.mapped %>%
-  left_join(cap.gen.joined.mapped.weighted, by = c("plntcode", "fuel.general", "overnightcategory")) %>%
+  rename(overnightcategory = overnight_c) %>%
+  # to make oc-fg unique ID's we need to aggregate over pm & f
   group_by(yr, startyr, plntcode, fuel.general, overnightcategory) %>%
   summarise(capacity=sum(capacity), # sum over pre-mapped pm-f
             generation=sum(generation)) %>%  # sum over pre-mapped pm-f
