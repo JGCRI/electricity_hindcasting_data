@@ -33,7 +33,7 @@ calc.capacityfactors <- function(merged, supFile) {
     # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
     mutate(capacityfactor = ifelse(capacityfactor.raw > 1, 1, capacityfactor.raw)) %>%
     filter(capacityfactor >= 0.1) %>%
-    select(yr, plntcode, overnightcategory, fuel.general, capacityfactor)
+    select(-capacity, -generation, -potentialgeneration, -capacityfactor.raw)
 
   epm <- read.csv(supFile) %>%
     select(overnightcategory, capacityfactor)
