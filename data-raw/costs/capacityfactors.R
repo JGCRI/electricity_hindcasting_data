@@ -1,22 +1,25 @@
 join.cap.gen <- function(cap, gen, na.case) {
 
+  # joined unmapped CAP & GEN datasets
+  # neither case includes utilcode in the join b/c of inconsistent utilcodes between data sets
 
   if (na.case) {
-    # merge for yr %in% c(2001, 2002)
-    # join excludes primemover, so we opt to use CAP pm column in later aggregation
-    join.unmapped <- gen %>%
-      inner_join( cap, ., # join unmapped datasets by DROPPING PRIMEMOVER
+    # merge CAP w/ GEN data that contains NA in primemover (this occurs exclusively for 2001-2002)
+    join.unmapped <- inner_join( cap, gen,
+                  # in order to match, join must exclude primemover
                   by = c("yr", "plntcode", "fuel") ) %>%
-      dplyr::rename(primemover = primemover.x) %>%  #use ORIG CAP pm column
-      select(-primemover.y, -starts_with("utilcode")) # drop ORIG GEN pm column & consumption, ORIG CAP/GEN utilcodes
+      # use CAP pm column
+      dplyr::rename(primemover = primemover.x) %>%
+      # drop GEN pm column & both utilcode cols
+      select(-primemover.y, -starts_with("utilcode"))
 
   } else {
-    # merge for ! yr %in% c(2001, 2002)
-    # join includes primemover
+    # merge CAP w/ GEN that doesn't contain NA in primemover
     join.unmapped <- gen %>%
-      inner_join( cap, ., # join unmapped datasets W/O UTILCODE
+      inner_join( cap, .,
                   by = c("yr", "plntcode", "primemover", "fuel") ) %>%
-      select(-starts_with("utilcode")) # drop ORIG CAP/GEN utilcodes, & consumption
+      # drop both utilcode cols
+      select(-starts_with("utilcode"))
   }
 
   join.unmapped
