@@ -67,8 +67,7 @@ generation.unmapped <- rbind(generation.90to00, generation.01to16) %>%
   filter(! is.na(utilcode)) %>%
   filter(generation > 0) %>%
   group_by(yr, utilcode, plntcode, primemover, fuel) %>%
-  summarise(generation=sum(generation),
-            consumption=sum(consumption)) %>%
+  summarise(generation=sum(generation)) %>%
   ungroup()
 devtools::use_data(generation.unmapped, overwrite=TRUE)
 if (csv) {
