@@ -78,17 +78,6 @@ if (csv) {
 }
 
 
-# OC-FG Mapping -----------------------------------------------------------
-source('data-raw/mappingfiles/mapping.R')
-# data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
-mapping <- prep.mapping("data-raw/mappingfiles/mapping_final.csv") %>%
-  rename(fuel.general = fuel_general)
-devtools::use_data(mapping, overwrite=TRUE)
-if(csv) {
-  write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
-}
-
-
 # CAP.GEN.JOINED.UNMAPPED -------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 
@@ -111,6 +100,15 @@ if (csv) {
 }
 
 
+# OC-FG Mapping -----------------------------------------------------------
+source('data-raw/mappingfiles/mapping.R')
+# data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
+mapping <- prep.mapping("data-raw/mappingfiles/mapping_final.csv") %>%
+  rename(fuel.general = fuel_general)
+devtools::use_data(mapping, overwrite=TRUE)
+if(csv) {
+  write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
+}
 # CAP.GEN.JOINED (map) ----------------------------------------------------
 cap.gen.joined <- cap.gen.joined.unmapped %>%
   # attach oc-fg columns
@@ -179,27 +177,6 @@ if (csv) {
 }
 
 
-# AEO Capital Costs -------------------------------------------------------
-capitalcosts <- read_excel("data-raw/costs/aeo_capital_costs.xlsx",
-                            sheet = "Fill_in_Missing_Tech_category",
-                            skip = 2)
-names(capitalcosts) <- c("yr", "reference.yr", "technology", "yr.available",
-                          "size", "overnight.foak", "overnight", "om.fixed", "om.var",
-                          "heatrate.foak", "heatrate", "construction")
-capitalcosts <- capitalcosts %>%
-  filter(! technology %in% c("Distributed Generation (base)",
-                           "Distributed Generation (peak)",
-                           "IGCC w/CCS",
-                           "Advanced CC",
-                           "Advanced CC w/CCS",
-                           "Advanced Coal (IGCC") ) %>%
-  select(yr, technology, overnight, om.fixed, om.var, heatrate)
-
-devtools::use_data(capitalcosts, overwrite=TRUE)
-if (csv) {
-  write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
-}
-
 # Inflation Adjustment ----------------------------------------------------
 source('data-raw/costs/gdpdeflator.R')
 # data: https://fred.stlouisfed.org/series/GDPDEF
@@ -228,6 +205,26 @@ if (csv) {
 }
 
 
+# AEO Capital Costs -------------------------------------------------------
+capitalcosts <- read_excel("data-raw/costs/aeo_capital_costs.xlsx",
+                           sheet = "Fill_in_Missing_Tech_category",
+                           skip = 2)
+names(capitalcosts) <- c("yr", "reference.yr", "technology", "yr.available",
+                         "size", "overnight.foak", "overnight", "om.fixed", "om.var",
+                         "heatrate.foak", "heatrate", "construction")
+capitalcosts <- capitalcosts %>%
+  filter(! technology %in% c("Distributed Generation (base)",
+                             "Distributed Generation (peak)",
+                             "IGCC w/CCS",
+                             "Advanced CC",
+                             "Advanced CC w/CCS",
+                             "Advanced Coal (IGCC") ) %>%
+  select(yr, technology, overnight, om.fixed, om.var, heatrate)
+
+devtools::use_data(capitalcosts, overwrite=TRUE)
+if (csv) {
+  write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
+}
 # LCOE --------------------------------------------------------------------
 source('data-raw/costs/levelize.R')
 # equation: See data-raw/costs/gcam/Electricity Generation Assumptions.pdf for equation
