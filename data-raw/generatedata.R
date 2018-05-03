@@ -9,7 +9,7 @@ library(rebus)
 csv <- TRUE
 
 
-# ORIG CAP ----------------------------------------------------------------
+# generators --------------------------------------------------------------
 # data: https://www.eia.gov/electricity/data/eia860/
 # nameplate, summer, winter ~ MW
 # heatrate ~ BTU/ kWh
@@ -32,6 +32,9 @@ if (csv) {
   write.csv(generators, "CSV/generators.csv", row.names=FALSE)
 }
 
+
+
+# capacity.unmapped -------------------------------------------------------
 capacity.unmapped <- generators %>%
   group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate over gencode
   summarise(capacity=sum(capacity)) %>%
@@ -53,7 +56,8 @@ if (csv) {
 }
 
 
-# ORIG GEN ----------------------------------------------------------------
+
+# generation.unmapped -----------------------------------------------------
 source('data-raw/generation/1990to2000_utilities.R')
 # data: https://www.eia.gov/electricity/data/eia923/eia906u.html
 # generation ~ MWh
@@ -78,7 +82,8 @@ if (csv) {
 }
 
 
-# CAP.GEN.JOINED.UNMAPPED -------------------------------------------------
+
+# cap.gen.joined.unmapped -------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
@@ -100,7 +105,8 @@ if (csv) {
 }
 
 
-# OC-FG Mapping -----------------------------------------------------------
+
+# mapping -----------------------------------------------------------------
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
 mapping <- prep.mapping("data-raw/mappingfiles/mapping_final.csv") %>%
@@ -109,7 +115,8 @@ devtools::use_data(mapping, overwrite=TRUE)
 if(csv) {
   write.csv(mapping, "CSV/mapping.csv", row.names=FALSE)
 }
-# CAP.GEN.JOINED (map) ----------------------------------------------------
+
+# cap.gen.joined ----------------------------------------------------------
 cap.gen.joined <- cap.gen.joined.unmapped %>%
   # attach oc-fg columns
   left_join(mapping, by=c("primemover", "fuel")) %>%
@@ -131,8 +138,7 @@ if (csv) {
 }
 
 
-
-# master set --------------------------------------------------------------
+# 'master' sets -----------------------------------------------------------
 v1 <- cap.gen.joined.unmapped %>%
   # aggregate over vintage
   group_by(yr, plntcode, primemover, fuel) %>%
@@ -154,7 +160,8 @@ v2 <- v1 %>%
 
 
 
-# Capacity Factors --------------------------------------------------------
+
+# capacityfactors ---------------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 # data: form860 generator capacities & forms759/906/920/923 plant generation output
 # carries original capacity and generation as well (for weighting capital costs)
@@ -177,7 +184,8 @@ if (csv) {
 }
 
 
-# Inflation Adjustment ----------------------------------------------------
+
+# gdpdeflator -------------------------------------------------------------
 source('data-raw/costs/gdpdeflator.R')
 # data: https://fred.stlouisfed.org/series/GDPDEF
 gdpdeflator <- calc.gdpdeflator("data-raw/costs/GDPDEF.csv", "2010") # reference year
@@ -186,7 +194,9 @@ if (csv) {
   write.csv(gdpdeflator, "CSV/gdpdeflator.csv", row.names=FALSE)
 }
 
-# Fuel Prices -------------------------------------------------------------
+
+# fuelprices --------------------------------------------------------------
+
 source('data-raw/costs/fuelprices.R')
 # fossil fuels data: https://www.eia.gov/electricity/monthly/backissues.html
 # issues: June 1996 - Table 26, p39(55), January 2010 - Table 4.2, p73(81), May 2016 - Table 4.2, p73(94)
@@ -205,7 +215,8 @@ if (csv) {
 }
 
 
-# AEO Capital Costs -------------------------------------------------------
+
+# capitalcosts ------------------------------------------------------------
 capitalcosts <- read_excel("data-raw/costs/aeo_capital_costs.xlsx",
                            sheet = "Fill_in_Missing_Tech_category",
                            skip = 2)
@@ -225,7 +236,8 @@ devtools::use_data(capitalcosts, overwrite=TRUE)
 if (csv) {
   write.csv(capitalcosts, "CSV/capitalcosts.csv", row.names=FALSE)
 }
-# LCOE --------------------------------------------------------------------
+
+# levelizedcosts ----------------------------------------------------------
 source('data-raw/costs/levelize.R')
 # equation: See data-raw/costs/gcam/Electricity Generation Assumptions.pdf for equation
 # constant fixed charge rate of 0.13 from GCAM
