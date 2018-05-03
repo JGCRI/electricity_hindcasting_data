@@ -86,8 +86,8 @@ if(csv) {
 }
 
 
-# JOIN.CAP.GEN.UNMAPPED ---------------------------------------------------
 
+# CAP.GEN.JOINED.UNMAPPED -------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 
 # join capacity.unmapped and generation.unmapped
@@ -108,8 +108,8 @@ if (csv) {
   write.csv(cap.gen.joined.unmapped, "CSV/cap.gen.joined.unmapped.csv", row.names=FALSE)
 }
 
-# CAP.GEN.JOINED ----------------------------------------------------------
 
+# CAP.GEN.JOINED (map & startyr) ------------------------------------------
 # attach oc-fg clumns
 # to make oc-fg unique ID's we need to do an aggregation, but after assigning vintage yr
 cap.gen.joined.mapped <- cap.gen.joined.unmapped %>%
