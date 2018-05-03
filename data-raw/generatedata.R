@@ -33,17 +33,20 @@ if (csv) {
 }
 
 capacity.unmapped <- generators %>%
-  group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate to plant-level
-
-  # NOTE:
-  # this dataset is at plant-level, but we are dropping utilcode as a useful key due to
-  # inconsistencies between capacity and generation datasets.
-  #
-  # these two datasets are joined using c("yr", "plntcode", "primemover", "fuel"),
-  # except for yr %in% c(2000, 2001), where we use c("yr", "plntcode", "fuel")
-
-  summarise(capacity=sum(capacity)) %>% # rename nameplate as capacity
+  group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate over gencode
+  summarise(capacity=sum(capacity)) %>%
+  ungroup() %>%
+  filter(!is.na(vintage)) %>%
+  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
+  # get total plant capacity, use them to weight each plant's reported vintage years
+  mutate(sumcapacity = sum(capacity),
+         vintage.fraction = vintage * capacity/sumcapacity) %>%
+  # collapse vintage year by summing vintage.fraction (weighted average)
+  # report total plant capacity across vintages
+  summarise(startyr=sum(vintage.fraction) %>% round(),
+            capacity=sum(capacity)) %>%
   ungroup()
+
 devtools::use_data(capacity.unmapped, overwrite=TRUE)
 if (csv) {
   write.csv(capacity.unmapped, "CSV/capacity.unmapped.csv", row.names=FALSE)
@@ -86,7 +89,6 @@ if(csv) {
 }
 
 
-
 # CAP.GEN.JOINED.UNMAPPED -------------------------------------------------
 source('data-raw/costs/capacityfactors.R')
 
@@ -113,7 +115,6 @@ if (csv) {
 # attach oc-fg clumns
 # to make oc-fg unique ID's we need to do an aggregation, but after assigning vintage yr
 cap.gen.joined.mapped <- cap.gen.joined.unmapped %>%
-  filter(!is.na(vintage)) %>%
   left_join(mapping, by=c("primemover", "fuel")) %>%
   filter(overnight_c != "OTH") %>%
   filter(overnight_d != ".") %>%
