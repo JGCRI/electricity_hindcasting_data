@@ -1,0 +1,15 @@
+overnightcategory,fuel.general,capacityfactor,CF.SUP,CF.DATA
+biomass,biomass,0.5544,0.55,0.57
+coal,coal,0.5648,0.55,0.74
+gas,CC,0.5254,0.6,0.51
+gas,CT,0.075333333,0.05,0.57
+gas,ST,0.1124,0.15,0.46
+geothermal,geothermal,0.7444,0.7,0.61
+hydro,water,0.3908,0.4,0.54
+MSW,MSW,0.6942,0.7,0.65
+nuclear,nuclear,0.9168,NA,0.92
+petroleum,CT,0.016111111,0.05,0.42
+petroleum,ST,0.1248,0.15,0.41
+PV,solar,0.2595,0.25,0.18
+solar_thermal,solar,0.21475,0.25,0.2
+wind,wind,0.3396,0.3,0.31
