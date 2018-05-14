@@ -39,21 +39,14 @@ capacity.unmapped <- generators %>%
   group_by(yr, utilcode, plntcode, primemover, fuel, vintage) %>% # aggregate over gencode
   summarise(capacity=sum(capacity)) %>%
   ungroup() %>%
-  filter(!is.na(vintage)) %>%
-  group_by(yr, utilcode, plntcode, primemover, fuel) %>%
-  # get total plant capacity, use them to weight each plant's reported vintage years
-  mutate(sumcapacity = sum(capacity),
-         vintage.fraction = vintage * capacity/sumcapacity) %>%
-  # collapse vintage year by summing vintage.fraction (weighted average)
-  # report total plant capacity across vintages
-  summarise(startyr=sum(vintage.fraction) %>% round(),
-            capacity=sum(capacity)) %>%
-  ungroup()
+  filter(!is.na(vintage))
 
 devtools::use_data(capacity.unmapped, overwrite=TRUE)
 if (csv) {
   write.csv(capacity.unmapped, "CSV/capacity.unmapped.csv", row.names=FALSE)
 }
+
+
 
 
 
@@ -106,7 +99,8 @@ if (csv) {
 
 
 
-# mapping -----------------------------------------------------------------
+# fuel/tech mapping -------------------------------------------------------
+
 source('data-raw/mappingfiles/mapping.R')
 # data: fuel_general and overnight_categories constructed from native fuel and prime_mover codes
 mapping <- prep.mapping("data-raw/mappingfiles/mapping_final.csv") %>%
@@ -125,12 +119,21 @@ cap.gen.joined <- cap.gen.joined.unmapped %>%
   filter(primemover != "WS") %>%
   select(-overnight_d) %>%
   rename(overnightcategory = overnight_c) %>%
-  # to make oc-fg unique ID's we need to aggregate over pm & f
-  group_by(yr, startyr, plntcode, fuel.general, overnightcategory) %>%
-  summarise(capacity=sum(capacity), # sum over pre-mapped pm-f
-            generation=sum(generation)) %>%  # sum over pre-mapped pm-f
+  # we want the columns in group() to be our uniquely-identifying keys
+  # in order to do that, we must:
+  # (1) aggregate CAP & GEN for redundant pm-f -> oc-fg mappings
+  # (2) average vintage (weighted by capacity) to calculate one startyr for each set of unique ID keys
+  group_by(utilcode, plntcode, fuel.general, overnightcategory) %>%
+  # mutate adds non-grouping columns
+  mutate(sumcapacity = sum(capacity), # total plant capacity
+         weight = capacity / sumcapacity, # used to weight individual vintage yrs
+         vintage.fraction = vintage * weight) %>% # vintage yr scaled by share of plant capacity
+  # summarise collapses all non-grouping columns to shared values of grouping columns
+  summarise(startyr=sum(vintage.fraction) %>% round(), # calculate one startyr for each plant
+            capacity=sum(capacity), # report total plant capacity
+            generation=sum(generation) # report total plant generation
+            ) %>%
   ungroup()
-
 # save cap.gen.joined (oc-fg codes)
 devtools::use_data(cap.gen.joined, overwrite=TRUE)
 if (csv) {
