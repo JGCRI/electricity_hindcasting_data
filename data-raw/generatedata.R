@@ -6,6 +6,7 @@ library(lubridate)
 library(stringr)
 library(readxl)
 library(rebus)
+library(tidyr)
 csv <- TRUE
 
 
@@ -170,14 +171,7 @@ source('data-raw/costs/capacityfactors.R')
 # carries original capacity and generation as well (for weighting capital costs)
 
 # calculate capacityfactors
-capacityfactors <- calc.capacityfactors(cap.gen.joined, "data-raw/costs/epm2017.csv")
-
-# CF as calculated from form data
-capacityfactors.data <- capacityfactors$data
-devtools::use_data(capacityfactors.data, overwrite=TRUE)
-if (csv) {
-  write.csv(capacityfactors.data, "CSV/capacityfactors.data.csv", row.names=FALSE)
-}
+capacityfactors <- calc.capacityfactors(cap.gen.joined, "data-raw/costs/epm.csv")
 
 # supplemental CF for missing data (from electrical power monthly)
 capacityfactors.sup <- capacityfactors$epm
@@ -186,6 +180,12 @@ if (csv) {
   write.csv(capacityfactors.sup, "CSV/capacityfactors.sup.csv", row.names=FALSE)
 }
 
+# CF as calculated from form data
+capacityfactors <- capacityfactors$data.fill
+devtools::use_data(capacityfactors, overwrite=TRUE)
+if (csv) {
+  write.csv(capacityfactors, "CSV/capacityfactors.csv", row.names=FALSE)
+}
 
 
 # gdpdeflator -------------------------------------------------------------

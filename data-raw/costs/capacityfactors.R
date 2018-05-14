@@ -33,12 +33,23 @@ calc.capacityfactors <- function(merged, supFile) {
     # CF > 1 is data error. See figs/filterbyCF for analysis how filter(CF < 1) affected data
     mutate(capacityfactor = ifelse(capacityfactor.raw > 1, 1, capacityfactor.raw)) %>%
     filter(capacityfactor >= 0.1) %>%
-    select(-capacity, -generation, -potentialgeneration, -capacityfactor.raw)
+    select(-capacity, -generation, -potentialgeneration, -capacityfactor.raw) %>%
+    mutate(fill = 0) # signals CF doesn't need to be filled
 
   epm <- read.csv(supFile) %>%
-    select(overnightcategory, capacityfactor)
+    select(overnightcategory, fuel.general, EPM=capacityfactor) %>%
+    mutate(fill = 1) # used to join to rows that need CF filled (see complete() below)
 
-  out <- list(data, epm)
-  names(out) <- c("data", "epm")
+  data.fill <- data %>%
+    # for each startyr in data, we want an entry for all native combinations of fg-oc
+    # missing entries are filled with values determined by parameter fill
+    complete(startyr, nesting(fuel.general, overnightcategory),
+             fill = list(plntcode = NA,
+                         fill = 1)) %>%
+    left_join(epm, by=c("overnightcategory", "fuel.general", "fill")) %>%
+    mutate(capacityfactor = ifelse(fill==1, EPM, capacityfactor))
+
+  out <- list(data.fill, epm)
+  names(out) <- c("data.fill", "epm")
   return(out)
 }
