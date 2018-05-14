@@ -123,7 +123,7 @@ cap.gen.joined <- cap.gen.joined.unmapped %>%
   # in order to do that, we must:
   # (1) aggregate CAP & GEN for redundant pm-f -> oc-fg mappings
   # (2) average vintage (weighted by capacity) to calculate one startyr for each set of unique ID keys
-  group_by(utilcode, plntcode, fuel.general, overnightcategory) %>%
+  group_by(plntcode, fuel.general, overnightcategory) %>%
   # mutate adds non-grouping columns
   mutate(sumcapacity = sum(capacity), # total plant capacity
          weight = capacity / sumcapacity, # used to weight individual vintage yrs
