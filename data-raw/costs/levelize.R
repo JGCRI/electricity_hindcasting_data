@@ -7,7 +7,7 @@ calc.levelizedcosts <- function(capcosts, cf.data, fcr, fuelprices, techmap) {
 
   # take plant-level capacity factor data
   levcst <- cf.data %>%
-    inner_join(capcosts.oc, by=c("yr", "overnightcategory", "fuel.general")) %>% # attach $$$ data to plant-level capacity factor data
+    inner_join(capcosts.oc, by=c("startyr" ="yr", "overnightcategory", "fuel.general")) %>% # attach $$$ data to plant-level capacity factor data
     mutate(LCOE_Capital = fcr * (1000 * overnight) / (8760 * capacityfactor), # $/MWh
            LCOE_FOM = (1000 * om.fixed) / (8760 * capacityfactor),
            LCOE_VOM = om.var,
@@ -15,7 +15,7 @@ calc.levelizedcosts <- function(capcosts, cf.data, fcr, fuelprices, techmap) {
     select(-overnight, -om.fixed, -om.var, -capacityfactor)
 
   levcst.fuel <- levcst %>%
-    left_join(fuelprices, by=c("yr", "fuel.general")) %>%
+    left_join(fuelprices, by=c("startyr"="yr", "fuel.general")) %>%
     mutate(fuel.price = ifelse(is.na(fuel.price), 0, fuel.price),
            LCOE_Fuel = fuel.price / (3412 / heatrate),
            LCOE = LCOE_wo_Fuel + LCOE_Fuel) %>%  # adjust fuel.price to fuel efficiency = 3412 / heatrate
